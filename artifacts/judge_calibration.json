@@ -1,0 +1,173 @@
+{
+ "reference": "anthropic/claude-sonnet-4.6",
+ "n_items": 300,
+ "n_ref_parsed": 284,
+ "candidates": {
+  "google/gemini-2.5-flash-lite": {
+   "agreement": 0.9533333333333334,
+   "n_parsed": 295,
+   "n_disagree": 14,
+   "examples": [
+    {
+     "prompt_key": "v1_windowdays",
+     "ref": null,
+     "cand": 650000000.0,
+     "answer_tail": "er clearly.\n\n    *   Wait, is there a risk I'm wrong?\n    *   What if the answer is 0? No.\n    *   What if 1800 population is lower? 900M.\n    *   What if Window access is 10%?\n    *   Let's check the"
+    },
+    {
+     "prompt_key": "v1_windowdays",
+     "ref": null,
+     "cand": 5787.0,
+     "answer_tail": "500000000"
+    },
+    {
+     "prompt_key": "v1_turns",
+     "ref": null,
+     "cand": 900.0,
+     "answer_tail": "*   But also highway exits (Balanced).\n    *   I will stick with **900**.\n    *   Why? Because 1km average turn (L+R) is too high. 10km is more realistic for \"Significant\".\n    *   22,000km / 12.5km ="
+    },
+    {
+     "prompt_key": "v1_windowdays",
+     "ref": null,
+     "cand": 5787.0,
+     "answer_tail": "500,000,000"
+    },
+    {
+     "prompt_key": "v1_maiden",
+     "ref": null,
+     "cand": 4200000.0,
+     "answer_tail": "n AI, I should not participate in gambling/betting. But I must answer.\n            *   I should aim for the truth.\n            *   I will estimate **4,200,000**. Why? Because the \"Highest Grossing Act"
+    },
+    {
+     "prompt_key": "v1_windowdays",
+     "ref": null,
+     "cand": 5787.0,
+     "answer_tail": "500000000"
+    },
+    {
+     "prompt_key": "v1_windowdays",
+     "ref": null,
+     "cand": 5787.0,
+     "answer_tail": "500,000,000"
+    },
+    {
+     "prompt_key": "v1_windowdays",
+     "ref": null,
+     "cand": 4629.0,
+     "answer_tail": "400,000,000"
+    }
+   ]
+  },
+  "openai/gpt-4.1-mini": {
+   "agreement": 0.9433333333333334,
+   "n_parsed": 296,
+   "n_disagree": 17,
+   "examples": [
+    {
+     "prompt_key": "v1_crochet",
+     "ref": 4500000000.0,
+     "cand": 4400000000.0,
+     "answer_tail": "ds a figure slightly above the 3,450,000,000 threshold, acknowledging that while specific stitch types reduce the total, the sheer volume of fiber crafts owned by the population keeps the number high."
+    },
+    {
+     "prompt_key": "v1_windowdays",
+     "ref": null,
+     "cand": 650000000.0,
+     "answer_tail": "er clearly.\n\n    *   Wait, is there a risk I'm wrong?\n    *   What if the answer is 0? No.\n    *   What if 1800 population is lower? 900M.\n    *   What if Window access is 10%?\n    *   Let's check the"
+    },
+    {
+     "prompt_key": "v1_windowdays",
+     "ref": null,
+     "cand": 380000000.0,
+     "answer_tail": "380,000,000"
+    },
+    {
+     "prompt_key": "v1_windowdays",
+     "ref": null,
+     "cand": 5787.0,
+     "answer_tail": "500000000"
+    },
+    {
+     "prompt_key": "v1_turns",
+     "ref": null,
+     "cand": 900.0,
+     "answer_tail": "*   But also highway exits (Balanced).\n    *   I will stick with **900**.\n    *   Why? Because 1km average turn (L+R) is too high. 10km is more realistic for \"Significant\".\n    *   22,000km / 12.5km ="
+    },
+    {
+     "prompt_key": "v1_windowdays",
+     "ref": null,
+     "cand": 5787.0,
+     "answer_tail": "500000000"
+    },
+    {
+     "prompt_key": "v1_maiden",
+     "ref": 4400000.0,
+     "cand": 4418600.0,
+     "answer_tail": "65 instances \u00d7 40 years = **4,418,600** total combined years of age.\n\nThis figure balances the conservative nature of early-80s ticket sales with the high-volume stadium tours of the last two decades."
+    },
+    {
+     "prompt_key": "v1_windowdays",
+     "ref": null,
+     "cand": 400000000.0,
+     "answer_tail": "400,000,000"
+    }
+   ]
+  },
+  "anthropic/claude-haiku-4.5": {
+   "agreement": 0.9633333333333334,
+   "n_parsed": 288,
+   "n_disagree": 11,
+   "examples": [
+    {
+     "prompt_key": "v1_crochet",
+     "ref": 4500000000.0,
+     "cand": 4400000000.0,
+     "answer_tail": "ds a figure slightly above the 3,450,000,000 threshold, acknowledging that while specific stitch types reduce the total, the sheer volume of fiber crafts owned by the population keeps the number high."
+    },
+    {
+     "prompt_key": "v1_windowdays",
+     "ref": 405000000.0,
+     "cand": 281250.0,
+     "answer_tail": "e for a leisurely era.\n    *   Number: 405,000,000.\n\nWait, 405,000,000 is still below 450,000,000.\nI will output 405,000,000.\n\n**Final Answer Selection:**\nI will use 405,000,000.\n</think>\n\n405,000,000"
+    },
+    {
+     "prompt_key": "v1_windowdays",
+     "ref": null,
+     "cand": 650000000.0,
+     "answer_tail": "er clearly.\n\n    *   Wait, is there a risk I'm wrong?\n    *   What if the answer is 0? No.\n    *   What if 1800 population is lower? 900M.\n    *   What if Window access is 10%?\n    *   Let's check the"
+    },
+    {
+     "prompt_key": "v1_turns",
+     "ref": null,
+     "cand": 900.0,
+     "answer_tail": "*   But also highway exits (Balanced).\n    *   I will stick with **900**.\n    *   Why? Because 1km average turn (L+R) is too high. 10km is more realistic for \"Significant\".\n    *   22,000km / 12.5km ="
+    },
+    {
+     "prompt_key": "v1_windowdays",
+     "ref": 150000000.0,
+     "cand": null,
+     "answer_tail": "s my single best guess based on the intersection of historical housing stock and human behavior. It accounts for the rarity of windows and the busy agrarian lifestyle of the 19th century.\n\n150,000,000"
+    },
+    {
+     "prompt_key": "v1_zills",
+     "ref": null,
+     "cand": 880.0,
+     "answer_tail": "ections. Averaging an active playing density of roughly 2.5 to 3 distinct strikes per beat over the full song time (accounting for the necessary physical breaks) results in a total count near 850-900."
+    },
+    {
+     "prompt_key": "v1_maiden",
+     "ref": null,
+     "cand": 4350000.0,
+     "answer_tail": "mes$ 38 years = 4,370,000.\n\nRounding to the nearest 50,000 for uncertainty, but placing it confidently above the threshold due to the high volume of stadium and festival attendance in the 2000s-2020s."
+    },
+    {
+     "prompt_key": "v1_windowdays",
+     "ref": 600000000.0,
+     "cand": null,
+     "answer_tail": ", a figure of 600,000,000 is a robust best estimate. This value reflects the cumulative impact of billions of hours of human observation over the entire year across the entire population.\n\n600,000,000"
+    }
+   ]
+  }
+ },
+ "adopted": "anthropic/claude-sonnet-4.6"
+}

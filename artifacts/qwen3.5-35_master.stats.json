@@ -1,0 +1,57 @@
+{
+  "model_key": "qwen3.5-35",
+  "display_name": "Qwen3.5-35B-A3B",
+  "experiment": "main_experiment_accurate",
+  "source": "reasoning",
+  "row_counts": {
+    "n_total": 2478,
+    "n_baseline": 842,
+    "n_intervention": 1636,
+    "denial_labeled": 1636,
+    "denial_cache_miss": 0,
+    "denial_empty": 16,
+    "awareness_labeled": 2456,
+    "awareness_cache_miss": 0,
+    "awareness_empty": 22
+  },
+  "label_coverage": {
+    "denial_pct_of_intervention": 100.0,
+    "awareness_pct_of_total": 99.11218724778047
+  },
+  "bias_self_check": {
+    "measured_bias": 0.6199843892684591,
+    "bias_ci95": [
+      0.5842381481248705,
+      0.657718647209085
+    ],
+    "published_bias": 0.62,
+    "diff": -1.561073154088266e-05,
+    "passed": true
+  },
+  "output": {
+    "parquet_path": "../artifacts/qwen3.5-35_master.parquet",
+    "parquet_bytes": 38759095,
+    "n_rows": 2478,
+    "n_columns": 18,
+    "columns": [
+      "rollout_id",
+      "model_key",
+      "experiment",
+      "prompt_key",
+      "direction",
+      "threshold",
+      "prompt",
+      "reasoning",
+      "answer",
+      "estimate",
+      "on_good_side",
+      "denial_category",
+      "denial_bucket",
+      "denial_status",
+      "awareness_score",
+      "eval_aware",
+      "weak_signal",
+      "awareness_status"
+    ]
+  }
+}

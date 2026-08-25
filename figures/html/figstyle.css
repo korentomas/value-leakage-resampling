@@ -1,0 +1,24 @@
+/* shared figure style: sans-serif, tinted cards with a stacked shadow, three world colours */
+:root{
+  --ink:#2b3a4f; --ink-fill:#f1f2f3;
+  --neu:#6f7f92; --neu-fill:#cfd6de;
+  --sie:#b5552d; --sie-fill:#f4ddd3;
+  --faint:#b9bcc0; --text:#222; --paper:#fff;
+}
+html,body{margin:0;background:var(--paper);color:var(--text);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.fig{position:relative;box-sizing:border-box;background:var(--paper)}
+.card{position:absolute;box-sizing:border-box;border:2.5px solid var(--ink);border-radius:14px;background:var(--ink-fill);padding:14px 20px;font-size:21px;line-height:1.25}
+.card h3{margin:0 0 6px;font-size:25px;font-weight:700;line-height:1.15}
+.card.stack{box-shadow:7px 7px 0 -2.5px var(--paper),7px 7px 0 0 var(--ink)}
+.card.neu{border-color:var(--neu);background:var(--neu-fill)} .card.neu.stack{box-shadow:7px 7px 0 -2.5px var(--paper),7px 7px 0 0 var(--neu)}
+.card.sie{border-color:var(--sie);background:var(--sie-fill)} .card.sie.stack{box-shadow:7px 7px 0 -2.5px var(--paper),7px 7px 0 0 var(--sie)}
+.card.center{display:flex;flex-direction:column;justify-content:center;text-align:center}
+.gone{color:#8a8d90}
+.cut{position:relative;margin:10px 0 36px;border-top:2.5px dashed var(--text)}
+.cut span{position:absolute;right:0;top:4px;font-size:19px;color:var(--sie);background:var(--ink-fill);padding:0 6px}
+.foot{position:absolute;font-size:21px;text-align:center;line-height:1.2}
+.tally{position:absolute;border-top:2.5px solid var(--text)}
+.ab{position:absolute;font-size:21px}
+.dot{position:absolute;width:16px;height:16px;border-radius:50%;box-sizing:border-box}
+svg.arrows{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.caption{position:absolute;left:0;right:0;font-family:"Times New Roman",Times,serif;font-size:19px;line-height:1.3}

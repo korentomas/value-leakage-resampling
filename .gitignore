@@ -1,0 +1,36 @@
+external/
+.venv-model/
+__pycache__/
+.DS_Store
+.deepeval/
+
+# Raw request/result dumps (GBs) stay local; only the derived files the
+# figures and reported numbers depend on are tracked.
+artifacts/*
+!artifacts/step3_counts.jsonl
+!artifacts/step3_summaries.json
+!artifacts/step4_baseline_counts.jsonl
+!artifacts/step4_neutral_counts.jsonl
+!artifacts/step4_awareness.json
+!artifacts/step4_labels.json
+!artifacts/step4d_counts.jsonl
+!artifacts/step4e_tally.jsonl
+!artifacts/step4f_by_source.json
+!artifacts/step4f_trajectories.jsonl
+!artifacts/step4g_counts_all.jsonl
+!artifacts/step4g_baseline_counts.jsonl
+!artifacts/step4g_t0_counts.jsonl
+!artifacts/step4g_summaries.json
+!artifacts/denial_labels.json
+!artifacts/denial_positions.jsonl
+!artifacts/prefix_direction.jsonl
+!artifacts/prefix_direction_summary.json
+!artifacts/judge_calibration.json
+!artifacts/reviewer_checks.json
+!artifacts/critique_addenda.json
+!artifacts/splice_check_v2.jsonl
+!artifacts/qwen3.5-35_labels.json
+!artifacts/qwen3.5-35_master.parquet
+!artifacts/qwen3.5-35_master.stats.json
+!artifacts/qwen3.6-35_master.parquet
+!artifacts/qwen3.6-35_master.stats.json
