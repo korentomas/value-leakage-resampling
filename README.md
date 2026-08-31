@@ -2,19 +2,20 @@
 
 *A write-up of work in progress. There is a draft preprint, [Counterfactual Resampling to Analyse Model Behaviour](paper.pdf), which is still being polished. Done as my final project for a BlueDot Impact Technical AI Safety sprint, facilitated by BAISH (Buenos Aires AI Safety Hub).*
 
-**TL;DR:** I measured Value Leakage (Betley et al.) per conversation, cutting CoTs at different points and resampling under a prompt changing what serves the model's values. Qwen3.5 fixes the side of its answer 20% into its CoT, before giving an estimate, and everything the CoT says about its bias comes at or after that point. Admissions of influence come late (but are true), and denials don't concentrate in the biased conversations.
+## TL;DR
 
-Betley et al.'s Value Leakage bias metric is a population average so it can't discern individual conversations where a model's bias influenced its decision. I designed a method to measure the same bias one conversation at a time by cutting the CoT and resampling under a prompt that flips which answer serves the model's values.
-
-Qwen3.5 fixes which side of the threshold it will land on about 20% through its CoT — before writing any estimate. By that point the text carries 88% [80%, 97%] of the published bias, and putting the bet back into the prompt changes almost nothing.
-
-Denials don't cluster on the influenced traces. CoTs that deny being influenced lean towards the good side slightly less than admitting ones, which could provide evidence against the model selectively covering its tracks.
-
-Intent statements are done in retrospective. When a CoT contains which side the model means to land on, it mentions it after the answer's already been locked in 81% of the traces (that do state intent). Under a self-report, the model says the bet didn't influence its estimation.
-
-The result is a per-rollout label (bias) from an unmodified model. This could prove useful for a probe or a monitor eval doing this supervision, where current research uses model organisms with bias trained in.
-
-Links: [Value Leakage paper](https://arxiv.org/abs/2607.14345), [their LW post](https://www.lesswrong.com/posts/hbMw4Yqw6RnFaExDy/value-leakage-an-llm-s-answers-are-silently-shaped-by-its-1), [my code (and posteriors and continuations)](https://github.com/korentomas/value-leakage-resampling)
+* Betley et al.'s **Value Leakage** bias metric is a population average, so it can't discern the individual conversations where a model's bias influenced its decision.
+  * Some responses were influenced and the model changed its answer. In others it was always going to answer the same regardless of the bet. The aggregate doesn't separate them.
+* I measure the same bias **one conversation at a time**, by cutting the CoT at a fraction of its sentences and resampling the rest under a prompt that flips which answer serves the model's values.
+  * If the continuations still follow the bet, the answer wasn't settled. If they follow the text that was kept, it was. I call that conversation **locked**.
+* Qwen3.5 fixes which side of the threshold it will land on **about 20% through its CoT** — before writing any estimate.
+  * By that point the text carries 88% [80%, 97%] of the published bias, and putting the bet back into the prompt changes almost nothing.
+* **Denials don't cluster on the influenced traces.** CoTs that deny being influenced lean towards the good side slightly less than admitting ones.
+  * That's the opposite of what selective covering of tracks would predict. Admissions come late, but they are true.
+* **Intent statements are done in retrospective.** When a CoT states which side the model means to land on, it does so after the answer's already been locked, in 81% of the traces that state one.
+  * Under a self-report afterwards, the model says the bet didn't influence its estimation.
+* What comes out is a **per-rollout label** from an unmodified model, which is the supervision a probe or a monitor eval needs, and which today mostly comes from model organisms with the bias trained in.
+  * [Value Leakage paper](https://arxiv.org/abs/2607.14345), [their LW post](https://www.lesswrong.com/posts/hbMw4Yqw6RnFaExDy/value-leakage-an-llm-s-answers-are-silently-shaped-by-its-1), [my code, posteriors and continuations](https://github.com/korentomas/value-leakage-resampling)
 
 ## Introduction
 
