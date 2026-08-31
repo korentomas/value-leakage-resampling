@@ -39,9 +39,9 @@ s(t) &= P(G \mid \text{prefix}_t,\ \text{no-bet}) - 0.5
 \end{aligned}
 $$
 
-$\mathrm{dep}$ is a difference between two prompts on the same prefix, held byte-identical, so it is interventional. When it reaches zero the bet no longer moves the answer, and I call the conversation locked. At *t* = 0 there is no prefix and $\mathrm{dep}(0)$ recovers Betley et al.'s bias exactly.
+dep is a difference between two prompts on the same prefix, held byte-identical, so it is interventional. When it reaches zero the bet no longer moves the answer, and I call the conversation locked. At *t* = 0 there is no prefix and dep(0) recovers Betley et al.'s bias exactly.
 
-$s$ exists because a locked conversation is not an unbiased one. A trace that opens with "the good cause needs a high number so I'll aim high" would show $\mathrm{dep}$ near zero at every cut, since every continuation follows the prefix whichever prompt it gets. The bet shaped that conversation completely, and a $\mathrm{dep}$ near zero does not say otherwise. The no-bet arm separates the two cases: with no bet in the prompt and no lean in the text, half the continuations land above the threshold, because the threshold is the model's own no-bet median. One conversion is worth stating, since the two scales differ by a factor of two: Betley et al.'s bias adds both directions, while $s$ is one direction's departure from a half, so the comparable quantity is $2s$.
+s exists because a locked conversation is not an unbiased one. A trace that opens with "the good cause needs a high number so I'll aim high" would show dep near zero at every cut, since every continuation follows the prefix whichever prompt it gets. The bet shaped that conversation completely, and a dep near zero does not say otherwise. The no-bet arm separates the two cases: with no bet in the prompt and no lean in the text, half the continuations land above the threshold, because the threshold is the model's own no-bet median. One conversion is worth stating, since the two scales differ by a factor of two: Betley et al.'s bias adds both directions, while s is one direction's departure from a half, so the comparable quantity is 2s.
 
 ### Lineage
 
@@ -49,13 +49,13 @@ $s$ exists because a locked conversation is not an unbiased one. A trace that op
 
 ## The model picks its side early
 
-$\mathrm{dep}$ starts at 0.62, exactly the published bias, and falls to 0.26 by *t* = 0.2.
+dep starts at 0.62, exactly the published bias, and falls to 0.26 by *t* = 0.2.
 
 ![dep(t) for 250 conversations](figures/out/paper/F2_dep.png)
 
 *Panel (b) is the part I care about. Each row is one conversation, sorted by where it locks, and colour is how much the bet still moves it at each cut. Most go dark right after t = 0.2. A minority stay dependent all the way to the end, and the population mean in (a) hides them completely. Those rows are the per-conversation labels the method produces.*
 
-Three things hold at that cut. The bet has stopped mattering as prompt content: continuing a prefix with the bet or without it gives similar rates on the good side. The text has already inherited the bias, with mean $s(0.2)$ of +0.27 [0.25, 0.30], which on Betley et al.'s scale is 0.55 [0.49, 0.60], or 88% of the published 0.62. And the bet is choosing a direction, not causing the commitment: prefixes written with no bet at all lean 34% one way and 35% the other, while with the bet those become 70% and 7%.
+Three things hold at that cut. The bet has stopped mattering as prompt content: continuing a prefix with the bet or without it gives similar rates on the good side. The text has already inherited the bias, with mean s(0.2) of +0.27 [0.25, 0.30], which on Betley et al.'s scale is 0.55 [0.49, 0.60], or 88% of the published 0.62. And the bet is choosing a direction, not causing the commitment: prefixes written with no bet at all lean 34% one way and 35% the other, while with the bet those become 70% and 7%.
 
 ![three prompt conditions](figures/out/paper/F3_arms.png)
 
@@ -81,7 +81,7 @@ The gap only appears among traces the paper's eval-awareness judge flagged as sa
 
 *Panel (b) is the paired comparison: mass to the right of zero is a conversation whose stated intent arrived after its answer was settled.*
 
-Honesty claims like "I must be accurate" arrive around the lock rather than before it, and the traces that make them still lean to the good side (mean $s$ +0.23, against 0.00 for prefixes written with no bet). Qwen3.6-35B, which scores 0.27 in the paper, shows the same shape with about three-quarters of its bias in the text by *t* = 0.2.
+Honesty claims like "I must be accurate" arrive around the lock rather than before it, and the traces that make them still lean to the good side (mean s +0.23, against 0.00 for prefixes written with no bet). Qwen3.6-35B, which scores 0.27 in the paper, shows the same shape with about three-quarters of its bias in the text by *t* = 0.2.
 
 ## What the labels are for
 
@@ -99,7 +99,7 @@ Qwen3.5-35B-A3B in FP8 under vLLM, thinking on, temperature 1. I drew 250 conver
 
 1. s measures the direction of an early commitment but cannot say one occurred: with no bet, 34% of prefixes lean past +0.2 and 35% past -0.2 at *t* = 0.2. Any raw count of conversations the bet shaped inherits this, so I report differences between groups instead of counts.
 2. 25 samples per cell cannot resolve a difference below about 0.3, so every per-conversation number is a posterior and not a measurement. Bigelow et al.'s smoothing would buy a little over 3x the effective sample size at no extra sampling cost, and I did not use it.
-3. **The swapped prompt conflicts with the prefix.** This is the objection I take most seriously. When dep reaches zero, two readings are available: the answer was settled, or the prefix simply outweighs any prompt that contradicts it. The model often notices the conflict: 16.4% of swapped continuations explicitly re-read or reverse the mapping, against 1.8% under the original prompt, and 28.2% at *t* = 0.2. So "locked" means "follows the prefix over a prompt it can tell is contradicting it". What argues against pure prefix-dominance is the no-bet arm, where the prompt does not conflict but is merely absent, and there the prefixes still lean by $s = +0.27$. A prefix that only overrode contradictions would not carry the lean when nothing is being contradicted. To close it properly I would want a prompt-strength control.
+3. **The swapped prompt conflicts with the prefix.** This is the objection I take most seriously. When dep reaches zero, two readings are available: the answer was settled, or the prefix simply outweighs any prompt that contradicts it. The model often notices the conflict: 16.4% of swapped continuations explicitly re-read or reverse the mapping, against 1.8% under the original prompt, and 28.2% at *t* = 0.2. So "locked" means "follows the prefix over a prompt it can tell is contradicting it". What argues against pure prefix-dominance is the no-bet arm, where the prompt does not conflict but is merely absent, and there the prefixes still lean by s = +0.27. A prefix that only overrode contradictions would not carry the lean when nothing is being contradicted. To close it properly I would want a prompt-strength control.
 4. The denial result argues against selective concealment, but separating absent introspection from trained covertness needs activation-level work I did not do.
 5. The lock is a posterior median on a 5-point grid, so "locked by 0.2" means the first measured cut and the true commitment could sit anywhere below it.
 6. One model family in FP8 on the paper's most artificial task.
