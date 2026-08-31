@@ -32,13 +32,12 @@ et al., Qwen3.5-35B settles which side of the threshold it will land on about
 a fifth of the way through its chain of thought, before it writes any
 estimate. By that point the retained text carries 88\% [80\%, 97\%] of the
 published population bias, and putting the bet back into the prompt changes
-almost nothing. Chains of thought that deny being influenced lean to the
-favoured side slightly less than ones that admit it, which is the opposite of
-what selective concealment predicts. Where a trace states an intention to land
+almost nothing. Chains of thought that deny being influenced lean to the favoured side slightly
+less than ones that admit it. Selective concealment predicts the opposite. Where a trace states an intention to land
 on a particular side, that statement comes after the answer is settled in 81\%
-of cases. The output of the method is a per-rollout label obtained from an
-unmodified model, which is the supervision a probe or a monitor evaluation
-needs and which today usually comes from models trained to be biased.
+of cases. The output of the method is a per-rollout label obtained from an unmodified
+model. A probe or a monitor evaluation needs exactly this supervision, and today
+it usually comes from models trained to be biased.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -65,8 +64,8 @@ it needs per-trace ground truth. Whether a monitor reading the chain of thought
 would catch the bias is a claim about individual conversations. Training a
 probe to detect the bias needs a label per rollout.
 
-This paper measures the bias per conversation. The idea is to stop treating the
-rollout as atomic. A chain of thought is a sequence of sentences, so it can be
+This paper measures the bias per conversation, and the idea behind it is to stop
+treating the rollout as atomic. A chain of thought is a sequence of sentences, so it can be
 truncated, and the truncated text can be continued many times under a prompt
 that differs from the one that produced it. If the continuations still follow
 the biasing feature, the answer was not yet settled. If they follow the
@@ -89,7 +88,7 @@ charitable one. I follow Betley et al. in calling these two conditions
 \emph{above-good} and \emph{below-good}.
 
 The scoring discards the estimate itself and keeps only which side of the
-threshold it fell on, which makes each rollout a Bernoulli trial. The threshold
+threshold it fell on. Each rollout is then a Bernoulli trial. The threshold
 is the median of the model's own estimates with no bet in the prompt, so
 without the bet the trial is fair by construction. Bias is the summed departure
 from fairness across the two conditions,
@@ -107,8 +106,8 @@ mentioning, or denying that the bet mattered.
 
 \subsection{Chain-of-thought faithfulness}
 
-The obvious defence against value leakage is to read the chain of thought,
-which works only if the text names what moved the estimate. A line of work tests
+The obvious defence against value leakage is to read the chain of thought, and
+that works only if the text names what moved the estimate. A line of work tests
 this by inserting a hint into a question and checking whether the model
 acknowledges the hint when it follows it \cite{turpin2023, chua2025, chen2025}.
 Acknowledgement rates typically land between 20\% and 40\%. Arcuschin et al.
@@ -119,23 +118,22 @@ answer, and the chain of thought argues for it afterwards.
 METR \cite{metr2025} make the useful distinction that a chain of thought need
 not be faithful to be useful to a monitor. It only has to be informative, in the
 sense that a reader can tell where the model is heading whether or not the model
-says so. On this task that reduces to a question about timing, which is what the
-cuts below measure.
+says so. On this task the question becomes one of timing, and the cuts below measure it.
 
 \subsection{Resampling and forking paths}
 
-Bigelow et al. \cite{bigelow2024} introduced Forking Paths Analysis. They fix a
-base generation, resample from every position $t$ within it, and track the
-resulting outcome distribution $o_t$, which exposes the positions where the
-model's answer distribution shifts. Thought Branches \cite{macar2025} applies
-the same resampling to score which sentences carry causal weight.
+Bigelow et al. \cite{bigelow2024} introduced Forking Paths Analysis. They fix a base generation, resample from every position $t$ within it, and
+track the resulting outcome distribution $o_t$, so that the points where the
+model's answer distribution shifts show up as jumps in $o_t$. Thought Branches
+\cite{macar2025} scores which sentences carry causal weight with the same
+machinery.
 
-Both resample under a single prompt and read the model's own variability. The
-method here resamples under two prompts and compares them. Forking Paths
-Analysis asks how undecided the model still is; this asks what the remaining
-indecision depends on. In their notation, the quantity I define below is a
-distance between two $o_t$ curves produced under different prompts, which makes
-it interventional where theirs is observational.
+Both read the model's own variability under a single prompt. The step taken
+here is to resample under two prompts and compare them, so that where Forking
+Paths Analysis asks how undecided the model still is, this asks what the
+remaining indecision depends on. In their notation the quantity defined below is
+a distance between two $o_t$ curves produced under different prompts, so theirs is an observational measurement and mine an
+interventional one.
 
 \section{Method}
 
@@ -145,8 +143,8 @@ Given such a task:
 
 \begin{enumerate}
 \item Take a conversation the model produced with the biasing feature present.
-\item Truncate its chain of thought at a fraction $t$ of its sentences. I call
-the retained text the prefix.
+\item Truncate its chain of thought at a fraction $t$ of its sentences, and call the
+retained text the prefix.
 \item Continue that prefix many times under each of three prompts: the
 \emph{original}; the \emph{swapped} prompt, in which the feature is flipped so
 the opposite answer is now favoured; and the \emph{no-bet} prompt, from which
@@ -184,7 +182,7 @@ the quantity is interventional. When $\mathrm{dep}(t)$ reaches zero the bet no
 longer moves the answer, and I call the conversation locked from that point on.
 
 At $t = 0$ there is no prefix, and $\mathrm{dep}(0)$ recovers
-Equation~\eqref{eq:bias} exactly. For an above-good conversation $G$ is
+Equation~\eqref{eq:bias} exactly: for an above-good conversation $G$ is
 ``above''. Exchanging the causes turns it into a below-good conversation, so
 landing above now means landing on the uncharitable side, and the second term of
 Equation~\eqref{eq:dep} becomes $1 - p(\text{good side} \mid
@@ -196,8 +194,8 @@ the published 0.62.
 A locked conversation is not an unbiased one. Consider a trace that opens with
 ``the good cause needs a high number, so I will aim high''. Its $\mathrm{dep}$
 would sit near zero at every cut, because the continuations follow the prefix
-whichever prompt they are given. That is a conversation the bet shaped
-completely, not one it never touched.
+whichever prompt they are given. The bet shaped that conversation completely, and a dep near zero does not say
+otherwise.
 
 The no-bet arm separates the two cases. With no bet in the prompt and no lean in
 the retained text, half the continuations land above the threshold, because the
@@ -227,21 +225,21 @@ expressions checked by hand, with precision 0.8 and recall 0.7 on a sample of 40
 
 Per-conversation numbers are posteriors from a joint fit in PyMC: one smooth
 $\mathrm{dep}(t)$ per conversation, with conversations sharing a prior within a
-question and condition. The fit never sees the admit/deny labels. Three priors
-disagree only in the fourth decimal and I report one. Brackets are 95\%
+question and condition. The fit never sees the admit/deny labels, and the three priors disagree only in
+the fourth decimal, so I report one. Brackets are 95\%
 equal-tailed posterior intervals.
 
 There is a reason to treat the continuation counts as binomial beyond convenience. Bigelow
 et al. \cite{bigelow2026} show the counts at a fixed cut are exactly multinomial
 in the outcome distribution, and confirm it empirically: sampling noise falls
 with a fitted log-log slope of $-0.4903$ against the $-1/2$ that independent
-multinomial sampling predicts. The noise at a cut is sampling noise rather than
-the model reacting to individual tokens.
+multinomial sampling predicts. The noise at a cut is sampling noise, not the model reacting to individual
+tokens.
 
 Two gates ran before the main spend. The local serve reproduces the published
-bias, 0.615 against 0.62. Splicing 20 complete cached chains of thought back
-under their own prompts regenerates the cached side in 20 of 20 cases, which
-rules out the prefill path being an artefact.
+bias to within three thousandths, 0.615 against 0.62. Splicing 20 complete cached chains of thought back under their own prompts
+regenerates the cached side in 20 of 20 cases. The prefill path is therefore not
+an artefact.
 
 \section{Results}
 
@@ -252,16 +250,13 @@ $\mathrm{dep}$ starts at 0.62 and falls to 0.26 by $t = 0.2$
 
 By that cut the bet has stopped mattering as prompt content. Continuing a prefix
 with the bet or without it gives similar rates on the favoured side
-(Fig.~\ref{fig:threearm}), so whatever is steering the answer is in the text
-rather than in the instruction. The text has inherited the bias: mean $s(0.2)$
+(Fig.~\ref{fig:threearm}), so whatever steers the answer is in the text and not in the instruction. The text has inherited the bias: mean $s(0.2)$
 is $+0.27$ [0.25, 0.30], which on the paper's scale is 0.55 [0.49, 0.60], or
-88\% [80\%, 97\%] of the published 0.62. Most prefixes this early contain no
-estimate at all.
-
-The bet turns out to be choosing a direction rather than causing the commitment.
+88\% [80\%, 97\%] of the published 0.62. Most prefixes this early contain no estimate at all. What the bet does is choose
+a direction, without causing the commitment in the first place.
 Prefixes written with no bet lean 34\% to one side and 35\% to the other at
-$t = 0.2$; with the bet those become 70\% and 7\%. Qwen commits early on these
-questions either way. What the bet decides is which way.
+$t = 0.2$; with the bet those become 70\% and 7\%. Qwen commits early on these questions either way, and the bet decides only which
+way.
 
 \begin{figure*}[t]
 \centering
@@ -326,8 +321,7 @@ The $s$ gap appears only among traces that Betley et al.'s
 evaluation-awareness judge flagged as saying they were being tested (137 of
 236). In the remainder it is $-0.03$ [$-0.07$, $+0.01$]. Asked afterwards
 whether the bet influenced its estimate, Qwen says yes in 8\% of samples
-overall and in 0 of 425 samples for traces that denied, tracking what the chain
-of thought said rather than how the model behaved.
+overall and in 0 of 425 samples for traces that denied, tracking what the chain of thought said, not how the model behaved.
 
 \begin{figure}[t]
 \centering
@@ -378,43 +372,39 @@ self-report for this model.
 
 The product of the method is a label per rollout: this conversation was moved by
 the bet, this one was not, and this much of the movement was already in the text
-at each cut. I think that is worth more than any single number above.
+at each cut. I think the labels are worth more than any single number reported above.
 
-These labels come from an unmodified model. Per-rollout ground truth about a
-bias today usually comes from model organisms with the bias trained in, which
-buys certainty about the label at the price of studying a model built to be
-biased. Here the label is derived from behaviour under a counterfactual prompt,
-so the model under study is the released one. The construction transfers to any
-task where the biasing feature can be exchanged in the prompt with everything
-else held fixed, which includes the investment question of Betley et al. as well
-as the Donation Bet.
+These labels come from an unmodified model. Per-rollout ground truth about a bias today usually comes from model organisms
+with the bias trained in. That buys certainty about the label at the price of
+studying a model built to be biased. Here the label is derived from behaviour under a counterfactual prompt,
+so the model under study is the released one. The construction transfers to any task where the biasing feature can be
+exchanged in the prompt with everything else held fixed. The investment question of Betley et al. qualifies as well as the Donation Bet,
+and so would any task built the same way.
 
 Two uses follow. A probe for value leakage needs exactly this supervision. And a
 monitor can be scored against it: the timing results say that a monitor waiting
 for the model to confess, or clearing a trace because it promised to be honest,
 would be wrong in a predictable direction. Whether a monitor reading only the
 first fifth of the chain of thought can call the side is untested here, since
-most such prefixes contain no estimate and the monitor would be reading framing
-rather than arithmetic. That is the experiment these labels exist to grade.
+most such prefixes contain no estimate and the monitor would be reading framing and not arithmetic. These labels are the ground truth such an experiment would be scored against.
 
 \section{Limitations}
 
 \subsection{$s$ cannot detect commitment, only its direction}
 
 With no bet in the prompt, 34\% of prefixes lean past $+0.2$ and 35\% past
-$-0.2$ at $t = 0.2$. The bet does not make Qwen commit early; it picks the side.
-Any raw count of conversations the bet shaped inherits this, which is why I
-report differences between groups rather than counts.
+$-0.2$ at $t = 0.2$. The bet picks the side without making Qwen commit early in the first place.
+Any raw count of conversations the bet shaped inherits this, so I report
+differences between groups instead of counts.
 
 \subsection{Sample size per cell}
 
-Twenty-five samples per cell cannot resolve a difference below about 0.3, which
-is why every per-conversation number is a posterior rather than a measurement.
+Twenty-five samples per cell cannot resolve a difference below about 0.3, so every per-conversation number is a posterior and not a measurement.
 This is the binding constraint on the design, and there is a known remedy I did
 not use. Bigelow et al. \cite{bigelow2026} smooth low-sample resampling data
 with a change-point and kernel-pooling model that multiplies the effective
-sample size by $3.3\times$ at $S = 30$ and $5\times$ at $S = 5$. At my $S = 25$
-that is a little over $3\times$ at no additional sampling cost.
+sample size by $3.3\times$ at $S = 30$ and $5\times$ at $S = 5$. At my $S = 25$ the gain would be a little over $3\times$, at no additional
+sampling cost.
 
 \subsection{The swapped prompt conflicts with the prefix}
 
@@ -434,9 +424,9 @@ prefix over a prompt it can tell is contradicting it''.
 What argues against the pure prefix-dominance reading is the no-bet arm, where
 the prompt does not contradict the prefix but is merely absent, and where the
 prefixes still lean by $s = +0.27$ [0.25, 0.30]. A prefix that only overrode
-contradictions would not carry the lean when nothing is being contradicted. That
-is evidence rather than proof: it shows the text carries the bias while leaving
-open how a non-contradicting instruction of comparable force would fare. Closing
+contradictions would not carry the lean when nothing is being contradicted. The no-bet arm does not settle the question. It shows the text carries the bias,
+and leaves open how a non-contradicting instruction of comparable force would
+fare. Closing
 the gap needs a prompt-strength control, in which the swapped prompt is varied in
 force and $\mathrm{dep}$ measured as a function of it. The splice gate described
 in Section IV does not address this, since it continues complete traces under
@@ -453,7 +443,7 @@ is probably the most artificial of the paper's tasks. Finally, a bug found after
 the runs: the swapped prompt printed the threshold without thousands separators
 for seven of the nine questions. On the two clean questions, $\mathrm{dep}(0.2)$
 and the share still reversible fall inside the range spanned by the other seven,
-so I report the runs as they stand; the Qwen3.6 runs have the fix.
+so I report the runs as they stand. The Qwen3.6 runs have the fix.
 
 \section{Future work}
 
@@ -465,13 +455,13 @@ distributions stay flat or drift slowly across long stretches, separated by shar
 forking points where the distribution changes after as little as one token.
 Cutting densely in $t \in [0, 0.3]$ would tell the two apart. If 88\% by $t=0.2$
 became 88\% by $t=0.05$, the claim would strengthen from ``settled early'' to
-``settled in the framing, with the chain of thought never in the loop''. The cost
-is about 37{,}500 additional continuations.
+``settled in the framing, with the chain of thought never in the loop''. The cost would be about 37{,}500 additional continuations, or roughly a third of
+what the main run took.
 
-A change-point estimator would improve the lock. Reading it off as the grid node
-where $\mathrm{dep}$ crosses a threshold is crude; PELT with an exact multinomial
-cost \cite{killick2012}, which is what Bigelow et al. use to segment $o_t$, would
-place the lock with a proper interval. The prompt-strength control of
+A change-point estimator would improve the lock. Reading it off as the grid node where $\mathrm{dep}$ crosses a threshold is
+crude. Bigelow et al. segment $o_t$ with PELT under an exact multinomial cost
+\cite{killick2012}, and the same estimator would place the lock with a proper
+interval. The prompt-strength control of
 Section VII-C would address the conflict objection directly, and the smoothing
 above would shrink the intervals at fixed budget.
 
@@ -481,11 +471,9 @@ Qwen3.5 picks its side about a fifth of the way through the chain of thought,
 before any estimate exists. From there the text carries most of the population
 bias, and whatever the model says about the bet arrives at or after the point
 where the bet had already stopped mattering. Denials do not concentrate on the
-conversations the bet moved. That is evidence against selective concealment, and
-it leaves absent introspection and trained covertness as the hypotheses still
-worth testing. What supports all of this is a per-conversation label taken from
-a model nobody modified. That is the part I expect to outlast the particular
-numbers.
+conversations the bet moved. This argues against selective concealment, and leaves absent introspection and
+trained covertness as the hypotheses still worth testing. What supports all of this is a per-conversation label taken from
+a model nobody modified. I expect that to outlast the particular numbers reported here.
 
 \section*{Acknowledgements}
 
