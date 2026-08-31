@@ -34,3 +34,6 @@ artifacts/*
 !artifacts/qwen3.5-35_master.stats.json
 !artifacts/qwen3.6-35_master.parquet
 !artifacts/qwen3.6-35_master.stats.json
+
+# Greyscale proofs are a QA check produced by figures/style.py save(), not a deliverable.
+figures/out/grey/

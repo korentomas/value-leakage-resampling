@@ -626,3 +626,161 @@ than admitters, at a quarter of Qwen3.5's bias and with the direction
 asymmetry reversed in form (all the bias on the below-good side). Two
 cuts and 100 sources: treat as a replication of direction and rough
 magnitude, not of the per-conversation counts.
+
+## Threshold-handling audit of the step-3 continuations (2026-08-27; swap/threshold_audit.py; artifacts/threshold_audit_rows.jsonl, threshold_audit_rows.sample.txt)
+
+Follow-up to "Threshold-format mismatch in the step-3 swap arm", asking the
+62,500 continuations directly rather than comparing dep per question. Also
+read 100 swap-arm continuations on the 7 affected questions by hand (uniform
+sample, seed 20260827, in threshold_audit_rows.sample.txt). Judge coverage
+for the dep table is 42,651/62,500 (the on-disk step3_judge_results.jsonl is
+one wave; the missing rows are spread evenly over arms and cuts, and the
+plug-in dep(0.2) it gives, 0.25, matches the 0.26 in the fit).
+
+**The prefix already names the threshold, long before the answer locks.**
+Over the 250 sources, the first "threshold" in the CoT sits at sentence
+fraction 0.011 (median) and the first appearance of the *value* at 0.045;
+the posterior median lock is at 0.26. 246/250 name it before locking,
+204/244 write the number before locking, 6/250 never write the number.
+So of the retained prefixes: 96% say "threshold" and 77% state the value
+already at t~0.2, rising to ~99% by t~0.6. On the affected questions the
+prefix carries the value in the paper's comma form 86% of the time, in bare
+digits 18% (Qwen drops the separators on its own), in words ("26 million")
+44%. The malformed prompt therefore restates a number the prefix has almost
+always already fixed in the correct format.
+
+**No continuation misreads the value.** Of 88,022 "the threshold is X"
+statements, the ones where X != T occur at 2.79% (orig) vs 2.60% (swap) on
+affected questions and 1.28% vs 1.29% on clean ones -- no arm asymmetry, and
+inspection shows the residue is regex artefacts (`$350 \times 10^6$`,
+"Threshold Deals = 2,000,000"). Of 132 explicit "26000000 is 26 million"
+style equations, 2 are wrong, both self-corrected in the same trace.
+
+**What the format bug does produce is talk about output formatting.**
+Number-format commentary near a threshold mention: 3.35% of swap/affected
+continuations vs 0.62% of orig/affected and 0.01% of clean. Reading 60 of
+those windows: essentially all are the model deciding how to write *its own*
+answer ("'3500000000' has no commas in the prompt. Should I match that
+format?"), plus a few correct magnitude checks ("Wait, one final check: Is
+'3500000000' 3.5 Billion? Yes."). None is a misreading. Generic confusion
+tokens are useless here: some "wait" fires within a threshold window in 78%
+of swap and 76% of orig continuations.
+
+**dep(t) is the same on affected and clean questions at every cut**
+(plug-in, per (source, cut) cell, unit bootstrap):
+
+  t<0.15 affected +0.34 [+0.25,+0.43] / clean +0.42 [+0.24,+0.57]
+  t~0.2  affected +0.25 [+0.21,+0.29] / clean +0.22 [+0.17,+0.27]
+  t~0.4  affected +0.16 [+0.13,+0.19] / clean +0.14 [+0.10,+0.18]
+  t~0.6  affected +0.11 [+0.09,+0.14] / clean +0.09 [+0.06,+0.12]
+  t~0.8  affected +0.04 [+0.03,+0.06] / clean +0.04 [+0.03,+0.06]
+  t=1.0  affected +0.02 [+0.01,+0.03] / clean +0.01 [+0.00,+0.02]
+
+Continuations that *do* comment on the format land good-side 22.9%
+[19.5,26.6] against 26.7% [26.0,27.4] for the rest of swap/affected and
+27.0% for swap/clean, i.e. if anything slightly more prefix-following.
+This is a stronger version of the free check in the earlier entry:
+limitation 6 stands as written, and nothing in the step-3 numbers needs
+restating.
+
+**Incidental, and bigger than the format bug: the swap arm's conflict is
+visible in the text.** 16.4% of swap continuations vs 1.8% of orig contain
+an explicit re-reading or reversal of the exceed -> good/bad mapping within
+300 chars of it ("Why did I think > 950 was good before?", "Wait. I misread
+the prompt in the first step?"). It falls monotonically with the cut: 33.8%
+at t~0.1, 28.2% at t~0.2, 16.9% at t~0.6, 3.2% at t=1.0. So "locked" really
+does mean "follows the prefix over a prompt it can tell is contradicting it"
+(limitation 3), and now with a number: at the headline cut, roughly one
+continuation in four notices the contradiction out loud. Worth quoting in
+the write-up's limitation 3, and it suggests the splice/consistent-prompt
+control is the right next experiment.
+
+## v2 writeup reframe + figure regeneration (2026-08-31; docs/V2-BRIEF.md; figures/*, README.md)
+
+No new sampling. Every number below comes from the existing `artifacts/`.
+
+**Figures rebuilt on a SciencePlots base.** `figures/style.py` now applies
+`plt.style.use(["science", "no-latex"])` and overrides it with the project
+palette, white ground and sans face; the public API (`use`, `plate`, `trim`,
+`annotate`, `label_halfplane`, `save`, `tangle`) is unchanged, plus new
+`no_minor`, `panel_label` and `audit`. Every figure is built at its final
+printed size (6.5 in, the LW column) instead of being drawn large and shrunk.
+`save()` now writes svg + pdf + png(200 dpi) + a greyscale proof and prints an
+audit line. F2-F6 render with zero warnings and a `clean` audit; greyscale
+proofs check out, including F3's three arms.
+
+Two rendering bugs found and fixed on the way:
+
+- SciencePlots sets `axes.formatter.use_mathtext: True`, which routes *tick
+  labels* through the math font. With a custom Helvetica mathtext map that
+  cannot resolve a weight, and matplotlib logged
+  `findfont: Failed to find font weight normal` on every render. Fixed by
+  using the `dejavusans` math set instead of a custom map.
+- SciencePlots' global minor ticks land at meaningless positions on the
+  categorical y axes of F5b and F6 (AutoMinorLocator interpolating between two
+  category rows). Fixed with `style.no_minor(ax)`.
+
+**F2's Pchip interpolation really does undershoot.** 24 of the 250 per-unit
+curves dip below 0 between grid knots, worst -0.159. All interpolated series
+(spaghetti, means, IQR band edges) are now clipped to [0, 1].
+
+**The brief's F4 instruction was wrong and was not followed.** It asked for
+`-0.06 [-0.09, -0.03]` on the Denies - Admits panel. That is
+`contrast/Denies-Admits s_mean` in `artifacts/step4_labels.json`, the mean-s
+contrast quoted in the post's prose. What F4 plots is the bet-shaped share
+contrast, `contrast/Denies-Admits bet_shaped` = **-0.116 [-0.155, -0.076]**,
+which is what the figure now states and what `figure-texts.md` already said.
+Both numbers are correct; they are different quantities. `figure-texts.md`
+now carries an explicit warning not to swap them.
+
+Intervals on F4 are labelled **95% ETI**, not HDI: ETI is what
+`swap/step4_labels.py` computes and stores, so calling them HDI in a caption
+would not match the artifact.
+
+**The headline 87% is 88% on three of four routes.** With
+s_ag + s_bg = 0.5414 and our dep(0) = 0.6170: 87.3% against the paper's
+published 0.62, 87.8% against our own dep(0); using 2 x pooled s = 0.5454 it
+is 88.0% and 88.4%. The README now reports 88% and carries the interval the
+number actually has, 2 x [0.246, 0.299] = [0.49, 0.60], i.e. **[80%, 97%]**
+of 0.62. The old bare "87%" was one rounding path presented without
+uncertainty.
+
+**`splice_check` cannot support limitation 3.** It splices a full CoT back
+under its *own original* prompt; it is a prefill-fidelity gate, and
+`artifacts/splice_check_v2.jsonl` is 186 raw unjudged continuations of that
+design. Limitation 3 was instead rewritten around two things that do bear on
+it: the no-bet arm (a non-conflicting prompt, where prefixes still lean
+s = +0.27), and the 2026-08-27 threshold audit's conflict-detection rate
+(16.4% of swap vs 1.8% of orig continuations explicitly re-read or reverse
+the mapping; 28.2% at t ~ 0.2). That audit entry asked for exactly this and
+it is now quoted in the post.
+
+**Writeup reframed method-first** per the brief: method and formal
+definitions of dep and s before the Value Leakage context, a lineage
+paragraph (FPA -> Thought Branches -> here), the Context section compressed,
+"why this matters" promoted to "what the per-conversation labels are for",
+and a future-work section that runs nothing. Both Bigelow citations added,
+each verified against the PDF in `external/refs/`: counts at a cut are
+exactly multinomial with a fitted slope of -0.4903 against -1/2 predicted;
+smoothing multiplies effective sample size 3.3x (S=30) to 5x (S=5); PELT with
+an exact multinomial cost segments o_t; outcome distributions are flat with
+sparse sharp forking points.
+
+**Title.** v1 was "Value leakage happens before the CoT admits it", which is
+findings-first and no longer matches a method-first body. Now "Resampling
+under flipped conditions: value leakage, one conversation at a time", taking
+the brief's own wording. Still TK's call; it is a one-line change.
+
+**Repo cleanup.** Deleted `figures/out/svg/F1_method.svg`: a hand-authored
+leftover from an earlier F1 on the old palette (`#3c3b3b` where the current
+ink is `#2b3a4f`), missing the current strings, referenced by nothing and
+produced by nothing (`html/render.sh` writes PNG only). Gitignored
+`figures/out/grey/`, which is a QA check rather than a deliverable.
+Downscaled `figures/betley-fig1.png` from 4912x1950 to 1600x635, 1207 KB ->
+424 KB; text stays legible and no README embed needs more.
+
+Not touched, but noted: four tracked artifacts are referenced by nothing in
+the repo (`qwen3.5-35_master.stats.json`, `qwen3.6-35_master.stats.json`,
+`splice_check_v2.jsonl`, `step4f_by_source.json`). They are small and they
+are evidence, so they stay. `figures/export_truth.py` also stays: no figure
+reads `figure_truth.npz`, but `swap/critique_addenda.py` does.
