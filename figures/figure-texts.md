@@ -147,12 +147,20 @@ bars and lines beat colour, so none of them use a colour map.
 
 ### F1 text register
 
-F1's strings were rewritten to read the way Bigelow et al. write: terse,
-notation-bearing, no explanatory prose. `one chain of thought, cut at t = 0.2`
-became `base rollout, truncated at t = 0.2`; `three prompts, same prefix` became
-`three prompt conditions, shared prefix`; `25 estimates per prompt` became
-`S = 25 continuations per condition`; `cut at t = 0.2; the rest is discarded`
-became `cut at t = 0.2; suffix discarded`; and the card bodies dropped to
+The column headings are the three pipeline steps and nothing else:
+`truncate`, `resample`, `score`.
+
+An earlier pass made them `base rollout, truncated at t = 0.2` /
+`three prompt conditions, shared prefix` / `S = 25 continuations per condition`,
+which was wrong twice over. Jargon density is not the same thing as terseness,
+and all three had the identical shape of a noun phrase plus a comma plus a
+qualifying clause, which is the parallel-triple pattern `tools/slopcheck.py`
+flags in prose. They were also redundant: the cut line already gives t = 0.2,
+the three cards are visibly three prompts, and the dots are countable. A heading
+that narrates the diagram is padding, so S = 25 lives in the caption instead.
+
+The remaining strings did get terser: `cut at t = 0.2; the rest is discarded`
+became `cut at t = 0.2; suffix discarded`, and the card bodies dropped to
 `above threshold -> good cause`, `question only`, `above threshold -> bad
 cause`. The font stack is `"DejaVu Sans", Verdana` so the schematic matches the
 plots, since DejaVu Sans is not installed for Chrome on this machine and
