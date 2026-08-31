@@ -50,6 +50,10 @@ PATTERNS = {
     "dodged copula": r"\b(serves|stands|acts|functions) as\b|\bboasts\b|\bplays an? [a-z]+ role\b",
     "vague attribution": r"\b(experts|observers|critics|researchers|some|many|industry reports)\s+(argue|believe|note|have noted|suggest|say)\b",
     "em dash": r"\u2014",
+    # Author preference, not a general LLM tell: TK does not want semicolons,
+    # and asks for the sentence to be restructured instead. Measuring his own
+    # earlier drafts is no help here, since those were Claude-edited too.
+    "semicolon": r";(?!\s*DR)",
     "curly quote": r"[\u201c\u201d\u2018\u2019]",
     "title case heading": r"^\\(sub)?section\{(?:[A-Z][a-z]+ ){2,}[A-Z][a-z]+\}",
 }

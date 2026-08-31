@@ -100,7 +100,7 @@ b = {}& p(\text{good side} \mid \text{above-good}) \\
 \label{eq:bias}
 \end{equation}
 computed over roughly 100 rollouts per condition for each of nine questions. A
-model scoring 0 ignores the bet; a model scoring 1 always lands on the
+model scoring 0 ignores the bet, and a model scoring 1 always lands on the
 charitable side. Each chain of thought is then labelled by a judge as admitting,
 mentioning, or denying that the bet mattered.
 
@@ -145,24 +145,24 @@ Given such a task:
 \item Take a conversation the model produced with the biasing feature present.
 \item Truncate its chain of thought at a fraction $t$ of its sentences, and call the
 retained text the prefix.
-\item Continue that prefix many times under each of three prompts: the
-\emph{original}; the \emph{swapped} prompt, in which the feature is flipped so
-the opposite answer is now favoured; and the \emph{no-bet} prompt, from which
-the feature is absent.
+\item Continue that prefix many times under each of three prompts. The
+\emph{original} is the prompt that produced the conversation. The
+\emph{swapped} prompt flips the feature, so the opposite answer is now the
+favoured one. The \emph{no-bet} prompt omits the feature altogether.
 \end{enumerate}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/out/png/F1_method.png}
 \caption{Counterfactual resampling of one conversation (crochet question,
-above-good, threshold $3.5\times10^9$; Qwen3.5-35B). The chain of thought is
+above-good, threshold $3.5\times10^9$, Qwen3.5-35B). The chain of thought is
 truncated at $t = 0.21$ and the suffix discarded. The retained prefix,
 byte-identical across conditions, is continued $S = 25$ times under the
 original prompt, the no-bet prompt, and the prompt with the two causes
 exchanged. Continuations are scored against the model's own no-bet median,
 drawn as the horizontal rule. The share landing on the side the original prompt
 favours is printed beside each row. $\mathrm{dep}$ is the original arm minus the
-swapped arm; $s$ is the no-bet arm minus one half.}
+swapped arm, and $s$ is the no-bet arm minus one half.}
 \label{fig:method}
 \end{figure*}
 
@@ -255,15 +255,15 @@ is $+0.27$ [0.25, 0.30], which on the paper's scale is 0.55 [0.49, 0.60], or
 88\% [80\%, 97\%] of the published 0.62. Most prefixes this early contain no estimate at all. What the bet does is choose
 a direction, without causing the commitment in the first place.
 Prefixes written with no bet lean 34\% to one side and 35\% to the other at
-$t = 0.2$; with the bet those become 70\% and 7\%. Qwen commits early on these questions either way, and the bet decides only which
+$t = 0.2$, while with the bet those become 70\% and 7\%. Qwen commits early on these questions either way, and the bet decides only which
 way.
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/out/paper/F2_dep.pdf}
 \caption{Dependence on the bet, $\mathrm{dep}(t)$, for 250 conversations
-(Qwen3.5-35B; Donation Bet). (a) Mean over conversations with the 95\% spread;
-the dashed line is $\mathrm{dep}=0$. $\mathrm{dep}(0)=0.62$ recovers the
+(Qwen3.5-35B, Donation Bet). (a) Mean over conversations with the 95\% spread.
+The dashed line is $\mathrm{dep}=0$. $\mathrm{dep}(0)=0.62$ recovers the
 published population bias, and the mean falls to 0.26 by $t=0.2$. (b) One row
 per conversation, sorted by lock position, with colour giving posterior mean
 $\mathrm{dep}$ at each of the five measured cuts. The mean in (a) hides
@@ -283,8 +283,8 @@ counts. The dashed line is the no-bet baseline, which is 0.5 by construction at
 $t=0$ because the threshold is the model's own no-bet median. After the first
 cut the original and no-bet arms coincide, so the bet has stopped acting through
 the prompt and the retained text carries the bias. The gap between the no-bet
-arm and the baseline is $s(t)$; the gap between the original and swapped arms is
-$\mathrm{dep}(t)$. At $t=0.2$, $s=+0.24$ and $\mathrm{dep}=0.33$ above-good,
+arm and the baseline is $s(t)$, and the gap between the original and swapped
+arms is $\mathrm{dep}(t)$. At $t=0.2$, $s=+0.24$ and $\mathrm{dep}=0.33$ above-good,
 $s=+0.31$ and $\mathrm{dep}=0.18$ below-good.}
 \label{fig:threearm}
 \end{figure*}
@@ -350,7 +350,7 @@ $+0.23$ against $0.00$ for prefixes written with no bet.
 \includegraphics[width=\textwidth]{figures/out/paper/F6_timing.pdf}
 \caption{Position of the lock and of the first stated intention, for the 147
 conversations that state one. (a) The two distributions as fractions of the
-chain of thought; the lock has median 0.29, the first stated intent 0.63. (b)
+chain of thought. The lock has median 0.29 and the first stated intent 0.63. (b)
 The per-conversation difference between them, which is the paired quantity the
 claim concerns. Mass to the right of zero is a conversation whose stated intent
 came after its answer was settled, and that holds in 81\% of cases. The lock is

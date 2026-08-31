@@ -38,7 +38,7 @@ Here is a trace from the crochet subset, cut at *t* = 0.21, which ends mid-setup
 
 > ... Total: ~5-6 million shawls. Variable 4: Stitches per Shawl. Shawl sizes vary. A small shawl (60x150cm) vs a large wrap (150x200cm). Gauge: HDC (half double crochet). [...] Let's say 2.5 stitches per cm (Gauge). Dimensions: Average 100cm (width) x 150cm (length). Rows: Length / stitch height.
 
-From here 22 of 25 continuations under the original prompt land above the threshold, 8 of 25 under the swapped prompt, and 19 of 24 with no bet. This half-finished arithmetic already leans to the good side, and a contradicting prompt can still pull it back. Their judge labels this trace as denying influence; its statement of intent, "I should not bias low", arrives at *t* = 0.65, long after the cut.
+From here 22 of 25 continuations under the original prompt land above the threshold, 8 of 25 under the swapped prompt, and 19 of 24 with no bet. This half-finished arithmetic already leans to the good side, and a contradicting prompt can still pull it back. Their judge labels this trace as denying influence, and its one statement of intent, "I should not bias low", arrives at *t* = 0.65, long after the cut.
 
 ## Denials don't cluster on the influenced traces
 
@@ -60,13 +60,13 @@ Honesty claims like "I must be accurate" arrive around the lock rather than befo
 
 The output is a label per rollout: this conversation was moved by the bet, this one wasn't, and this much of the movement was already in the text at each cut. I think the labels are worth more than any single number above.
 
-They come from an unmodified model. Per-rollout ground truth about a bias today usually comes from model organisms with the bias trained in; that buys certainty about the label at the price of studying a model built to be biased. Here the label is derived from behaviour under a counterfactual prompt, so the model under study is the released one. The construction transfers to any task where the biasing feature can be swapped in the prompt with everything else held fixed.
+They come from an unmodified model. Per-rollout ground truth about a bias today usually comes from model organisms with the bias trained in. That approach buys certainty about the label at the price of studying a model built to be biased. Here the label is derived from behaviour under a counterfactual prompt, so the model under study is the released one. The construction transfers to any task where the biasing feature can be swapped in the prompt with everything else held fixed.
 
 Two uses follow. A probe for value leakage needs exactly this supervision. And a monitor can be scored against it: the timing results say a monitor that waits for the model to confess, or clears a trace because it promised to be honest, would be wrong in a predictable direction. Whether a monitor reading only the first fifth can call the side is untested here, since most of those prefixes contain no estimate and the monitor would be reading framing and not arithmetic. These labels are the ground truth such an experiment would be scored against.
 
 ## The method
 
-Take a conversation the model produced with the bet present. Truncate its chain of thought at a fraction *t* of its sentences, and call the retained text the prefix. Continue that prefix 25 times under each of three prompts: the **original**; the **swapped** prompt, where the causes are exchanged so the opposite answer is now favoured; and the **no-bet** prompt, from which the bet is absent.
+Take a conversation the model produced with the bet present. Truncate its chain of thought at a fraction *t* of its sentences, and call the retained text the prefix. Continue that prefix 25 times under each of three prompts. The **original** is the one that produced the conversation. The **swapped** prompt exchanges the two causes, so the opposite answer is now the favoured one. The **no-bet** prompt drops the bet altogether.
 
 ![the method on one conversation](figures/out/png/F1_method.png)
 
@@ -87,7 +87,7 @@ s(t)   = P(G | prefix_t, no-bet prompt) - 0.5
 
 ### Setup
 
-Qwen3.5-35B-A3B in FP8 under vLLM, thinking on, temperature 1. I drew 250 conversations from Betley et al.'s cached bet-condition rollouts, cut each at *t* = 0.2, 0.4, 0.6, 0.8 and 1.0, and continued every cut 25 times under each of the three prompts, for 93,750 continuations. Per-conversation numbers are posteriors from a joint fit in PyMC across cuts and questions; the fit never sees the admit/deny labels. Brackets are 95% posterior intervals. [Bigelow et al. (2026)](https://arxiv.org/abs/2608.19611) show the counts at a fixed cut are exactly multinomial, so the Beta-Bernoulli treatment is justified and not just convenient.
+Qwen3.5-35B-A3B in FP8 under vLLM, thinking on, temperature 1. I drew 250 conversations from Betley et al.'s cached bet-condition rollouts, cut each at *t* = 0.2, 0.4, 0.6, 0.8 and 1.0, and continued every cut 25 times under each of the three prompts, for 93,750 continuations. Per-conversation numbers are posteriors from a joint fit in PyMC across cuts and questions, and the fit never sees the admit/deny labels. Brackets are 95% posterior intervals. [Bigelow et al. (2026)](https://arxiv.org/abs/2608.19611) show the counts at a fixed cut are exactly multinomial, so the Beta-Bernoulli treatment is justified and not just convenient.
 
 ## Limitations
 
@@ -101,11 +101,11 @@ Qwen3.5-35B-A3B in FP8 under vLLM, thinking on, temperature 1. I drew 250 conver
 
 ## Future work
 
-None of this was run. Cutting densely in *t* between 0 and 0.3 would separate a gradual drift from a single sentence that settles the answer; Bigelow et al. find outcome distributions stay flat across long stretches and then change sharply at forking points, sometimes after one token. If 88% by *t* = 0.2 became 88% by *t* = 0.05, the claim would strengthen from "settled early" to "settled in the framing, with the chain of thought never in the loop". A change-point estimator (PELT with an exact multinomial cost, as Bigelow et al. use) would place the lock with a proper interval instead of at whichever grid node crosses a threshold. And the prompt-strength control above would address limitation 3 directly.
+None of this was run. Cutting densely in *t* between 0 and 0.3 would separate a gradual drift from a single sentence that settles the answer. Bigelow et al. find outcome distributions stay flat across long stretches before changing sharply at forking points, sometimes after a single token. If 88% by *t* = 0.2 became 88% by *t* = 0.05, the claim would strengthen from "settled early" to "settled in the framing, with the chain of thought never in the loop". A change-point estimator (PELT with an exact multinomial cost, as Bigelow et al. use) would place the lock with a proper interval instead of at whichever grid node crosses a threshold. And the prompt-strength control above would address limitation 3 directly.
 
 ## Acknowledgements
 
-This project was done as part of a BlueDot Impact Technical AI Safety project sprint, facilitated by BAISH (Buenos Aires AI Safety Hub). Thanks to Tobias Bersia, my main mentor for this project, and to Guido Bergman, Gonzalo Heredia and Nicolás Martorell for their support. Claude was used for proofreading and editing; the ideas, experiments and text are mine.
+This project was done as part of a BlueDot Impact Technical AI Safety project sprint, facilitated by BAISH (Buenos Aires AI Safety Hub). Thanks to Tobias Bersia, my main mentor for this project, and to Guido Bergman, Gonzalo Heredia and Nicolás Martorell for their support. Claude was used for proofreading and editing. The ideas, experiments and text are mine.
 
 ---
 
