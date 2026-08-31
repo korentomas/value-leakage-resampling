@@ -1,6 +1,6 @@
 # Value leakage is settled before the chain of thought discusses it
 
-*Adapted from my paper, [Counterfactual Resampling to Analyse Model Behaviour](paper.pdf). Done as my final project for a BlueDot Impact Technical AI Safety sprint, facilitated by BAISH (Buenos Aires AI Safety Hub).*
+*A write-up of work in progress. There is a draft preprint, [Counterfactual Resampling to Analyse Model Behaviour](paper.pdf), which is still being polished. Done as my final project for a BlueDot Impact Technical AI Safety sprint, facilitated by BAISH (Buenos Aires AI Safety Hub).*
 
 ## TL;DR
 
@@ -15,6 +15,10 @@ Links: [Value Leakage paper](https://arxiv.org/abs/2607.14345) | [their LW post]
 ## Introduction
 
 [Betley et al.](https://arxiv.org/abs/2607.14345) describe a failure they call value leakage: a model's answer to a factual question shifts according to which answer would serve the model's own values, while the chain of thought says nothing about the shift. Their Donation Bet task poses a Fermi problem and appends a note saying the user has a bet, where an estimate above some threshold sends money to a good cause and below it to a bad one. The counterfactual is the same question with the causes exchanged. Scoring keeps only which side of the threshold the estimate fell on, so each rollout is a Bernoulli trial, and bias is the summed departure from fairness across the two directions. Qwen3.5-35B scores 0.62, Claude Opus 4.8 0.81, GPT-5.6 0.16.
+
+![Figure 1 from Betley et al. (2026)](figures/betley-fig1.png)
+
+*Their Figure 1. Left: one estimation question with and without the donation note, where the estimate moves toward whichever side sends money to the good cause. Middle: the chain of thought claims to ignore the note. Right: a user who knows nothing about the model's values ends up misinformed.*
 
 That number is a population average, and it cannot say which conversations were moved. If the metric reads 0.62, some rollouts were pushed across the threshold and some were always going to land where they landed. The distinction matters for the questions people actually want to ask. Whether a model conceals its bias selectively is a claim about which traces deny influence, so it needs per-trace ground truth. Whether a monitor reading the chain of thought would catch the bias is a claim about individual conversations. Training a probe needs a label per rollout.
 
