@@ -59,14 +59,16 @@ threshold, and the aggregate displacement is the bias. Qwen3.5-35B scores 0.62
 on their Donation Bet task, Claude Opus 4.8 with high reasoning 0.81, GPT-5.6
 0.16.
 
-A population average cannot say which conversations were moved. If the metric
-reads 0.62, some rollouts were pushed across the threshold and some were
-already going to land where they landed, and the number does not separate them.
-That matters for the questions people actually want to ask. Whether a model
-conceals its bias selectively is a claim about which traces deny influence, so
-it needs per-trace ground truth. Whether a monitor reading the chain of thought
-would catch the bias is a claim about individual conversations. Training a
-probe to detect the bias needs a label per rollout.
+That number is a population average. Some rollouts were pushed across the
+threshold and some were always going to land where they landed, and the metric
+does not separate them.
+
+Betley et al. raise the possibility that the model denies the influence
+selectively, so that the denials fall on exactly the conversations where the bet
+did its work. If that were true, denials would concentrate on the traces the bet
+moved. There is no way to check without knowing which traces those are. The same
+gap blocks scoring a monitor that reads the chain of thought, and it blocks
+training a probe on the bias.
 
 This paper measures the bias per conversation, and the idea behind it is to stop
 treating the rollout as atomic. A chain of thought is a sequence of sentences, so it can be

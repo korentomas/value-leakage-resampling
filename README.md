@@ -20,7 +20,9 @@ Links: [Value Leakage paper](https://arxiv.org/abs/2607.14345) | [their LW post]
 
 *Their Figure 1. Left: one estimation question with and without the donation note, where the estimate moves toward whichever side sends money to the good cause. Middle: the chain of thought claims to ignore the note. Right: a user who knows nothing about the model's values ends up misinformed.*
 
-That number is a population average, and it cannot say which conversations were moved. If the metric reads 0.62, some rollouts were pushed across the threshold and some were always going to land where they landed. The distinction matters for the questions people actually want to ask. Whether a model conceals its bias selectively is a claim about which traces deny influence, so it needs per-trace ground truth. Whether a monitor reading the chain of thought would catch the bias is a claim about individual conversations. Training a probe needs a label per rollout.
+That number is a population average. Some rollouts were pushed across the threshold and some were always going to land where they landed, and the metric does not separate them.
+
+Betley et al. raise the possibility that the model denies the influence selectively, so that the denials fall on exactly the conversations where the bet did its work. If that were true, denials would concentrate on the traces the bet moved. There is no way to check without knowing which traces those are. The same gap blocks scoring a monitor that reads the chain of thought, and it blocks training a probe on the bias.
 
 So I stopped treating the rollout as atomic. A chain of thought is a sequence of sentences, so it can be truncated, and the truncated text can be continued many times under a prompt that differs from the one that produced it. If the continuations still follow the bet, the answer was not yet settled. If they follow the retained text instead, it was.
 
