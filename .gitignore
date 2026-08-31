@@ -37,3 +37,13 @@ artifacts/*
 
 # Greyscale proofs are a QA check produced by figures/style.py save(), not a deliverable.
 figures/out/grey/
+
+# LaTeX build intermediates (paper.pdf itself is tracked, like figures/out)
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.bbl
+*.blg
