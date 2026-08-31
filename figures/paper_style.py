@@ -35,8 +35,8 @@ NEUTRAL = "#7f7f7f"  # tab10 grey
 SWAP = "#ff7f0e"     # tab10 orange
 REF = "#d62728"      # tab10 red, reference lines only (Betley use red dashed)
 
-COLUMN = (3.4, 2.6)   # single IEEE column
-WIDE = (7.0, 2.8)     # spans both columns, for a figure*
+WIDE = (5.5, 2.6)     # full text width of the ICLR single-column layout
+HALF = (2.7, 2.4)     # side-by-side pair inside that width
 
 
 def use():

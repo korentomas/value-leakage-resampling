@@ -31,7 +31,7 @@ arr = np.array([u["dep_mean"] for u in U])
 lock = np.array([u["commitment_frac"] for u in U])
 order = np.argsort(lock)
 
-fig, axes = plt.subplots(1, 3, figsize=(7.0, 2.9),
+fig, axes = plt.subplots(1, 3, figsize=(5.5, 2.5),
                          gridspec_kw=dict(width_ratios=[1.05, 1.0, 1.05]))
 
 # (a) population trend

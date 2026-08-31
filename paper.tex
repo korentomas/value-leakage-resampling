@@ -1,21 +1,27 @@
-\documentclass[conference]{IEEEtran}
-\IEEEoverridecommandlockouts
+% !TeX program = pdflatex
+\documentclass{article}
+\usepackage{iclr2026_conference,times}
+\iclrfinalcopy   % real authors rather than the anonymised submission form
 
-\usepackage{cite}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage[hidelinks]{hyperref}
 \usepackage{url}
 
-\begin{document}
+% The ICLR style stamps every page with a venue line. This is a standalone
+% preprint and is not under review anywhere, so the header is cleared rather
+% than left claiming a submission that does not exist.
+\fancyhead{}
+\renewcommand{\headrulewidth}{0pt}
 
 \title{Counterfactual Resampling to Analyse Model Behaviour}
 
-\author{\IEEEauthorblockN{Tom\'as Koren}
-\IEEEauthorblockA{\textit{Buenos Aires AI Safety Hub (BAISH)} \\
-Buenos Aires, Argentina \\
-baishresearch@gmail.com}}
+\author{Tom\'as Koren \\
+Buenos Aires AI Safety Hub (BAISH) \\
+\texttt{baishresearch@gmail.com}}
+
+\begin{document}
 
 \maketitle
 
@@ -40,13 +46,11 @@ model. A probe or a monitor evaluation needs exactly this supervision, and today
 it usually comes from models trained to be biased.
 \end{abstract}
 
-\begin{IEEEkeywords}
-chain-of-thought faithfulness, AI safety, resampling, interpretability, language models
-\end{IEEEkeywords}
+
 
 \section{Introduction}
 
-Betley et al. \cite{betley2026} describe a failure they call value leakage: a
+\citet{betley2026} describe a failure they call value leakage: a
 language model's answer to a factual question shifts according to which answer
 would serve the model's own values, while the chain of thought says nothing
 about the shift. Their headline measurement is a population average. A model is
@@ -109,23 +113,22 @@ mentioning, or denying that the bet mattered.
 The obvious defence against value leakage is to read the chain of thought, and
 that works only if the text names what moved the estimate. A line of work tests
 this by inserting a hint into a question and checking whether the model
-acknowledges the hint when it follows it \cite{turpin2023, chua2025, chen2025}.
-Acknowledgement rates typically land between 20\% and 40\%. Arcuschin et al.
-\cite{arcuschin2025} find the same pattern with no hint at all, on ordinary
+acknowledges the hint when it follows it \citep{turpin2023, chua2025, chen2025}.
+Acknowledgement rates typically land between 20\% and 40\%. \citet{arcuschin2025} find the same pattern with no hint at all, on ordinary
 questions, and call it implicit post-hoc rationalisation: something fixes the
 answer, and the chain of thought argues for it afterwards.
 
-METR \cite{metr2025} make the useful distinction that a chain of thought need
+\citet{metr2025} make the useful distinction that a chain of thought need
 not be faithful to be useful to a monitor. It only has to be informative, in the
 sense that a reader can tell where the model is heading whether or not the model
 says so. On this task the question becomes one of timing, and the cuts below measure it.
 
 \subsection{Resampling and forking paths}
 
-Bigelow et al. \cite{bigelow2024} introduced Forking Paths Analysis. They fix a base generation, resample from every position $t$ within it, and
+\citet{bigelow2024} introduced Forking Paths Analysis. They fix a base generation, resample from every position $t$ within it, and
 track the resulting outcome distribution $o_t$, so that the points where the
 model's answer distribution shifts show up as jumps in $o_t$. Thought Branches
-\cite{macar2025} scores which sentences carry causal weight with the same
+\citep{macar2025} scores which sentences carry causal weight with the same
 machinery.
 
 Both read the model's own variability under a single prompt. The step taken
@@ -151,9 +154,9 @@ retained text the prefix.
 favoured one. The \emph{no-bet} prompt omits the feature altogether.
 \end{enumerate}
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/out/png/F1_method.png}
+\includegraphics[width=\linewidth]{figures/out/png/F1_method.png}
 \caption{Counterfactual resampling of one conversation (crochet question,
 above-good, threshold $3.5\times10^9$, Qwen3.5-35B). The chain of thought is
 truncated at $t = 0.21$ and the suffix discarded. The retained prefix,
@@ -164,7 +167,7 @@ drawn as the horizontal rule. The share landing on the side the original prompt
 favours is printed beside each row. $\mathrm{dep}$ is the original arm minus the
 swapped arm, and $s$ is the no-bet arm minus one half.}
 \label{fig:method}
-\end{figure*}
+\end{figure}
 
 Write $G$ for the side of the threshold the original prompt favours, so $G$ is
 ``above'' in an above-good conversation and ``below'' in a below-good one. The
@@ -229,8 +232,7 @@ question and condition. The fit never sees the admit/deny labels, and the three 
 the fourth decimal, so I report one. Brackets are 95\%
 equal-tailed posterior intervals.
 
-There is a reason to treat the continuation counts as binomial beyond convenience. Bigelow
-et al. \cite{bigelow2026} show the counts at a fixed cut are exactly multinomial
+There is a reason to treat the continuation counts as binomial beyond convenience. \citet{bigelow2026} show the counts at a fixed cut are exactly multinomial
 in the outcome distribution, and confirm it empirically: sampling noise falls
 with a fitted log-log slope of $-0.4903$ against the $-1/2$ that independent
 multinomial sampling predicts. The noise at a cut is sampling noise, not the model reacting to individual
@@ -258,9 +260,9 @@ Prefixes written with no bet lean 34\% to one side and 35\% to the other at
 $t = 0.2$, while with the bet those become 70\% and 7\%. Qwen commits early on these questions either way, and the bet decides only which
 way.
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/out/paper/F2_dep.pdf}
+\includegraphics[width=\linewidth]{figures/out/paper/F2_dep.pdf}
 \caption{Dependence on the bet, $\mathrm{dep}(t)$, for 250 conversations
 (Qwen3.5-35B, Donation Bet). (a) Mean over conversations with the 95\% spread.
 The dashed line is $\mathrm{dep}=0$. $\mathrm{dep}(0)=0.62$ recovers the
@@ -272,11 +274,11 @@ stay dependent on the bet out to $t=1$. These rows are the per-conversation
 labels the method produces. (c) Distribution of lock position over the same
 conversations. 45\% are locked by $t=0.2$ and 72\% by $t=0.4$.}
 \label{fig:curves}
-\end{figure*}
+\end{figure}
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/out/paper/F3_arms.pdf}
+\includegraphics[width=\linewidth]{figures/out/paper/F3_arms.pdf}
 \caption{Share of continuations on the favoured side versus cut, by prompt
 condition and direction. Error bars are Wilson 95\% intervals on the pooled
 counts. The dashed line is the no-bet baseline, which is 0.5 by construction at
@@ -287,7 +289,7 @@ arm and the baseline is $s(t)$, and the gap between the original and swapped
 arms is $\mathrm{dep}(t)$. At $t=0.2$, $s=+0.24$ and $\mathrm{dep}=0.33$ above-good,
 $s=+0.31$ and $\mathrm{dep}=0.18$ below-good.}
 \label{fig:threearm}
-\end{figure*}
+\end{figure}
 
 A trace from the crochet subset, cut at $t = 0.21$, ends mid-setup without an
 estimate:
@@ -345,9 +347,9 @@ is settled in 4 cases out of 5 (Fig.~\ref{fig:timing}). Honesty claims such as
 traces that make them still lean toward the favoured side, with mean $s$ of
 $+0.23$ against $0.00$ for prefixes written with no bet.
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/out/paper/F6_timing.pdf}
+\includegraphics[width=\linewidth]{figures/out/paper/F6_timing.pdf}
 \caption{Position of the lock and of the first stated intention, for the 147
 conversations that state one. (a) The two distributions as fractions of the
 chain of thought. The lock has median 0.29 and the first stated intent 0.63. (b)
@@ -357,7 +359,7 @@ came after its answer was settled, and that holds in 81\% of cases. The lock is
 a posterior median on the five-point cut grid, so individual differences are
 coarse even where the aggregate is not.}
 \label{fig:timing}
-\end{figure*}
+\end{figure}
 
 \subsection{Replication on Qwen3.6}
 
@@ -401,7 +403,7 @@ differences between groups instead of counts.
 
 Twenty-five samples per cell cannot resolve a difference below about 0.3, so every per-conversation number is a posterior and not a measurement.
 This is the binding constraint on the design, and there is a known remedy I did
-not use. Bigelow et al. \cite{bigelow2026} smooth low-sample resampling data
+not use. \citet{bigelow2026} smooth low-sample resampling data
 with a change-point and kernel-pooling model that multiplies the effective
 sample size by $3.3\times$ at $S = 30$ and $5\times$ at $S = 5$. At my $S = 25$ the gain would be a little over $3\times$, at no additional
 sampling cost.
@@ -450,7 +452,7 @@ so I report the runs as they stand. The Qwen3.6 runs have the fix.
 None of the following was run.
 
 The five-point grid cannot distinguish gradual drift from a single sentence that
-settles the answer. Bigelow et al. \cite{bigelow2026} report that outcome
+settles the answer. \citet{bigelow2026} report that outcome
 distributions stay flat or drift slowly across long stretches, separated by sharp
 forking points where the distribution changes after as little as one token.
 Cutting densely in $t \in [0, 0.3]$ would tell the two apart. If 88\% by $t=0.2$
@@ -460,7 +462,7 @@ what the main run took.
 
 A change-point estimator would improve the lock. Reading it off as the grid node where $\mathrm{dep}$ crosses a threshold is
 crude. Bigelow et al. segment $o_t$ with PELT under an exact multinomial cost
-\cite{killick2012}, and the same estimator would place the lock with a proper
+\citep{killick2012}, and the same estimator would place the lock with a proper
 interval. The prompt-strength control of
 Section VII-C would address the conflict objection directly, and the smoothing
 above would shrink the intervals at fixed budget.
@@ -484,44 +486,44 @@ Nicol\'as Martorell.
 
 \begin{thebibliography}{99}
 
-\bibitem{betley2026}
+\bibitem[Betley et al.(2026)]{betley2026}
 J. Betley et al., ``Value leakage: an LLM's answers are silently shaped by its
 values,'' arXiv:2607.14345, 2026.
 
-\bibitem{bigelow2024}
+\bibitem[Bigelow et al.(2024)]{bigelow2024}
 E. Bigelow, A. Holtzman, H. Tanaka, and T. Ullman, ``Forking paths in neural
 text generation,'' arXiv:2412.07961, 2024.
 
-\bibitem{bigelow2026}
+\bibitem[Bigelow et al.(2026)]{bigelow2026}
 E. Bigelow et al., ``Forking fast: efficiently estimating uncertainty dynamics
 in text generation,'' arXiv:2608.19611, 2026.
 
-\bibitem{macar2025}
+\bibitem[Macar et al.(2025)]{macar2025}
 U. Macar, P. Bogdan et al., ``Thought branches: interpreting LLM reasoning
 requires resampling,'' arXiv:2510.27484, 2025.
 
-\bibitem{turpin2023}
+\bibitem[Turpin et al.(2023)]{turpin2023}
 M. Turpin, J. Michael, E. Perez, and S. Bowman, ``Language models don't always
 say what they think: unfaithful explanations in chain-of-thought prompting,''
 arXiv:2305.04388, 2023.
 
-\bibitem{chua2025}
+\bibitem[Chua \& Evans(2025)]{chua2025}
 J. Chua and O. Evans, ``Are DeepSeek R1 and other reasoning models more faithful?''
 arXiv:2501.08156, 2025.
 
-\bibitem{chen2025}
+\bibitem[Chen et al.(2025)]{chen2025}
 Y. Chen et al., ``Reasoning models don't always say what they think,''
 arXiv:2505.05410, 2025.
 
-\bibitem{arcuschin2025}
+\bibitem[Arcuschin et al.(2025)]{arcuschin2025}
 I. Arcuschin et al., ``Chain-of-thought reasoning in the wild is not always
 faithful,'' arXiv:2503.08679, 2025.
 
-\bibitem{metr2025}
+\bibitem[METR(2025)]{metr2025}
 METR, ``CoT may be highly informative despite unfaithfulness,'' 2025.
 [Online]. Available: \url{https://www.lesswrong.com/posts/WAxkA6gDgrschZovx/}
 
-\bibitem{killick2012}
+\bibitem[Killick et al.(2012)]{killick2012}
 R. Killick, P. Fearnhead, and I. A. Eckley, ``Optimal detection of changepoints
 with a linear computational cost,'' \emph{J. Amer. Statist. Assoc.}, vol. 107,
 no. 500, pp. 1590--1598, 2012.
