@@ -36,7 +36,6 @@ fig, axes = plt.subplots(1, 3, figsize=(7.0, 2.9),
 
 # (a) population trend
 ax = axes[0]
-ps.grid(ax)
 m = arr.mean(axis=0)
 lo, hi = np.percentile(arr, 2.5, axis=0), np.percentile(arr, 97.5, axis=0)
 ax.fill_between(grid, lo, hi, color=ps.ORIG, alpha=0.2, lw=0, label="95% spread")
@@ -64,7 +63,6 @@ cb.ax.tick_params(labelsize=ps.TICK_FS - 1)
 
 # (c) lock distribution
 ax = axes[2]
-ps.grid(ax)
 ax.hist(lock, bins=np.linspace(0, 1, 21), color=ps.NEUTRAL, edgecolor="white", lw=0.5)
 ax.axvline(np.median(lock), color=ps.REF, ls="--", lw=1.2,
            label=f"median {np.median(lock):.2f}")

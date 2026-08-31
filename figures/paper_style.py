@@ -8,9 +8,12 @@ al. publish no plotting code at all, and their figures are plain stacked panels
 with the explanation carried entirely by the caption.
 
 So this module deliberately does almost nothing. It resets to matplotlib
-defaults, sets font sizes, and turns on the horizontal gridline that Betley et
-al. put on essentially every axes. Boxed spines, DejaVu Sans and the tab10
-cycle are all inherited on purpose.
+defaults and sets font sizes. Boxed spines, DejaVu Sans and the tab10 cycle are
+all inherited on purpose.
+
+No gridlines. Betley et al. put a y-grid on essentially every axes, but neither
+Bigelow paper nor Thought Branches uses one, and this work is positioned against
+the forking-paths line, so the plots follow those.
 
 Arm colours are pinned here so the F1 schematic and the plots agree. Green and
 red are avoided, following Betley et al., because on this task those hues read
@@ -51,11 +54,13 @@ def use():
     })
 
 
-def grid(ax, axis="y"):
-    """The gridline Betley et al. put on essentially every axes."""
-    ax.grid(True, axis=axis, alpha=0.3)
-    ax.set_axisbelow(True)
-    return ax
+def below_legend(fig, ax, ncol=3, y=-0.02, title=None):
+    """Legend under the axes, which is what both Bigelow papers and Thought
+    Branches do. Keeps the plotting area for data."""
+    h, l = ax.get_legend_handles_labels()
+    fig.legend(h, l, loc="upper center", bbox_to_anchor=(0.5, y), ncol=ncol,
+               frameon=False, title=title)
+    return fig
 
 
 def save(fig, name, outdir="out/paper"):

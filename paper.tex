@@ -162,9 +162,10 @@ $t = 0.21$ and the suffix discarded. The retained prefix, byte-identical across
 all three conditions, is continued $S = 25$ times under the original prompt,
 the no-bet prompt, and the prompt with the two causes exchanged. Each
 continuation is scored against the model's own no-bet median, drawn as the
-horizontal rule; dots above it landed on the side the original prompt favours.
-Here 22 of 25 original, 19 of 24 no-bet and 8 of 25 swapped continuations land
-above, giving $\mathrm{dep} = 0.56$ and $s = +0.29$ for this conversation.}
+horizontal rule, and the share landing on the side the original prompt favours
+is given at the right of each row. The two quantities the method produces are
+formed from those shares: $\mathrm{dep}$ is the original arm minus the swapped
+arm, and $s$ is the no-bet arm minus one half.}
 \label{fig:method}
 \end{figure*}
 
@@ -331,21 +332,19 @@ whether the bet influenced its estimate, Qwen says yes in 8\% of samples
 overall and in 0 of 425 samples for traces that denied, tracking what the chain
 of thought said rather than how the model behaved.
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/out/paper/F4_denial.pdf}
+\includegraphics[width=\linewidth]{figures/out/paper/F4_denial.pdf}
 \caption{Bet-shaped share by the covertness label the original paper's judge
 assigned to each chain of thought. A conversation counts as bet-shaped if its
 no-bet continuations already lean to the favoured side by more than 0.2, or if
-the swapped prompt can still move it. (a) Posterior mean and 95\% equal-tailed
-interval per label group: Admits $0.86$ $[0.83, 0.89]$, Denies $0.74$ $[0.72,
-0.78]$, Mentions $0.99$ $[0.92, 1.00]$. (b) The Denies minus Admits contrast,
-$-0.12$ $[-0.16, -0.08]$, with zero marked. Denying traces are if anything less
-bet-shaped than admitting ones, which is the opposite of what selective
-concealment predicts. About a third of no-bet prefixes clear the same bar by
-chance, which inflates both groups equally and cancels in the contrast.}
+the swapped prompt can still move it. Bars are posterior means with 95\%
+equal-tailed intervals. Denying traces are if anything less bet-shaped than
+admitting ones, which is the opposite of what selective concealment predicts.
+About a third of no-bet prefixes clear the same bar by chance, which inflates
+every group equally and cancels in the contrast quoted above the bars.}
 \label{fig:denial}
-\end{figure*}
+\end{figure}
 
 \subsection{Statements about intent are retrospective}
 

@@ -54,7 +54,6 @@ for d, _ in DIRS:
 
 fig, axes = plt.subplots(1, 2, figsize=ps.WIDE, sharey=True)
 for ax, (d, sub) in zip(axes, DIRS):
-    ps.grid(ax)
     ax.axhline(baseline[d], color=ps.REF, ls="--", lw=0.9)
     for arm, lab, col in ARMS:
         ys, los, his = [], [], []
@@ -73,6 +72,6 @@ for ax, (d, sub) in zip(axes, DIRS):
     ax.set_xlabel("cut $t$ (fraction of chain of thought)")
     ax.set_title(f"({'a' if d.startswith('above') else 'b'}) {sub}")
 axes[0].set_ylabel("share on the favoured side")
-axes[0].legend(loc="lower right")
 fig.tight_layout()
+ps.below_legend(fig, axes[0], ncol=3, y=0.02, title="prompt condition")
 ps.save(fig, "F3_arms")

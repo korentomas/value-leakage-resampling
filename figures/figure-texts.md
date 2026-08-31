@@ -111,6 +111,21 @@ gridlines, prose annotations with curved leader arrows. That is right for a
 LessWrong post and wrong for a paper, and it is why the first paper draft looked
 unlike anything in the literature.
 
+Conventions were checked against the arXiv sources of all three neighbouring
+papers, unpacked under `external/bigelow/` (gitignored). None of them publishes
+plotting code, so the evidence is the figure PDFs themselves. They do not agree
+with each other: Betley et al. use matplotlib defaults with a y-grid and per-panel
+titles; Forking Fast uses small single-column panels, no grid, and a legend below
+the axes with a descriptive header; Thought Branches uses large grouped bars with
+a sentence title and a horizontal legend below. What they share is that the plots
+are plain and the legend usually sits under the axes.
+
+Choices here: no gridlines (Betley's habit, but neither Bigelow paper nor Thought
+Branches uses one, and this work is positioned against the forking-paths line);
+legends below the axes where the legend is shared across panels (F3, F6) and
+inside where it is small and panel-local (F2); single column where the chart is
+simple enough to earn the density (F4), full width otherwise.
+
 `paper_style.py` is modelled directly on Betley et al.'s `shared/plot_style.py`,
 which is the figure code for the paper this work extends. That module sets font
 sizes and nothing else. Everything else in it is matplotlib's default: the tab10
@@ -133,7 +148,7 @@ task those hues already mean the good and bad cause.
 |---|---|---|---|
 | `paper_f2_dep.py` | `out/paper/F2_dep.pdf` | 2 | mean dep(t) + per-conversation heatmap + lock histogram |
 | `paper_f3_arms.py` | `out/paper/F3_arms.pdf` | 3 | three-arm lines, Wilson 95% intervals |
-| `paper_f4_denial.py` | `out/paper/F4_denial.pdf` | 4 | bar chart with 95% ETI, plus contrast panel |
+| `paper_f4_denial.py` | `out/paper/F4_denial.pdf` | 4 | bar chart with 95% ETI, single column; contrast annotated in-axes |
 | `paper_f6_timing.py` | `out/paper/F6_timing.pdf` | 5 | position histograms + paired difference |
 
 Captions live in `paper.tex`, not here, because in the paper the caption carries
@@ -147,8 +162,19 @@ bars and lines beat colour, so none of them use a colour map.
 
 ### F1 text register
 
-The column headings are the three pipeline steps and nothing else:
-`truncate`, `resample`, `score`.
+There are no column headings. They were dropped once the notation went on the
+figure, because between the cut line, the three cards and the countable dots they
+were narrating what the picture already showed.
+
+Instead F1 now defines its quantities where they are formed, which is what
+Forking Paths does: each arm's share of continuations on the favoured side is
+printed at the right of its row (0.88, 0.79, 0.32), a bracket spans the original
+and swapped rows for `dep = 0.88 - 0.32 = 0.56`, and a dashed leader marks the
+no-bet row for `s = 0.79 - 0.5 = +0.29`. Labels take the colour of the arm they
+belong to. `html/render.sh` renders at a 2300px window because the notation
+column widened the canvas past the old 1600px clip.
+
+An earlier pass used the headings `truncate` / `resample` / `score`.
 
 An earlier pass made them `base rollout, truncated at t = 0.2` /
 `three prompt conditions, shared prefix` / `S = 25 continuations per condition`,

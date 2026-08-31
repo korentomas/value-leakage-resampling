@@ -60,38 +60,25 @@ def eti(x):
 
 
 # ---- figure ----------------------------------------------------------------
+# Single column. Two panels did not fit at 3.4 in without the group labels
+# colliding, so the contrast is annotated in the axes instead of given a panel.
 LABELS = ["Admits", "Denies", "Mentions"]
 means, los, his = [], [], []
 for L in LABELS:
     m, lo, hi = eti(frac[L])
     means.append(m); los.append(m - lo); his.append(hi - m)
+md, lod, hid = eti(diff)
 
-fig, axes = plt.subplots(1, 2, figsize=(7.0, 2.7),
-                         gridspec_kw=dict(width_ratios=[1.5, 1.0]))
-
-ax = axes[0]
-ps.grid(ax)
+fig, ax = plt.subplots(figsize=(3.4, 2.5))
 xs = np.arange(len(LABELS))
-ax.bar(xs, means, yerr=[los, his], capsize=3, width=0.6,
+ax.bar(xs, means, yerr=[los, his], capsize=3, width=0.65,
        color=[ps.ORIG, ps.SWAP, ps.NEUTRAL], edgecolor="black", linewidth=0.5)
 ax.set_xticks(xs)
-ax.set_xticklabels([f"{L}\n(n = {n[L]})" for L in LABELS])
+ax.set_xticklabels([f"{L}\nn = {n[L]}" for L in LABELS])
 ax.set_ylabel("bet-shaped share")
-ax.set_ylim(0, 1.05)
-ax.set_title("(a) by covertness label")
-
-ax = axes[1]
-ps.grid(ax)
-md, lod, hid = eti(diff)
-ax.errorbar([0], [md], yerr=[[md - lod], [hid - md]], fmt="o", ms=5,
-            color=ps.SWAP, capsize=4, lw=1.5)
-ax.axhline(0, color=ps.REF, ls="--", lw=1.0)
-ax.set_xlim(-0.5, 0.5)
-ax.set_xticks([0])
-ax.set_xticklabels(["Denies $-$ Admits"])
-ax.set_ylabel("difference")
-ax.set_title("(b) contrast")
-
+ax.set_ylim(0, 1.18)
+ax.text(0.5, 0.97, f"Denies $-$ Admits  ${md:+.2f}$ $[{lod:+.2f}, {hid:+.2f}]$",
+        transform=ax.transAxes, ha="center", va="top", fontsize=ps.ANNOT_FS)
 fig.tight_layout()
 ps.save(fig, "F4_denial")
 

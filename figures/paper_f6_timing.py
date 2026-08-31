@@ -27,24 +27,23 @@ fig, axes = plt.subplots(1, 2, figsize=ps.WIDE)
 bins = np.linspace(0, 1, 21)
 
 ax = axes[0]
-ps.grid(ax)
 ax.hist(lock, bins=bins, color=ps.ORIG, alpha=0.65, label="answer locked", edgecolor="white", lw=0.4)
 ax.hist(ipos, bins=bins, color=ps.SWAP, alpha=0.65, label="first stated intent", edgecolor="white", lw=0.4)
 ax.set_xlabel("position in chain of thought (fraction)")
 ax.set_ylabel("conversations")
 ax.set_title("(a) positions")
-ax.legend()
 
 ax = axes[1]
-ps.grid(ax)
 ax.hist(diff, bins=np.linspace(-1, 1, 25), color=ps.NEUTRAL, edgecolor="white", lw=0.4)
-ax.axvline(0, color=ps.REF, ls="--", lw=1.2, label=f"intent after lock: {after:.0%}")
+ax.axvline(0, color=ps.REF, ls="--", lw=1.2)
 ax.set_xlabel("first intent $-$ lock (fraction)")
 ax.set_ylabel("conversations")
 ax.set_title("(b) per-conversation difference")
-ax.legend()
+ax.text(0.97, 0.94, f"intent after lock: {after:.0%}", transform=ax.transAxes,
+        ha="right", va="top", fontsize=ps.ANNOT_FS)
 
 fig.tight_layout()
+ps.below_legend(fig, axes[0], ncol=2, y=0.02)
 ps.save(fig, "F6_timing")
 
 if __name__ == "__main__":
