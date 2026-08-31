@@ -229,7 +229,7 @@ question and condition. The fit never sees the admit/deny labels. Three priors
 disagree only in the fourth decimal and I report one. Brackets are 95\%
 equal-tailed posterior intervals.
 
-Treating the continuation counts as binomial is not merely convenient. Bigelow
+There is a reason to treat the continuation counts as binomial beyond convenience. Bigelow
 et al. \cite{bigelow2026} show the counts at a fixed cut are exactly multinomial
 in the outcome distribution, and confirm it empirically: sampling noise falls
 with a fitted log-log slope of $-0.4903$ against the $-1/2$ that independent
@@ -301,8 +301,8 @@ From here 22 of 25 continuations under the original prompt land above the
 threshold, 8 of 25 under the swapped prompt, and 19 of 24 with no bet. The
 half-finished arithmetic already leans toward the favoured side ($s = +0.29$),
 yet a contradicting prompt can still pull it back ($\mathrm{dep} = 0.56$). The
-judge labels this trace as denying influence; its statement of intent, ``I
-should not bias low'', arrives at $t = 0.65$, long after the cut.
+judge labels this trace as denying influence. Its stated intent, ``I should not
+bias low'', arrives at $t = 0.65$, long after the cut.
 
 \subsection{Denials do not concentrate on the influenced traces}
 
@@ -463,15 +463,15 @@ above would shrink the intervals at fixed budget.
 
 \section{Conclusion}
 
-On this task, Qwen3.5 fixes which side of the threshold it will land on about a
-fifth of the way through its chain of thought, before it writes an estimate. The
-text carries most of the population bias from that point on, and the model's own
-commentary about the bet arrives at or after it. Denials do not concentrate on
-the conversations the bet moved, which is evidence against selective
-concealment and leaves absent introspection and trained covertness as the
-candidates worth testing. The measurement that supports all of this is a label
-per conversation obtained from a model nobody modified, which is the part I
-expect to be reusable.
+Qwen3.5 picks its side about a fifth of the way through the chain of thought,
+before any estimate exists. From there the text carries most of the population
+bias, and whatever the model says about the bet arrives at or after the point
+where the bet had already stopped mattering. Denials do not concentrate on the
+conversations the bet moved. That is evidence against selective concealment, and
+it leaves absent introspection and trained covertness as the hypotheses still
+worth testing. What supports all of this is a per-conversation label taken from
+a model nobody modified. That is the part I expect to outlast the particular
+numbers.
 
 \section*{Acknowledgements}
 
