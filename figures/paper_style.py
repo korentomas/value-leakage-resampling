@@ -64,11 +64,17 @@ def below_legend(fig, ax, ncol=3, y=-0.02, title=None):
 
 
 def save(fig, name, outdir="out/paper"):
-    """PDF only, as in Betley et al.'s pipeline."""
+    """PDF for the paper, PNG alongside it.
+
+    Betley et al. write PDF only, straight into Overleaf. We need the PNG too:
+    the same figures are used in the LessWrong write-up, and neither GitHub
+    markdown nor LessWrong renders a PDF inline.
+    """
     import os
     os.makedirs(outdir, exist_ok=True)
     p = f"{outdir}/{name}.pdf"
     fig.savefig(p, bbox_inches="tight")
+    fig.savefig(f"{outdir}/{name}.png", bbox_inches="tight", dpi=200)
     w, h = fig.get_size_inches()
     print(f"saved {p}  ({w:.2f}x{h:.2f} in)")
     plt.close(fig)
