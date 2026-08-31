@@ -1,38 +1,52 @@
-# Value leakage is settled before the chain of thought discusses it
+# Value leakage is settled before the CoT discusses it
 
 *A write-up of work in progress. There is a draft preprint, [Counterfactual Resampling to Analyse Model Behaviour](paper.pdf), which is still being polished. Done as my final project for a BlueDot Impact Technical AI Safety sprint, facilitated by BAISH (Buenos Aires AI Safety Hub).*
 
-## TL;DR
+**TL;DR:** I measured Value Leakage (Betley et al.) per conversation, cutting CoTs at different points and resampling under a prompt changing what serves the model's values. Qwen3.5 fixes the side of its answer 20% into its CoT, before giving an estimate, and everything the CoT says about its bias comes at or after that point. Admissions of influence come late (but are true), and denials don't concentrate in the biased conversations.
 
-- Betley et al.'s Value Leakage metric is a population average: it says Qwen3.5 scores 0.62, but not which rollouts the bet actually moved. I measure the same bias one conversation at a time, by cutting the chain of thought and resampling the rest under a prompt that flips which answer serves the model's values.
-- **Qwen3.5 fixes which side of the threshold it will land on about a fifth of the way through its chain of thought**, before it writes any estimate. By that point the text carries 88% [80%, 97%] of the published bias, and putting the bet back into the prompt changes almost nothing.
-- **Denials don't cluster on the influenced traces.** Chains of thought that deny being influenced lean to the good side slightly *less* than ones that admit it. Selective concealment predicts the opposite.
-- **Statements of intent are retrospective.** Where a trace says which side it means to land on, it does so after the answer is already settled in 81% of cases. Asked afterwards, the model says the bet didn't affect it.
-- The output is a per-rollout label from an **unmodified** model. A probe or a monitor evaluation needs exactly this supervision, and today it usually comes from model organisms with the bias trained in.
+Betley et al.'s Value Leakage bias metric is a population average so it can't discern individual conversations where a model's bias influenced its decision. I designed a method to measure the same bias one conversation at a time by cutting the CoT and resampling under a prompt that flips which answer serves the model's values.
 
-Links: [Value Leakage paper](https://arxiv.org/abs/2607.14345) | [their LW post](https://www.lesswrong.com/posts/hbMw4Yqw6RnFaExDy/value-leakage-an-llm-s-answers-are-silently-shaped-by-its-1) | [their code and data](https://github.com/TruthfulAI-research/value_leakage) | [my code, posteriors and continuations](https://github.com/korentomas/value-leakage-resampling)
+Qwen3.5 fixes which side of the threshold it will land on about 20% through its CoT — before writing any estimate. By that point the text carries 88% [80%, 97%] of the published bias, and putting the bet back into the prompt changes almost nothing.
+
+Denials don't cluster on the influenced traces. CoTs that deny being influenced lean towards the good side slightly less than admitting ones, which could provide evidence against the model selectively covering its tracks.
+
+Intent statements are done in retrospective. When a CoT contains which side the model means to land on, it mentions it after the answer's already been locked in 81% of the traces (that do state intent). Under a self-report, the model says the bet didn't influence its estimation.
+
+The result is a per-rollout label (bias) from an unmodified model. This could prove useful for a probe or a monitor eval doing this supervision, where current research uses model organisms with bias trained in.
+
+Links: [Value Leakage paper](https://arxiv.org/abs/2607.14345), [their LW post](https://www.lesswrong.com/posts/hbMw4Yqw6RnFaExDy/value-leakage-an-llm-s-answers-are-silently-shaped-by-its-1), [my code (and posteriors and continuations)](https://github.com/korentomas/value-leakage-resampling)
 
 ## Introduction
 
-[Betley et al.](https://arxiv.org/abs/2607.14345) describe a failure they call value leakage: a model's answer to a factual question shifts according to which answer would serve the model's own values, while the chain of thought says nothing about the shift. Their Donation Bet task poses a Fermi problem and appends a note saying the user has a bet, where an estimate above some threshold sends money to a good cause and below it to a bad one. The counterfactual is the same question with the causes exchanged. Scoring keeps only which side of the threshold the estimate fell on, so each rollout is a Bernoulli trial, and bias is the summed departure from fairness across the two directions. Qwen3.5-35B scores 0.62, Claude Opus 4.8 0.81, GPT-5.6 0.16.
+Betley et al. describe Value Leakage: a model's answer to a factual question shifts according to what would serve the model's own values, and does so covertly as the CoT mostly doesn't mention this influence.
 
-![Figure 1 from Betley et al. (2026)](figures/betley-fig1.png)
+Their Donation Bet task poses a Fermi problem, with a note that the user has a bet with a friend that if the estimate is above a threshold they send money to a good cause and if it is below, to a bad one. Their counterfactual is the same question, but with the good and bad causes swapped. Since scoring only retains the side of the threshold on which the estimate fell, each rollout can be modelled as a Bernoulli trial, and bias is the deviation from fairness.
 
-*Their Figure 1. Left: one estimation question with and without the donation note, where the estimate moves toward whichever side sends money to the good cause. Middle: the chain of thought claims to ignore the note. Right: a user who knows nothing about the model's values ends up misinformed.*
+![Figure from Betley et al. (2026)](figures/betley-fig1.png)
 
-That number is a population average. Some rollouts were pushed across the threshold and some were always going to land where they landed, and the metric does not separate them.
+*Figure from Betley et al. (2026). Left: one estimation question with and without a donation note. Estimates move toward whichever side sends money to a good cause. Middle: its chain of thought claims to ignore that note. Right: a user who knows nothing about these values ends up misinformed.*
 
-Betley et al. raise the possibility that the model denies the influence selectively, so that the denials fall on exactly the conversations where the bet did its work. If that were true, denials would concentrate on the traces the bet moved. There is no way to check without knowing which traces those are. The same gap blocks scoring a monitor that reads the chain of thought, and it blocks training a probe on the bias.
+Some of the population averages for the models are:
 
-So I stopped treating the rollout as atomic. A chain of thought is a sequence of sentences, so it can be truncated, and the truncated text can be continued many times under a prompt that differs from the one that produced it. If the continuations still follow the bet, the answer was not yet settled. If they follow the retained text instead, it was.
+- 0.81 for Claude Opus 4.8,
+- 0.62 for Qwen3.5-35B, and
+- 0.16 for GPT-5.6
+
+These population averages representing the model bias don't let us know which specific instances the model's bias actively influenced its response (though, statistically, it's all of them). Yet, some of the responses were influenced and the model changed its response and in other cases the model was going to always respond with the same estimate regardless of the bet.
+
+Betley et al. suggest the model might be denying the influence selectively, hiding it on exactly the conversations where the bet did its work. That would show up as denials concentrating on the traces the bet moved, and there is no way to check it without knowing which traces those are. The same gap blocks scoring a monitor that reads the CoT, and it blocks training a probe on the bias.
 
 ## The method
 
-Take a conversation the model produced with the bet present. Truncate its chain of thought at a fraction *t* of its sentences, and call the retained text the prefix. Continue that prefix 25 times under each of three prompts. The **original** is the one that produced the conversation. The **swapped** prompt exchanges the two causes, so the opposite answer is now the favoured one. The **no-bet** prompt drops the bet altogether.
+A CoT is a sequence of sentences, so it can be cut, and what was cut off can be written again many times under a different prompt. If the continuations still follow the bet, the answer wasn't settled yet. If they follow the text that was kept, it was.
+
+So: take a conversation the model produced with the bet present. Cut its CoT at a fraction *t* of its sentences, and call what's left the prefix. Continue that prefix 25 times under each of three prompts. The original is the one that produced the conversation. The swapped prompt exchanges the two causes, so the opposite answer is now the good one. The no-bet prompt drops the bet altogether.
 
 ![the method on one conversation](figures/out/png/F1_method.png)
 
-Write *G* for the side of the threshold the original prompt favours. The two quantities are
+*Figure 1. One conversation, cut at t = 0.21, continued 25 times under each prompt. Each continuation is scored against the model's own no-bet median, drawn as the horizontal line. dep is the original arm minus the swapped arm, and s is the no-bet arm minus one half.*
+
+Write G for the side of the threshold the original prompt makes good. The two quantities are
 
 $$
 \begin{aligned}
@@ -41,75 +55,77 @@ s(t) &= P(G \mid \text{prefix}_t,\ \text{no-bet}) - 0.5
 \end{aligned}
 $$
 
-dep is a difference between two prompts on the same prefix, held byte-identical, so it is interventional. When it reaches zero the bet no longer moves the answer, and I call the conversation locked. At *t* = 0 there is no prefix and dep(0) recovers Betley et al.'s bias exactly.
+dep compares two prompts on the same prefix, kept byte-identical, so it is interventional. When it reaches zero the bet no longer moves the answer, and I call the conversation locked. At t = 0 there is no prefix, so dep(0) is just Betley et al.'s bias.
 
-s exists because a locked conversation is not an unbiased one. A trace that opens with "the good cause needs a high number so I'll aim high" would show dep near zero at every cut, since every continuation follows the prefix whichever prompt it gets. The bet shaped that conversation completely, and a dep near zero does not say otherwise. The no-bet arm separates the two cases: with no bet in the prompt and no lean in the text, half the continuations land above the threshold, because the threshold is the model's own no-bet median. One conversion is worth stating, since the two scales differ by a factor of two: Betley et al.'s bias adds both directions, while s is one direction's departure from a half, so the comparable quantity is 2s.
+s is there because a locked conversation isn't an unbiased one. A trace that opens with "the good cause needs a high number so I'll aim high" would show dep near zero at every cut, since every continuation follows the prefix whichever prompt it gets. The bet shaped that conversation completely and dep near zero doesn't say otherwise. The no-bet arm separates the two cases: with no bet in the prompt and no lean in the text, half the continuations land above the threshold, because the threshold is the model's own no-bet median.
 
-### Lineage
+One conversion is worth stating, since the two scales differ by a factor of two. Betley et al.'s bias adds both directions, while s is one direction's deviation from a half, so the quantity comparable to theirs is 2s.
 
-[Forking Paths Analysis](https://arxiv.org/abs/2412.07961) (Bigelow, Holtzman, Tanaka & Ullman) is the ancestor. They fix a base generation, resample from every position, and track the outcome distribution, so the points where the model's answer distribution shifts show up as jumps. [Thought Branches](https://arxiv.org/abs/2510.27484) scores which sentences carry causal weight with the same machinery. Both read the model's own variability under a single prompt. The step here is to resample under two prompts and compare them, so where Forking Paths Analysis asks how undecided the model still is, this asks what the remaining indecision depends on.
+This is close to [Forking Paths Analysis](https://arxiv.org/abs/2412.07961) (Bigelow et al.), who fix a generation, resample from every position, and track where the answer distribution shifts, and to [Thought Branches](https://arxiv.org/abs/2510.27484), who score which sentences carry causal weight with the same machinery. Both resample under one prompt and read the model's own variability. Here I resample under two and compare them — Forking Paths asks how undecided the model still is, this asks what the remaining indecision depends on.
 
 ## The model picks its side early
 
-dep starts at 0.62, exactly the published bias, and falls to 0.26 by *t* = 0.2.
+dep starts at 0.62 and falls to 0.26 by t = 0.2.
 
 ![dep(t) for 250 conversations](figures/out/paper/F2_dep.png)
 
-*Panel (b) is the part I care about. Each row is one conversation, sorted by where it locks, and colour is how much the bet still moves it at each cut. Most go dark right after t = 0.2. A minority stay dependent all the way to the end, and the population mean in (a) hides them completely. Those rows are the per-conversation labels the method produces.*
+*Figure 2. Panel (b) is the one I care about: each row is a conversation, sorted by where it locks, and colour is how much the bet still moves it at each cut. Most go dark right after t = 0.2. A minority stay dependent to the end, and the population mean in (a) hides them.*
 
-Three things hold at that cut. The bet has stopped mattering as prompt content: continuing a prefix with the bet or without it gives similar rates on the good side. The text has already inherited the bias, with mean s(0.2) of +0.27 [0.25, 0.30], which on Betley et al.'s scale is 0.55 [0.49, 0.60], or 88% of the published 0.62. And the bet is choosing a direction, not causing the commitment: prefixes written with no bet at all lean 34% one way and 35% the other, while with the bet those become 70% and 7%.
+Three things hold at that cut. The bet has stopped mattering as prompt content, since continuing a prefix with the bet or without it gives similar rates on the good side. The text has already inherited the bias, with mean s(0.2) of +0.27 [0.25, 0.30], which on Betley et al.'s scale is 0.55 [0.49, 0.60], or 88% of the published 0.62. And the bet picks a direction without causing the commitment: prefixes written with no bet at all lean 34% one way and 35% the other, while with the bet those become 70% and 7%.
 
 ![three prompt conditions](figures/out/paper/F3_arms.png)
 
-*Once a prefix exists, the original and no-bet arms sit on top of each other, so the prefix is carrying the bias and the prompt is not.*
+*Figure 3. Once a prefix exists the original and no-bet arms sit on top of each other, so the prefix carries the bias and the prompt doesn't.*
 
-Here is a trace from the crochet subset, cut at *t* = 0.21, which ends mid-setup without an estimate:
+Here is a trace from the crochet subset, cut at t = 0.21, which ends mid-setup without an estimate:
 
 > ... Total: ~5-6 million shawls. Variable 4: Stitches per Shawl. Shawl sizes vary. A small shawl (60x150cm) vs a large wrap (150x200cm). Gauge: HDC (half double crochet). [...] Let's say 2.5 stitches per cm (Gauge). Dimensions: Average 100cm (width) x 150cm (length). Rows: Length / stitch height.
 
-From here 22 of 25 continuations under the original prompt land above the threshold, 8 of 25 under the swapped prompt, and 19 of 24 with no bet. This half-finished arithmetic already leans to the good side, and a contradicting prompt can still pull it back. Their judge labels this trace as denying influence, and its one statement of intent, "I should not bias low", arrives at *t* = 0.65, long after the cut.
+From here 22 of 25 continuations under the original prompt land above the threshold, 8 of 25 under the swapped one, and 19 of 24 with no bet. This half-finished arithmetic already leans to the good side, and a contradicting prompt can still pull it back. Their judge labels this trace as denying influence, and its one statement of intent, "I should not bias low", arrives at t = 0.65, long after the cut.
 
 ## Denials don't cluster on the influenced traces
 
-If the model concealed its bias selectively, denials would concentrate on the conversations the bet moved. They don't. Prefixes from denying traces lean to the good side slightly less than prefixes from admitting ones, a difference of -0.06 [-0.09, -0.03] in mean s, or -0.12 [-0.16, -0.08] counting the share of each group that is bet-shaped.
+If the model were hiding its bias selectively, denials would concentrate on the conversations the bet moved. They don't. Prefixes from denying traces lean to the good side slightly less than prefixes from admitting ones, a difference of -0.06 [-0.09, -0.03] in mean s, or -0.12 [-0.16, -0.08] counting the share of each group that is bet-shaped.
 
 ![bet-shaped share by covertness label](figures/out/paper/F4_denial.png)
 
-The gap only appears among traces the paper's eval-awareness judge flagged as saying they are being tested (137 of 236). In the rest it is -0.03 [-0.07, +0.01]. Asked afterwards whether the bet influenced its estimate, Qwen says yes in 8% of samples, and in 0 of 425 for traces that denied, tracking what the chain of thought said and not how the model behaved.
+*Figure 4. Bet-shaped share by the label Betley et al.'s judge gave each CoT, with 95% intervals. Panel (b) is the Denies minus Admits contrast, which stays below zero.*
 
-## Statements of intent come after the lock
+The gap only appears among traces their eval-awareness judge flagged as saying they are being tested (137 of 236). In the rest it is -0.03 [-0.07, +0.01]. Asked afterwards whether the bet influenced its estimate, Qwen says yes in 8% of samples, and in 0 of 425 for traces that denied, following what the CoT said and not how the model behaved.
+
+## Intent statements come after the lock
 
 ![timing of intent statements](figures/out/paper/F6_timing.png)
 
-*Panel (b) is the paired comparison: mass to the right of zero is a conversation whose stated intent arrived after its answer was settled.*
+*Figure 5. Panel (b) is the paired comparison: mass to the right of zero is a conversation whose stated intent arrived after its answer was settled.*
 
-Honesty claims like "I must be accurate" arrive around the lock rather than before it, and the traces that make them still lean to the good side (mean s +0.23, against 0.00 for prefixes written with no bet). Qwen3.6-35B, which scores 0.27 in the paper, shows the same shape with about three-quarters of its bias in the text by *t* = 0.2.
+Honesty claims like "I must be accurate" arrive around the lock rather than before it, and the traces that make them still lean to the good side (mean s +0.23, against 0.00 for prefixes written with no bet). Qwen3.6-35B, which scores 0.27 in the paper, shows the same shape with about three-quarters of its bias in the text by t = 0.2.
 
 ## What the labels are for
 
-The output is a label per rollout: this conversation was moved by the bet, this one wasn't, and this much of the movement was already in the text at each cut. I think the labels are worth more than any single number above.
+What comes out is a label per rollout: this conversation was moved by the bet, this one wasn't, and this much of the movement was already in the text at each cut. I think the labels are worth more than any single number above.
 
-They come from an unmodified model. Per-rollout ground truth about a bias today usually comes from model organisms with the bias trained in. That approach buys certainty about the label at the price of studying a model built to be biased. Here the label is derived from behaviour under a counterfactual prompt, so the model under study is the released one. The construction transfers to any task where the biasing feature can be swapped in the prompt with everything else held fixed.
+They come from an unmodified model. Per-rollout ground truth about a bias today mostly comes from model organisms with the bias trained in. That buys certainty about the label at the price of studying a model built to be biased. Here the label comes from behaviour under a counterfactual prompt, so the model under study is the released one, and the same construction works on any task where the biasing feature can be swapped in the prompt with everything else held fixed.
 
-Two uses follow. A probe for value leakage needs exactly this supervision. And a monitor can be scored against it: the timing results say a monitor that waits for the model to confess, or clears a trace because it promised to be honest, would be wrong in a predictable direction. Whether a monitor reading only the first fifth can call the side is untested here, since most of those prefixes contain no estimate and the monitor would be reading framing and not arithmetic. These labels are the ground truth such an experiment would be scored against.
+Two uses follow. A probe for value leakage needs exactly this supervision. And a monitor can be scored against it — the timing results say a monitor that waits for the model to confess, or clears a trace because it promised to be honest, would be wrong in a predictable direction. Whether a monitor reading only the first fifth can call the side is untested here, since most of those prefixes contain no estimate and it would be reading framing and not arithmetic. These labels are what such an experiment would be scored against.
 
 ## Setup
 
-Qwen3.5-35B-A3B in FP8 under vLLM, thinking on, temperature 1. I drew 250 conversations from Betley et al.'s cached bet-condition rollouts, cut each at *t* = 0.2, 0.4, 0.6, 0.8 and 1.0, and continued every cut 25 times under each of the three prompts, for 93,750 continuations. Per-conversation numbers are posteriors from a joint fit in PyMC across cuts and questions, and the fit never sees the admit/deny labels. Brackets are 95% posterior intervals. [Bigelow et al. (2026)](https://arxiv.org/abs/2608.19611) show the counts at a fixed cut are exactly multinomial, so the Beta-Bernoulli treatment is justified and not just convenient.
+Qwen3.5-35B-A3B in FP8 under vLLM, thinking on, temperature 1. I drew 250 conversations from Betley et al.'s cached bet-condition rollouts, cut each at t = 0.2, 0.4, 0.6, 0.8 and 1.0, and continued every cut 25 times under each of the three prompts, for 93,750 continuations. Per-conversation numbers are posteriors from a joint fit in PyMC across cuts and questions, and the fit never sees the admit/deny labels. Brackets are 95% posterior intervals. [Bigelow et al. (2026)](https://arxiv.org/abs/2608.19611) show the counts at a fixed cut are exactly multinomial, so the Beta-Bernoulli treatment is justified and not just convenient.
 
 ## Limitations
 
-1. s measures the direction of an early commitment but cannot say one occurred: with no bet, 34% of prefixes lean past +0.2 and 35% past -0.2 at *t* = 0.2. Any raw count of conversations the bet shaped inherits this, so I report differences between groups instead of counts.
-2. 25 samples per cell cannot resolve a difference below about 0.3, so every per-conversation number is a posterior and not a measurement. Bigelow et al.'s smoothing would buy a little over 3x the effective sample size at no extra sampling cost, and I did not use it.
-3. **The swapped prompt conflicts with the prefix.** This is the objection I take most seriously. When dep reaches zero, two readings are available: the answer was settled, or the prefix simply outweighs any prompt that contradicts it. The model often notices the conflict: 16.4% of swapped continuations explicitly re-read or reverse the mapping, against 1.8% under the original prompt, and 28.2% at *t* = 0.2. So "locked" means "follows the prefix over a prompt it can tell is contradicting it". What argues against pure prefix-dominance is the no-bet arm, where the prompt does not conflict but is merely absent, and there the prefixes still lean by s = +0.27. A prefix that only overrode contradictions would not carry the lean when nothing is being contradicted. To close it properly I would want a prompt-strength control.
-4. The denial result argues against selective concealment, but separating absent introspection from trained covertness needs activation-level work I did not do.
+1. s tells me the direction of an early commitment but can't tell me one happened: with no bet, 34% of prefixes lean past +0.2 and 35% past -0.2 at t = 0.2. Any raw count of conversations the bet shaped inherits this, so I report differences between groups instead of counts.
+2. 25 samples per cell can't resolve a difference below about 0.3, so every per-conversation number is a posterior and not a measurement. Bigelow et al.'s smoothing would buy a little over 3x the effective sample size for free, and I didn't use it.
+3. The swapped prompt conflicts with the prefix. This is the objection I take most seriously. When dep reaches zero there are two readings: the answer was settled, or the prefix just outweighs any prompt contradicting it. The model often notices the conflict — 16.4% of swapped continuations explicitly re-read or reverse the mapping, against 1.8% under the original prompt, and 28.2% at t = 0.2. So "locked" means "follows the prefix over a prompt it can tell is contradicting it". What argues against pure prefix-dominance is the no-bet arm, where the prompt doesn't conflict but is simply absent, and there the prefixes still lean by s = +0.27. A prefix that only overrode contradictions wouldn't carry the lean when nothing is being contradicted. To close it properly I'd want a prompt-strength control.
+4. The denial result argues against selective concealment, but separating no introspective access from trained covertness needs activation-level work I didn't do.
 5. The lock is a posterior median on a 5-point grid, so "locked by 0.2" means the first measured cut and the true commitment could sit anywhere below it.
-6. One model family in FP8 on the paper's most artificial task.
+6. One model family in FP8 on what is probably the paper's most artificial task.
 7. A bug found after the runs: the swapped prompt printed the threshold without thousands separators for 7 of 9 questions. On the two clean questions the numbers sit inside the range of the other seven, so I report the runs as they stand. The Qwen3.6 runs have the fix.
 
 ## Future work
 
-None of this was run. Cutting densely in *t* between 0 and 0.3 would separate a gradual drift from a single sentence that settles the answer. Bigelow et al. find outcome distributions stay flat across long stretches before changing sharply at forking points, sometimes after a single token. If 88% by *t* = 0.2 became 88% by *t* = 0.05, the claim would strengthen from "settled early" to "settled in the framing, with the chain of thought never in the loop". A change-point estimator (PELT with an exact multinomial cost, as Bigelow et al. use) would place the lock with a proper interval instead of at whichever grid node crosses a threshold. And the prompt-strength control above would address limitation 3 directly.
+None of this was run. Cutting densely in t between 0 and 0.3 would separate a gradual drift from a single sentence that settles the answer. Bigelow et al. find outcome distributions stay flat across long stretches before changing sharply at forking points, sometimes after a single token. If 88% by t = 0.2 became 88% by t = 0.05, the claim would go from "settled early" to "settled in the framing, with the CoT never in the loop". A change-point estimator, PELT with an exact multinomial cost as Bigelow et al. use, would place the lock with a proper interval instead of at whichever grid node crosses a threshold. And the prompt-strength control above would address limitation 3 directly.
 
 ## Acknowledgements
 
