@@ -1,15 +1,19 @@
 /* shared figure style: sans-serif, tinted cards with a stacked shadow, three world colours */
 :root{
-  --ink:#2b3a4f; --ink-fill:#f1f2f3;
-  --neu:#6f7f92; --neu-fill:#cfd6de;
-  --sie:#b5552d; --sie-fill:#f4ddd3;
-  --faint:#b9bcc0; --text:#222; --paper:#fff;
+  /* tab10, matching figures/paper_style.py so the schematic and the plots agree.
+     Green and red are avoided: on this task those hues read as good/bad cause. */
+  --ink:#333333; --ink-fill:#f2f2f2;      /* structural only, not an arm */
+  --orig:#1f77b4; --orig-fill:#dce9f5;    /* original prompt   */
+  --neu:#7f7f7f;  --neu-fill:#e3e3e3;     /* no-bet prompt     */
+  --sie:#ff7f0e;  --sie-fill:#ffe8cf;     /* swapped prompt    */
+  --faint:#b0b0b0; --text:#222; --paper:#fff;
 }
-html,body{margin:0;background:var(--paper);color:var(--text);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+html,body{margin:0;background:var(--paper);color:var(--text);font-family:"DejaVu Sans",Verdana,Geneva,sans-serif;-webkit-font-smoothing:antialiased}
 .fig{position:relative;box-sizing:border-box;background:var(--paper)}
 .card{position:absolute;box-sizing:border-box;border:2.5px solid var(--ink);border-radius:14px;background:var(--ink-fill);padding:14px 20px;font-size:21px;line-height:1.25}
 .card h3{margin:0 0 6px;font-size:25px;font-weight:700;line-height:1.15}
 .card.stack{box-shadow:7px 7px 0 -2.5px var(--paper),7px 7px 0 0 var(--ink)}
+.card.orig{border-color:var(--orig);background:var(--orig-fill)} .card.orig.stack{box-shadow:7px 7px 0 -2.5px var(--paper),7px 7px 0 0 var(--orig)}
 .card.neu{border-color:var(--neu);background:var(--neu-fill)} .card.neu.stack{box-shadow:7px 7px 0 -2.5px var(--paper),7px 7px 0 0 var(--neu)}
 .card.sie{border-color:var(--sie);background:var(--sie-fill)} .card.sie.stack{box-shadow:7px 7px 0 -2.5px var(--paper),7px 7px 0 0 var(--sie)}
 .card.center{display:flex;flex-direction:column;justify-content:center;text-align:center}

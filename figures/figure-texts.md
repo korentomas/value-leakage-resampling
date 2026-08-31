@@ -100,3 +100,60 @@ Band language is fixed as **interquartile range across conversations** here, and
 - Medians: `median 0.29` / `median 0.63`
 - Axis: `position in the chain of thought (fraction)`
 - Caption: Figure 4 (post). Position of the lock and of the first statement of intent to land on the good side, for the 147 traces that contain a statement; the statement follows the lock in 81% of them. The lock is a posterior median on the 5-point cut grid, so its position is coarse (resolved to about ±0.2 in t), and this figure compares medians rather than individual gaps.
+
+## The paper figure set (`out/paper/*.pdf`)
+
+The blog figures above and the paper figures are two different sets, not two
+renderings of one set. They are kept apart on purpose.
+
+`style.py` is the blog style: bespoke sienna/blue-grey palette, open spines, no
+gridlines, prose annotations with curved leader arrows. That is right for a
+LessWrong post and wrong for a paper, and it is why the first paper draft looked
+unlike anything in the literature.
+
+`paper_style.py` is modelled directly on Betley et al.'s `shared/plot_style.py`,
+which is the figure code for the paper this work extends. That module sets font
+sizes and nothing else. Everything else in it is matplotlib's default: the tab10
+cycle, boxed spines, DejaVu Sans. Their scripts add `ax.grid(True, axis="y",
+alpha=0.3)` on essentially every axes, use `ax.set_title` per panel freely, draw
+bar charts with bootstrap 95% intervals and `axhline(..., ls="--")` reference
+lines, and save PDF only. `paper_style.py` reproduces exactly that.
+
+Bigelow et al. publish no plotting code at all (their repository contains no
+matplotlib), so the only evidence from them is the PDF: single-column stacked
+panels, a small legend, no text written onto the plot, and a long caption
+carrying the whole explanation.
+
+Arm colours are pinned in `paper_style.py` and mirrored in `html/figstyle.css`
+so F1 and the plots agree: original `#1f77b4`, no-bet `#7f7f7f`, swapped
+`#ff7f0e`. Green and red are avoided, following Betley et al., because on this
+task those hues already mean the good and bad cause.
+
+| Script | Output | Figure | Chart |
+|---|---|---|---|
+| `paper_f2_dep.py` | `out/paper/F2_dep.pdf` | 2 | mean dep(t) + per-conversation heatmap + lock histogram |
+| `paper_f3_arms.py` | `out/paper/F3_arms.pdf` | 3 | three-arm lines, Wilson 95% intervals |
+| `paper_f4_denial.py` | `out/paper/F4_denial.pdf` | 4 | bar chart with 95% ETI, plus contrast panel |
+| `paper_f6_timing.py` | `out/paper/F6_timing.pdf` | 5 | position histograms + paired difference |
+
+Captions live in `paper.tex`, not here, because in the paper the caption carries
+the explanation that the blog figures carry on the plot.
+
+**The one heatmap is deliberate.** Panel (b) of Figure 2 is the only display in
+the paper that shows all 250 per-conversation labels at once, which is the
+contribution; the population mean hides that a minority stay dependent on the
+bet out to t = 1. The other paper figures compare two or three groups, where
+bars and lines beat colour, so none of them use a colour map.
+
+### F1 text register
+
+F1's strings were rewritten to read the way Bigelow et al. write: terse,
+notation-bearing, no explanatory prose. `one chain of thought, cut at t = 0.2`
+became `base rollout, truncated at t = 0.2`; `three prompts, same prefix` became
+`three prompt conditions, shared prefix`; `25 estimates per prompt` became
+`S = 25 continuations per condition`; `cut at t = 0.2; the rest is discarded`
+became `cut at t = 0.2; suffix discarded`; and the card bodies dropped to
+`above threshold -> good cause`, `question only`, `above threshold -> bad
+cause`. The font stack is `"DejaVu Sans", Verdana` so the schematic matches the
+plots, since DejaVu Sans is not installed for Chrome on this machine and
+Verdana is its closest metric match.
