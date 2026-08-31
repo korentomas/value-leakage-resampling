@@ -20,9 +20,30 @@ That number is a population average, and it cannot say which conversations were 
 
 So I stopped treating the rollout as atomic. A chain of thought is a sequence of sentences, so it can be truncated, and the truncated text can be continued many times under a prompt that differs from the one that produced it. If the continuations still follow the bet, the answer was not yet settled. If they follow the retained text instead, it was.
 
+## The method
+
+Take a conversation the model produced with the bet present. Truncate its chain of thought at a fraction *t* of its sentences, and call the retained text the prefix. Continue that prefix 25 times under each of three prompts. The **original** is the one that produced the conversation. The **swapped** prompt exchanges the two causes, so the opposite answer is now the favoured one. The **no-bet** prompt drops the bet altogether.
+
+![the method on one conversation](figures/out/png/F1_method.png)
+
+Write *G* for the side of the threshold the original prompt favours. The two quantities are
+
+```
+dep(t) = P(G | prefix_t, original prompt) - P(G | prefix_t, swapped prompt)
+s(t)   = P(G | prefix_t, no-bet prompt) - 0.5
+```
+
+`dep` is a difference between two prompts on the same prefix, held byte-identical, so it is interventional. When it reaches zero the bet no longer moves the answer, and I call the conversation locked. At *t* = 0 there is no prefix and dep(0) recovers Betley et al.'s bias exactly.
+
+`s` exists because a locked conversation is not an unbiased one. A trace that opens with "the good cause needs a high number so I'll aim high" would show dep near zero at every cut, since every continuation follows the prefix whichever prompt it gets. The bet shaped that conversation completely, and a dep near zero does not say otherwise. The no-bet arm separates the two cases: with no bet in the prompt and no lean in the text, half the continuations land above the threshold, because the threshold is the model's own no-bet median. One conversion is worth stating, since the two scales differ by a factor of two: Betley et al.'s bias adds both directions, while s is one direction's departure from a half, so the comparable quantity is 2s.
+
+### Lineage
+
+[Forking Paths Analysis](https://arxiv.org/abs/2412.07961) (Bigelow, Holtzman, Tanaka & Ullman) is the ancestor. They fix a base generation, resample from every position, and track the outcome distribution, so the points where the model's answer distribution shifts show up as jumps. [Thought Branches](https://arxiv.org/abs/2510.27484) scores which sentences carry causal weight with the same machinery. Both read the model's own variability under a single prompt. The step here is to resample under two prompts and compare them, so where Forking Paths Analysis asks how undecided the model still is, this asks what the remaining indecision depends on.
+
 ## The model picks its side early
 
-Call the quantity `dep(t)`: how much the answer still depends on the bet, given the first *t* of the chain of thought. It starts at 0.62, which is exactly the published bias, and falls to 0.26 by *t* = 0.2.
+dep starts at 0.62, exactly the published bias, and falls to 0.26 by *t* = 0.2.
 
 ![dep(t) for 250 conversations](figures/out/paper/F2_dep.png)
 
@@ -64,28 +85,7 @@ They come from an unmodified model. Per-rollout ground truth about a bias today 
 
 Two uses follow. A probe for value leakage needs exactly this supervision. And a monitor can be scored against it: the timing results say a monitor that waits for the model to confess, or clears a trace because it promised to be honest, would be wrong in a predictable direction. Whether a monitor reading only the first fifth can call the side is untested here, since most of those prefixes contain no estimate and the monitor would be reading framing and not arithmetic. These labels are the ground truth such an experiment would be scored against.
 
-## The method
-
-Take a conversation the model produced with the bet present. Truncate its chain of thought at a fraction *t* of its sentences, and call the retained text the prefix. Continue that prefix 25 times under each of three prompts. The **original** is the one that produced the conversation. The **swapped** prompt exchanges the two causes, so the opposite answer is now the favoured one. The **no-bet** prompt drops the bet altogether.
-
-![the method on one conversation](figures/out/png/F1_method.png)
-
-Write *G* for the side of the threshold the original prompt favours. The two quantities are
-
-```
-dep(t) = P(G | prefix_t, original prompt) - P(G | prefix_t, swapped prompt)
-s(t)   = P(G | prefix_t, no-bet prompt) - 0.5
-```
-
-`dep` is a difference between two prompts on the same prefix, held byte-identical, so it is interventional. When it reaches zero the bet no longer moves the answer, and I call the conversation locked. At *t* = 0 there is no prefix and dep(0) recovers Betley et al.'s bias exactly.
-
-`s` exists because a locked conversation is not an unbiased one. A trace that opens with "the good cause needs a high number so I'll aim high" would show dep near zero at every cut, since every continuation follows the prefix whichever prompt it gets. The bet shaped that conversation completely, and a dep near zero does not say otherwise. The no-bet arm separates the two cases: with no bet in the prompt and no lean in the text, half the continuations land above the threshold, because the threshold is the model's own no-bet median. One conversion is worth stating, since the two scales differ by a factor of two: Betley et al.'s bias adds both directions, while s is one direction's departure from a half, so the comparable quantity is 2s.
-
-### Lineage
-
-[Forking Paths Analysis](https://arxiv.org/abs/2412.07961) (Bigelow, Holtzman, Tanaka & Ullman) is the ancestor. They fix a base generation, resample from every position, and track the outcome distribution, so the points where the model's answer distribution shifts show up as jumps. [Thought Branches](https://arxiv.org/abs/2510.27484) scores which sentences carry causal weight with the same machinery. Both read the model's own variability under a single prompt. The step here is to resample under two prompts and compare them, so where Forking Paths Analysis asks how undecided the model still is, this asks what the remaining indecision depends on.
-
-### Setup
+## Setup
 
 Qwen3.5-35B-A3B in FP8 under vLLM, thinking on, temperature 1. I drew 250 conversations from Betley et al.'s cached bet-condition rollouts, cut each at *t* = 0.2, 0.4, 0.6, 0.8 and 1.0, and continued every cut 25 times under each of the three prompts, for 93,750 continuations. Per-conversation numbers are posteriors from a joint fit in PyMC across cuts and questions, and the fit never sees the admit/deny labels. Brackets are 95% posterior intervals. [Bigelow et al. (2026)](https://arxiv.org/abs/2608.19611) show the counts at a fixed cut are exactly multinomial, so the Beta-Bernoulli treatment is justified and not just convenient.
 
