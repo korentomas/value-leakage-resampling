@@ -67,7 +67,7 @@ I need s because a locked conversation isn't necessarily unbiased. A trace that 
 
 s and Betley et al.'s bias are not on the same scale. Theirs adds the lean from both versions of the question, and s is the lean in one version only, so the quantity to compare against their bias is 2s.
 
-This is close to [Forking Paths Analysis](https://arxiv.org/abs/2412.07961) (Bigelow et al.), who fix a generation, resample from every position, and track where the answer distribution shifts, and to [Thought Branches](https://arxiv.org/abs/2510.27484), who score which sentences carry causal weight with the same machinery. Both resample under one prompt and read the model's own variability. Here I resample under two and compare them — Forking Paths asks how undecided the model still is, this asks what the remaining indecision depends on.
+This is close to [Forking Paths Analysis](https://arxiv.org/abs/2412.07961) (Bigelow et al.). They start from a single CoT, resample it from every position, and watch where the distribution over final answers moves. [Thought Branches](https://arxiv.org/abs/2510.27484) does the same to score which sentences carry causal weight. Both resample under one prompt and read the model's own variability. Here I resample under two and compare them — Forking Paths asks how undecided the model still is, this asks what the remaining indecision depends on.
 
 ## The model picks its side early
 

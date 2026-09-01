@@ -127,9 +127,10 @@ says so. On this task the question becomes one of timing, and the cuts below mea
 
 \subsection{Resampling and forking paths}
 
-\citet{bigelow2024} introduced Forking Paths Analysis. They fix a base generation, resample from every position $t$ within it, and
-track the resulting outcome distribution $o_t$, so that the points where the
-model's answer distribution shifts show up as jumps in $o_t$. Thought Branches
+\citet{bigelow2024} introduced Forking Paths Analysis. They start from a single
+reasoning chain, which they call the base path, resample it from every position
+$t$, and track the resulting outcome distribution $o_t$, so that the points
+where the model's answer distribution shifts show up as jumps in $o_t$. Thought Branches
 \citep{macar2025} scores which sentences carry causal weight with the same
 machinery.
 
