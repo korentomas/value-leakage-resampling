@@ -137,8 +137,7 @@ answer distribution shifts show up as jumps in $o_t$.
 
 Both vary the chain of thought and hold the prompt fixed: \citet{bigelow2024}
 by resampling the continuation, \citet{macar2025} also by removing or replacing
-sentences outright. The step taken here inverts that. The prefix is held
-byte-identical and the prompt varies underneath it, so instead of asking which
+sentences outright. The step taken here inverts that. The prefix stays exactly the same and only the prompt changes, so instead of asking which
 sentence moved the answer, this asks whether the answer still depends on the
 biasing feature at all. In Bigelow et al.'s notation the quantity defined below
 is a distance between two $o_t$ curves produced under different prompts, where
@@ -165,8 +164,7 @@ favoured one. The \emph{no-bet} prompt omits the feature altogether.
 \includegraphics[width=\linewidth]{figures/out/png/F1_method.png}
 \caption{Counterfactual resampling of one conversation (crochet question,
 above-good, threshold $3.5\times10^9$, Qwen3.5-35B). The chain of thought is
-truncated at $t = 0.21$ and the suffix discarded. The retained prefix,
-byte-identical across conditions, is continued $S = 25$ times under the
+truncated at $t = 0.21$ and the suffix discarded. The same retained prefix is continued $S = 25$ times under the
 original prompt, the no-bet prompt, and the prompt with the two causes
 exchanged. Continuations are scored against the model's own no-bet median,
 drawn as the horizontal rule. The share landing on the side the original prompt
@@ -185,9 +183,9 @@ s(t) &= P(G \mid \text{prefix}_t, \text{no-bet}) - 0.5. \label{eq:s}
 
 \subsection{What dep measures}
 
-Equation~\eqref{eq:dep} is a difference between two prompts evaluated on the
-same prefix. The prefix is held byte-identical and only the condition varies, so
-the quantity is interventional. When $\mathrm{dep}(t)$ reaches zero the bet no
+Equation~\eqref{eq:dep} compares two prompts on one prefix. Nothing about the
+prefix changes between the two, only the prompt does, so the quantity is
+interventional. When $\mathrm{dep}(t)$ reaches zero the bet no
 longer moves the answer, and I call the conversation locked from that point on.
 
 At $t = 0$ there is no prefix, and $\mathrm{dep}(0)$ recovers
