@@ -37,17 +37,22 @@ These population averages representing the model bias don't let us know which sp
 
 Betley et al. suggest the model might be denying the influence selectively, hiding it on exactly the conversations where the bet did its work. That would show up as denials concentrating on the traces the bet moved, and there is no way to check it without knowing which traces those are. The same gap blocks scoring a monitor that reads the CoT, and it blocks training a probe on the bias.
 
-## The method
+## Methodology
 
-A CoT is a sequence of sentences, so it can be cut, and what was cut off can be written again many times under a different prompt. If the continuations still follow the bet, the answer wasn't settled yet. If they follow the text that was kept, it was.
+Steps:
 
-So: take a conversation the model produced with the bet present. Cut its CoT at a fraction *t* of its sentences, and call what's left the prefix. Continue that prefix 25 times under each of three prompts. The original is the one that produced the conversation. The swapped prompt exchanges the two causes, so the opposite answer is now the good one. The no-bet prompt drops the bet altogether.
+* Take a conversation that had the bet
+* Truncate its CoT at a fraction *t* of its sentences, call the retained text the prefix
+* Continue the prefix 25 times under each of three prompts
+  * Original: the one that produced the conversation
+  * Swapped: exchanges the two causes, so the opposite answer is now the good one
+  * No-bet: drops the bet altogether
 
 ![the method on one conversation](figures/out/png/F1_method.png)
 
 *Figure 1. One conversation, cut at t = 0.21, continued 25 times under each prompt. Each continuation is scored against the model's own no-bet median, drawn as the horizontal line. dep is the original arm minus the swapped arm, and s is the no-bet arm minus one half.*
 
-Write G for the side of the threshold the original prompt makes good. The two quantities are
+G is the side of the threshold the original prompt makes good. The two measurements are
 
 $$
 \begin{aligned}
@@ -56,9 +61,9 @@ s(t) &= P(G \mid \text{prefix}_t,\ \text{no-bet}) - 0.5
 \end{aligned}
 $$
 
-dep compares two prompts on the same prefix, kept byte-identical, so it is interventional. When it reaches zero the bet no longer moves the answer, and I call the conversation locked. At t = 0 there is no prefix, so dep(0) is just Betley et al.'s bias.
+dep compares two prompts on the same prefix, kept byte-identical. When it reaches zero the bet no longer moves the answer, and I call the conversation locked. At t = 0 there is no prefix, so dep(0) is just Betley et al.'s bias.
 
-s is there because a locked conversation isn't an unbiased one. A trace that opens with "the good cause needs a high number so I'll aim high" would show dep near zero at every cut, since every continuation follows the prefix whichever prompt it gets. The bet shaped that conversation completely and dep near zero doesn't say otherwise. The no-bet arm separates the two cases: with no bet in the prompt and no lean in the text, half the continuations land above the threshold, because the threshold is the model's own no-bet median.
+I need s because a locked conversation isn't necessarily unbiased. A trace that starts with "the good cause needs a high number so I'll aim high" would sit at dep = 0 at every cut, since the continuations follow the prefix regardless of which prompt they get. So I also need the no-bet condition: with no bet in the prompt and no lean in the text, half the continuations land on each side, because the threshold is the model's own median on the task without any bets.
 
 One conversion is worth stating, since the two scales differ by a factor of two. Betley et al.'s bias adds both directions, while s is one direction's deviation from a half, so the quantity comparable to theirs is 2s.
 
