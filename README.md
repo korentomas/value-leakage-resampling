@@ -129,7 +129,7 @@ After seeing this, I ran a self-report test, replaying the conversations and ask
 
 ![timing of intent statements](figures/out/paper/F6_timing.png)
 
-*Figure 6. (a) Where the answer locks and where the first stated intent appears, as fractions of the CoT on the same scale as the cuts. (b) The two subtracted per conversation, which the overlapping distributions in (a) can't show. Mass right of zero is a conversation whose intent came after its answer was already settled, and that is 81% of them.*
+*Figure 6. (a) Where the answer locks and where the first stated intent appears, as fractions of the CoT on the same scale as the cuts. (b) The two subtracted within each conversation, which the overlapping distributions in (a) can't show. A positive difference means the intent came after the answer was already settled, which is the case for 81% of the 147.*
 
 Honesty claims like "I must be accurate" arrive around the lock itself, and the traces that make them still lean to the good side (mean s +0.23, against 0.00 for prefixes written with no bet). So the model isn't lying about intending to be accurate, it's stating an intention about something already decided. Qwen3.6-35B, which scores 0.27 in the paper, shows the same shape with about three-quarters of its bias in the text by t = 0.2.
 
