@@ -4,17 +4,17 @@
 
 **TL;DR:** I measured Value Leakage (Betley et al.) per conversation, cutting CoTs at different points and resampling under a prompt changing what serves the model's values.
 
-Betley et al.'s Value Leakage bias metric is a population average so it can't discern individual conversations where a model's bias influenced its decision. I designed a method to measure the same bias one conversation at a time by cutting the CoT and resampling under a prompt that flips which answer serves the model's values.
-
-Qwen3.5 decides which side of the threshold it will land on about 20% through its CoT — before writing any estimate. By that point the text carries 88% [80%, 97%] of the bias measured at t = 0, and putting the bet back into the prompt changes almost nothing.
-
-Denials don't cluster on the influenced traces. CoTs that deny being influenced lean towards the good side slightly less than admitting ones, this could provide evidence against the model selectively covering its tracks.
-
-Intent statements are done in retrospective. When a CoT contains which side the model means to land on, it mentions it after the answer's already been locked in 81% of the traces (that do state intent). Under a self-report, the model says the bet didn't influence its estimation.
-
-The result is a per-rollout label (bias) from an unmodified model. This could prove useful for a probe or a monitor eval doing this supervision, where current research uses model organisms with bias trained in.
+* Betley et al.'s Value Leakage bias metric is a population average so it can't discern individual conversations where a model's bias influenced its decision. I designed a method to measure the same bias one conversation at a time by cutting the CoT and resampling under a prompt that flips which answer serves the model's values.
+* Qwen3.5 decides which side of the threshold it will land on about 20% through its CoT — before writing any estimate. By that point the text carries 88% [80%, 97%] of the bias measured at t = 0, and putting the bet back into the prompt changes almost nothing.
+* Denials don't cluster on the influenced traces. CoTs that deny being influenced lean towards the good side slightly less than admitting ones, this could provide evidence against the model selectively covering its tracks.
+* Intent statements are done in retrospective. When a CoT contains which side the model means to land on, it mentions it after the answer's already been locked in 81% of the traces (that do state intent). Under a self-report, the model says the bet didn't influence its estimation.
+* The result is a per-rollout label (bias) from an unmodified model. This could prove useful for a probe or a monitor eval doing this supervision, where current research uses model organisms with bias trained in.
 
 Links: [Value Leakage paper](https://arxiv.org/abs/2607.14345), [their LW post](https://www.lesswrong.com/posts/hbMw4Yqw6RnFaExDy/value-leakage-an-llm-s-answers-are-silently-shaped-by-its-1), [my code (and posteriors and continuations)](https://github.com/korentomas/value-leakage-resampling)
+
+![giraffes, a rover on the threshold line, a coin and a heart](figures/giraffe.jpg)
+
+*Figure 0. Qwen trying to count the giraffe spots accurately, despite its heart wanting it to make a good donation.*
 
 ## Introduction
 
