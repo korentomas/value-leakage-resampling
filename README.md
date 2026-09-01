@@ -92,7 +92,7 @@ At t = 0.2,
 
 * The text has already inherited the bias, with mean s(0.2) at +0.27 [0.25, 0.30], which on Betley et al.'s scale means 0.55 [0.49, 0.60], or 88% of the 0.62 the rollouts show at t = 0. Most of these prefixes don't contain an estimate yet, so the model isn't committing to a number but to a side.
 
-* The bet determines the direction of early commitment. Counting the prefixes that lean by more than 0.2 either way: without the bet, 34% lean toward the bet's side and 35% lean away from it, meaning 69% have already picked a side and are split almost evenly. With the bet, 70% lean toward its side and only 7% away, meaning 77% have picked a side. Nearly the same number commit early either way, what changes is that they stop splitting evenly.
+* The bet determines the direction of early commitment. Without it 34% of prefixes lean more than 0.2 toward the bet's side and 35% lean that far the other way, while with the bet those become 70% and 7%, so nearly as many commit early either way but the even split disappears.
 
 Here is a trace from the crochet subset, cut at t = 0.21, which ends mid-setup without an estimate:
 
