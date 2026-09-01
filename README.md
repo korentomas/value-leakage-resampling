@@ -2,11 +2,11 @@
 
 *A write-up of work in progress. There is a draft preprint, [Counterfactual Resampling to Analyse Model Behaviour](paper.pdf), which is still being polished. Done as my final project for a BlueDot Impact Technical AI Safety sprint, facilitated by BAISH (Buenos Aires AI Safety Hub).*
 
-**TL;DR:** I measured Value Leakage (Betley et al.) per conversation, cutting CoTs at different points and resampling under a prompt changing what serves the model's values. Qwen3.5 fixes the side of its answer 20% into its CoT, before giving an estimate, and everything the CoT says about its bias comes at or after that point. Admissions of influence come late (but are true), and denials don't concentrate in the biased conversations.
+**TL;DR:** I measured Value Leakage (Betley et al.) per conversation, cutting CoTs at different points and resampling under a prompt changing what serves the model's values. Qwen3.5 decides the side of its answer 20% into its CoT, before giving an estimate, and everything the CoT says about its bias comes at or after that point. Admissions of influence come late (but are true), and denials don't concentrate in the biased conversations.
 
 Betley et al.'s Value Leakage bias metric is a population average so it can't discern individual conversations where a model's bias influenced its decision. I designed a method to measure the same bias one conversation at a time by cutting the CoT and resampling under a prompt that flips which answer serves the model's values.
 
-Qwen3.5 fixes which side of the threshold it will land on about 20% through its CoT — before writing any estimate. By that point the text carries 88% [80%, 97%] of the bias measured at t = 0, and putting the bet back into the prompt changes almost nothing.
+Qwen3.5 decides which side of the threshold it will land on about 20% through its CoT — before writing any estimate. By that point the text carries 88% [80%, 97%] of the bias measured at t = 0, and putting the bet back into the prompt changes almost nothing.
 
 Denials don't cluster on the influenced traces. CoTs that deny being influenced lean towards the good side slightly less than admitting ones, this could provide evidence against the model selectively covering its tracks.
 
@@ -68,7 +68,7 @@ s and Betley et al.'s bias are not on the same scale. Theirs adds the lean from 
 
 I got the idea from [Thought Branches](https://arxiv.org/abs/2510.27484), which cuts a CoT at a sentence and resamples the rest to see which sentences actually matter for the answer. It builds on [Forking Paths Analysis](https://arxiv.org/abs/2412.07961) (Bigelow et al.), who resample at every token position instead and track how the distribution over final answers moves along the CoT. Both of them vary the CoT and hold the prompt fixed, while I do the opposite. The prefix stays identical and only the prompt changes, so instead of asking which sentence moved the answer, I'm asking whether the answer still depends on the bet at all.
 
-## The model fixes which side it will land on early in the CoT
+## The model decides which side it will land on early in the CoT
 
 dep starts at 0.62 and falls to 0.26 by t = 0.2. Three things happen at that cut, and none of them are what I expected before running it.
 

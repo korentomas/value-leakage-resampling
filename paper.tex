@@ -34,7 +34,7 @@ flips which answer serves the model's values, and check whether the answer
 still follows the flip. Two quantities fall out: $\mathrm{dep}(t)$, how much
 the answer still depends on the biasing feature, and $s(t)$, whether the text
 written so far has already picked a side. On the Donation Bet task of Betley
-et al., Qwen3.5-35B settles which side of the threshold it will land on about
+et al., Qwen3.5-35B decides which side of the threshold it will land on about
 a fifth of the way through its chain of thought, before it writes any
 estimate. By that point the retained text carries 88\% [80\%, 97\%] of the
 bias those same rollouts show at $t = 0$, and putting the bet back into the prompt changes
@@ -78,7 +78,7 @@ the biasing feature, the answer was not yet settled. If they follow the
 retained text instead, it was.
 
 I apply this to Qwen3.5-35B on the Donation Bet task and find that the side of
-the answer is fixed early, before an estimate exists, and that everything the
+the side is decided early, before an estimate exists, and that everything the
 model says about its own bias arrives at or after the point where the answer
 stopped moving.
 
@@ -117,7 +117,7 @@ that works only if the text names what moved the estimate. A line of work tests
 this by inserting a hint into a question and checking whether the model
 acknowledges the hint when it follows it \citep{turpin2023, chua2025, chen2025}.
 Acknowledgement rates typically land between 20\% and 40\%. \citet{arcuschin2025} find the same pattern with no hint at all, on ordinary
-questions, and call it implicit post-hoc rationalisation: something fixes the
+questions, and call it implicit post-hoc rationalisation: something settles the
 answer, and the chain of thought argues for it afterwards.
 
 \citet{metr2025} make the useful distinction that a chain of thought need
