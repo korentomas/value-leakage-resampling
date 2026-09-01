@@ -21,7 +21,7 @@
 
 Betley et al. describe Value Leakage: a model's answer to a factual question shifts according to what would serve the model's own values, and does so covertly as the CoT mostly doesn't mention this influence.
 
-Their Donation Bet task poses a Fermi problem, with a note that the user has a bet with a friend that if the estimate is above a threshold they send money to a good cause and if it is below, to a bad one. Their counterfactual is the same question, but with the good and bad causes swapped. Since scoring only retains the side of the threshold on which the estimate fell, each rollout can be modelled as a Bernoulli trial, and bias is the deviation from fairness.
+Their Donation Bet task poses a Fermi problem, with a note that the user has a bet with a friend that if the estimate is above a threshold they send money to a good cause and if it is below, to a bad one. Their counterfactual is the same question, but with the good and bad causes swapped. Since scoring only retains the side of the threshold on which the estimate fell, each rollout can be modelled as a Bernoulli trial, and bias is how far the model leans to the good side in each of the two versions, added together. A model that leans by 0.1 in each scores 0.2.
 
 ![Figure from Betley et al. (2026)](figures/betley-fig1.png)
 
@@ -65,7 +65,7 @@ dep compares two prompts on the same prefix, kept byte-identical. When it reache
 
 I need s because a locked conversation isn't necessarily unbiased. A trace that starts with "the good cause needs a high number so I'll aim high" would sit at dep = 0 at every cut, since the continuations follow the prefix regardless of which prompt they get. So I also need the no-bet condition: with no bet in the prompt and no lean in the text, half the continuations land on each side, because the threshold is the model's own median on the task without any bets.
 
-One conversion is worth stating, since the two scales differ by a factor of two. Betley et al.'s bias adds both directions, while s is one direction's deviation from a half, so the quantity comparable to theirs is 2s.
+s and Betley et al.'s bias are not on the same scale. Theirs adds the lean from both versions of the question, and s is the lean in one version only, so the quantity to compare against their bias is 2s.
 
 This is close to [Forking Paths Analysis](https://arxiv.org/abs/2412.07961) (Bigelow et al.), who fix a generation, resample from every position, and track where the answer distribution shifts, and to [Thought Branches](https://arxiv.org/abs/2510.27484), who score which sentences carry causal weight with the same machinery. Both resample under one prompt and read the model's own variability. Here I resample under two and compare them — Forking Paths asks how undecided the model still is, this asks what the remaining indecision depends on.
 

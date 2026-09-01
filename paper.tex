@@ -208,10 +208,10 @@ threshold is the model's own no-bet median. Equation~\eqref{eq:s} measures the
 departure from that half. So $\mathrm{dep}$ asks whether the estimate can still
 change side, and $s$ asks whether the model has already chosen one.
 
-One conversion matters, because the two scales differ by a factor of two.
-Equation~\eqref{eq:bias} adds the departures of both conditions, while $s$ is a
-single condition's departure from a half. When the two conditions lean by
-similar amounts, the quantity comparable to $b$ is $2s$.
+$s$ and $b$ are not on the same scale. Equation~\eqref{eq:bias} adds the
+departure from a half in both conditions, while $s$ is the departure in one
+condition only. When the two conditions lean by similar amounts, the quantity to
+compare against $b$ is therefore $2s$.
 
 \section{Experimental setup}
 
