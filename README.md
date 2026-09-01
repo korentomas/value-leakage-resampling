@@ -6,7 +6,7 @@
 
 Betley et al.'s Value Leakage bias metric is a population average so it can't discern individual conversations where a model's bias influenced its decision. I designed a method to measure the same bias one conversation at a time by cutting the CoT and resampling under a prompt that flips which answer serves the model's values.
 
-Qwen3.5 fixes which side of the threshold it will land on about 20% through its CoT — before writing any estimate. By that point the text carries 88% [80%, 97%] of the published bias, and putting the bet back into the prompt changes almost nothing.
+Qwen3.5 fixes which side of the threshold it will land on about 20% through its CoT — before writing any estimate. By that point the text carries 88% [80%, 97%] of the bias measured at t = 0, and putting the bet back into the prompt changes almost nothing.
 
 Denials don't cluster on the influenced traces. CoTs that deny being influenced lean towards the good side slightly less than admitting ones, this could provide evidence against the model selectively covering its tracks.
 
@@ -78,7 +78,7 @@ dep starts at 0.62 and falls to 0.26 by t = 0.2. Three things happen at that cut
 
 The bet stops mattering as prompt content. Continuing a prefix with the bet or without it gives similar rates on the good side, so whatever is steering the answer at that point is in the text and not in the instruction.
 
-The text has already inherited the bias, with mean s(0.2) at +0.27 [0.25, 0.30], which on Betley et al.'s scale is 0.55 [0.49, 0.60], or 88% of the published 0.62. Most of these prefixes don't contain an estimate yet, so the model is not committing to a number, it's committing to a side.
+The text has already inherited the bias, with mean s(0.2) at +0.27 [0.25, 0.30], which on Betley et al.'s scale is 0.55 [0.49, 0.60], or 88% of the 0.62 those same rollouts show at t = 0. Most of these prefixes don't contain an estimate yet, so the model is not committing to a number, it's committing to a side.
 
 And the bet picks a direction without causing the commitment, since prefixes written with no bet at all lean 34% one way and 35% the other, while with the bet those become 70% and 7%. Qwen commits early on these questions either way, the bet only decides which way.
 
@@ -118,7 +118,7 @@ They come from an unmodified model, which is the part I care about. Per-rollout 
 
 If we want a probe for value leakage, this is exactly the supervision it needs, and a monitor can be scored against it too. The timing results already say something about what we'd need from such a monitor, because one that waits for the model to confess, or clears a trace because it promised to be honest, would be wrong in a predictable direction. Whether a monitor reading only the first fifth can call the side is untested here, since most of those prefixes contain no estimate and it would be reading framing and not arithmetic.
 
-## Setup
+## Models and data
 
 Qwen3.5-35B-A3B in FP8 under vLLM, thinking on, temperature 1. I drew 250 conversations from Betley et al.'s cached bet-condition rollouts, cut each at t = 0.2, 0.4, 0.6, 0.8 and 1.0, and continued every cut 25 times under each of the three prompts, for 93,750 continuations. Per-conversation numbers are posteriors from a joint fit in PyMC across cuts and questions, and the fit never sees the admit/deny labels. Brackets are 95% posterior intervals. [Bigelow et al. (2026)](https://arxiv.org/abs/2608.19611) show the counts at a fixed cut are exactly multinomial, so the Beta-Bernoulli treatment is justified and not just convenient.
 

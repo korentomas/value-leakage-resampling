@@ -37,7 +37,7 @@ written so far has already picked a side. On the Donation Bet task of Betley
 et al., Qwen3.5-35B settles which side of the threshold it will land on about
 a fifth of the way through its chain of thought, before it writes any
 estimate. By that point the retained text carries 88\% [80\%, 97\%] of the
-published population bias, and putting the bet back into the prompt changes
+bias those same rollouts show at $t = 0$, and putting the bet back into the prompt changes
 almost nothing. Chains of thought that deny being influenced lean to the favoured side slightly
 less than ones that admit it. Selective concealment predicts the opposite. Where a trace states an intention to land
 on a particular side, that statement comes after the answer is settled in 81\%
@@ -260,7 +260,7 @@ By that cut the bet has stopped mattering as prompt content. Continuing a prefix
 with the bet or without it gives similar rates on the favoured side
 (Fig.~\ref{fig:threearm}), so whatever steers the answer is in the text and not in the instruction. The text has inherited the bias: mean $s(0.2)$
 is $+0.27$ [0.25, 0.30], which on the paper's scale is 0.55 [0.49, 0.60], or
-88\% [80\%, 97\%] of the published 0.62. Most prefixes this early contain no estimate at all. What the bet does is choose
+88\% [80\%, 97\%] of the 0.62 those same rollouts show at $t=0$. Most prefixes this early contain no estimate at all. What the bet does is choose
 a direction, without causing the commitment in the first place.
 Prefixes written with no bet lean 34\% to one side and 35\% to the other at
 $t = 0.2$, while with the bet those become 70\% and 7\%. Qwen commits early on these questions either way, and the bet decides only which
