@@ -133,7 +133,7 @@ Of the 250 conversations, 147 state at some point which side the model means to 
 
 *Figure 6. (a) Where the answer locks and where the first stated intent appears, as fractions of the CoT on the same scale as the cuts. (b) The two subtracted within each conversation, which the overlapping distributions in (a) can't show. A positive difference means the intent came after the answer was already settled, which is the case for 81% of the 147.*
 
-Honesty claims like "I must be accurate" arrive around the lock itself, and the traces that make them still lean to the good side (mean s +0.23, against 0.00 for prefixes written with no bet). So the model isn't lying about intending to be accurate, it's stating an intention about something already decided.
+Honesty claims are a different thing, and they behave differently. These are sentences like "I must be accurate", which I could locate in 77 of the denying conversations. Their median position is 0.23 against a median lock of 0.26, and only 45% come after the lock, so they arrive with the decision rather than following it. The traces that make them still lean to the good side, mean s +0.23 against 0.00 for prefixes written with no bet, so saying it doesn't make the answer any less biased.
 
 ## Qwen3.6 shows the same shape
 
