@@ -68,7 +68,7 @@ s and Betley et al.'s bias are not on the same scale. Theirs adds the lean from 
 
 I got the idea from [Thought Branches](https://arxiv.org/abs/2510.27484), which cuts a CoT at a sentence and resamples the rest to see which sentences actually matter for the answer. It builds on [Forking Paths Analysis](https://arxiv.org/abs/2412.07961) (Bigelow et al.), who resample at every token position instead and track how the distribution over final answers moves along the CoT. Both of them vary the CoT and hold the prompt fixed, while I do the opposite. The prefix stays identical and only the prompt changes, so instead of asking which sentence moved the answer, I'm asking whether the answer still depends on the bet at all.
 
-## The model picks its side early
+## The model fixes which side it will land on early in the CoT
 
 dep starts at 0.62 and falls to 0.26 by t = 0.2. Three things happen at that cut, and none of them are what I expected before running it.
 
@@ -102,7 +102,7 @@ If the model were hiding its bias selectively, denials would concentrate on the 
 
 The gap only appears among traces their eval-awareness judge flagged as saying they are being tested (137 of 236), and in the rest it is -0.03 [-0.07, +0.01]. I don't know what to make of that split. Asked afterwards whether the bet influenced its estimate, Qwen says yes in 8% of samples, and in 0 of 425 for traces that denied, so the self-report follows what the CoT said and not how the model behaved.
 
-## Intent statements come after the lock
+## Intent statements are done in retrospective
 
 ![timing of intent statements](figures/out/paper/F6_timing.png)
 
