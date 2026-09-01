@@ -260,9 +260,10 @@ rows are the per-conversation labels a population average cannot give.
 
 By that cut the bet has stopped mattering as prompt content. Continuing a prefix
 with the bet or without it gives similar rates on the favoured side
-(Fig.~\ref{fig:threearm}). The text has inherited the bias: mean $s(0.2)$
-is $+0.27$ [0.25, 0.30], which on the paper's scale is 0.55 [0.49, 0.60], or
-88\% [80\%, 97\%] of the 0.62 those same rollouts show at $t=0$. Most prefixes this early contain no estimate at all. The bet determines the
+(Fig.~\ref{fig:threearm}). The text has inherited the bias. Mean $s(0.2)$ is $+0.27$ [0.25, 0.30], which
+doubled onto the paper's scale is 0.55 [0.49, 0.60], against the 0.62 those same
+rollouts show at $t=0$, so 88\% [80\%, 97\%] of the bias is already in the
+text. Most prefixes this early contain no estimate at all. The bet determines the
 direction of early commitment. Without it 34\% of prefixes lean more than 0.2
 toward the bet's side and 35\% lean that far the other way, while with the bet
 those become 70\% and 7\%, so nearly as many commit early either way but the
@@ -422,9 +423,9 @@ same design on it: 100 conversations, cut at $t = 0.2$ and $1.0$ only, for
 published figure.
 
 $\mathrm{dep}$ falls from 0.27 to 0.10 by $t = 0.2$ and reaches 0 by the end,
-so the answer settles early here too. Mean $s(0.2)$ is $+0.10$ [$+0.04$,
-$+0.16$], which doubles to 0.20, or 74\% of the published 0.27 already in the
-text at that cut, against 88\% for Qwen3.5. Denying traces lean less than
+so the answer settles early here too. Mean $s(0.2)$ is $+0.10$ [$+0.04$, $+0.16$]. Doubled onto the paper's scale
+that is 0.20, and their published bias for this model is 0.27, so 74\% of it is
+already in the text at that cut, against 88\% for Qwen3.5. Denying traces lean less than
 admitting ones again, $+0.03$ against $+0.16$, a difference of $-0.13$
 [$-0.26$, $+0.02$]. That is the same sign as Qwen3.5's $-0.06$, but with only 20
 admitters the interval covers zero.

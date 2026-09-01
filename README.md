@@ -90,7 +90,7 @@ At t = 0.2,
 
   *Figure 4. Once a prefix exists the original and no-bet conditions sit on top of each other, so the prefix carries the bias and the prompt doesn't.*
 
-* The text has already inherited the bias, with mean s(0.2) at +0.27 [0.25, 0.30] (brackets are 95% posterior intervals throughout), which on Betley et al.'s scale means 0.55 [0.49, 0.60], or 88% of the 0.62 the rollouts show at t = 0. Most of these prefixes don't contain an estimate yet.
+* The text has already inherited the bias. Mean s(0.2) is +0.27 [0.25, 0.30], and brackets are 95% posterior intervals throughout. Doubled onto Betley et al.'s scale that is 0.55 [0.49, 0.60], against the 0.62 those same rollouts show at t = 0, so 88% of the bias is already in the text. Most of these prefixes don't contain an estimate yet.
 
 * The bet determines the direction of early commitment. Without it 34% of prefixes lean more than 0.2 toward the bet's side and 35% lean that far the other way, while with the bet those become 70% and 7%.
 
@@ -148,7 +148,7 @@ The traces that make those claims still lean to the good side, mean s +0.23 agai
 I ran a smaller version of all this on Qwen3.6-35B, which scores 0.27 in the paper. 100 conversations, cut at t = 0.2 and t = 1.0 only, for 12,500 continuations. dep(0) comes out at 0.27, matching their published number.
 
 * dep falls from 0.27 to 0.10 by t = 0.2 and reaches 0 by the end, so the answer settles early here too.
-* Mean s(0.2) is +0.10 [+0.04, +0.16], which doubles to 0.20, or 74% of the published 0.27 sitting in the text at that cut. For Qwen3.5 it was 88%.
+* Mean s(0.2) is +0.10 [+0.04, +0.16]. Doubled onto Betley et al.'s scale that is 0.20, and their published bias for this model is 0.27, so 74% of it is already in the text at that cut. For Qwen3.5 the same calculation gave 88%.
 * Denying traces lean less than admitting ones again, +0.03 against +0.16, a difference of -0.13 [-0.26, +0.02]. Same sign as Qwen3.5's -0.06, but with only 20 admitters the interval includes zero.
 
 One thing does differ. Qwen3.6's bias is almost entirely a below-good effect: at t = 0.2, s is +0.01 in the above-good version of the question and +0.20 in below-good, where Qwen3.5 leans in both. That matches the trajectories in Betley et al.'s Figure 35.
