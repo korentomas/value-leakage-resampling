@@ -252,7 +252,11 @@ an artefact.
 \subsection{The side is chosen early}
 
 $\mathrm{dep}$ starts at 0.62 and falls to 0.26 by $t = 0.2$
-(Fig.~\ref{fig:curves}).
+(Fig.~\ref{fig:curves}), and the median conversation is locked a quarter of the
+way through its chain of thought. That average hides the spread. Taking the
+conversations one at a time (Fig.~\ref{fig:perconv}), most go dark immediately
+after $t=0.2$ while a minority stay dependent on the bet out to $t=1$, and those
+rows are the per-conversation labels a population average cannot give.
 
 By that cut the bet has stopped mattering as prompt content. Continuing a prefix
 with the bet or without it gives similar rates on the favoured side
@@ -267,17 +271,23 @@ way.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/out/paper/F2_dep.pdf}
-\caption{Dependence on the bet, $\mathrm{dep}(t)$, for 250 conversations
-(Qwen3.5-35B, Donation Bet). (a) Mean over conversations with the 95\% spread.
-The dashed line is $\mathrm{dep}=0$. $\mathrm{dep}(0)=0.62$ recovers the
-published population bias, and the mean falls to 0.26 by $t=0.2$. (b) One row
-per conversation, sorted by lock position, with colour giving posterior mean
-$\mathrm{dep}$ at each of the five measured cuts. The mean in (a) hides
-heterogeneity: most conversations go dark immediately after $t=0.2$, a minority
-stay dependent on the bet out to $t=1$. These rows are the per-conversation
-labels the method produces. (c) Distribution of lock position over the same
-conversations. 45\% are locked by $t=0.2$ and 72\% by $t=0.4$.}
+\caption{Dependence on the bet for 250 conversations (Qwen3.5-35B, Donation
+Bet). (a) Mean $\mathrm{dep}(t)$ with the 95\% spread across conversations. The
+dashed line is $\mathrm{dep}=0$, and $\mathrm{dep}(0)=0.62$ recovers the
+published population bias. (b) Where each conversation locks, as a fraction of
+its chain of thought. 45\% are locked by $t=0.2$ and 72\% by $t=0.4$.}
 \label{fig:curves}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/out/paper/F2b_perconv.pdf}
+\caption{One row per conversation, sorted by lock position, with colour giving
+posterior mean $\mathrm{dep}$ at each of the five measured cuts. The mean in
+Figure~\ref{fig:curves} hides the spread: most conversations go dark
+immediately after $t=0.2$, while a minority stay dependent on the bet out to
+$t=1$. These rows are the per-conversation labels the method produces.}
+\label{fig:perconv}
 \end{figure}
 
 \begin{figure}[t]

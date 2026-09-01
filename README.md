@@ -70,21 +70,27 @@ I got the idea from [Thought Branches](https://arxiv.org/abs/2510.27484), which 
 
 ## The model decides which side it will land on early in the CoT
 
-dep starts at 0.62 and falls to 0.26 by t = 0.2. Three things happen at that cut, and none of them are what I expected before running it.
+dep starts at 0.62, which is Betley et al.'s bias, and falls to 0.26 by t = 0.2. The median conversation is locked a quarter of the way through its CoT.
 
-![dep(t) for 250 conversations](figures/out/paper/F2_dep.png)
+![dep(t) and lock positions](figures/out/paper/F2_dep.png)
 
-*Figure 2. Panel (b) is the one I care about: each row is a conversation, sorted by where it locks, and colour is how much the bet still moves it at each cut. Most go dark right after t = 0.2. A minority stay dependent to the end, and the population mean in (a) hides them.*
+*Figure 2. (a) Mean dep(t) over the 250 conversations with the 95% spread across them. (b) Where each conversation locks, as a fraction of its CoT.*
 
-The bet stops mattering as prompt content. Continuing a prefix with the bet or without it gives similar rates on the good side, so whatever is steering the answer at that point is in the text and not in the instruction.
+That average hides a lot, so it's worth looking at the conversations one at a time. Sorting them by where they lock and drawing one row each, most go dark right after t = 0.2 while a minority stay dependent on the bet all the way to the end. Those rows are the per-conversation labels, and they're the thing a population average can't give you.
 
-The text has already inherited the bias, with mean s(0.2) at +0.27 [0.25, 0.30], which on Betley et al.'s scale is 0.55 [0.49, 0.60], or 88% of the 0.62 those same rollouts show at t = 0. Most of these prefixes don't contain an estimate yet, so the model is not committing to a number, it's committing to a side.
+![one row per conversation](figures/out/paper/F2b_perconv.png)
 
-And the bet picks a direction without causing the commitment, since prefixes written with no bet at all lean 34% one way and 35% the other, while with the bet those become 70% and 7%. Qwen commits early on these questions either way, the bet only decides which way.
+*Figure 3. One row per conversation, sorted by lock position, with colour showing how much the bet still moves that conversation at each of the five cuts.*
+
+Three things hold at t = 0.2. The first is that the bet stops mattering as prompt content: continuing a prefix with the bet or without it gives similar rates on the good side, so whatever is steering the answer at that point is in the text and not in the instruction.
 
 ![three prompt conditions](figures/out/paper/F3_arms.png)
 
-*Figure 3. Once a prefix exists the original and no-bet arms sit on top of each other, so the prefix carries the bias and the prompt doesn't.*
+*Figure 4. Once a prefix exists the original and no-bet arms sit on top of each other, so the prefix carries the bias and the prompt doesn't.*
+
+The second is that the text has already inherited the bias, with mean s(0.2) at +0.27 [0.25, 0.30], which on Betley et al.'s scale is 0.55 [0.49, 0.60], or 88% of the 0.62 those same rollouts show at t = 0. Most of these prefixes don't contain an estimate yet, so the model is not committing to a number, it's committing to a side.
+
+The third is that the bet picks a direction without causing the commitment. Prefixes written with no bet at all lean 34% one way and 35% the other, while with the bet those become 70% and 7%. Qwen commits early on these questions either way, the bet only decides which way.
 
 Here is a trace from the crochet subset, cut at t = 0.21, which ends mid-setup without an estimate:
 
@@ -98,7 +104,7 @@ If the model were hiding its bias selectively, denials would concentrate on the 
 
 ![bet-shaped share by covertness label](figures/out/paper/F4_denial.png)
 
-*Figure 4. Bet-shaped share by the label Betley et al.'s judge gave each CoT, with 95% intervals. Panel (b) is the Denies minus Admits contrast, which stays below zero.*
+*Figure 5. Bet-shaped share by the label Betley et al.'s judge gave each CoT, with 95% intervals. Panel (b) is the Denies minus Admits contrast, which stays below zero.*
 
 The gap only appears among traces their eval-awareness judge flagged as saying they are being tested (137 of 236), and in the rest it is -0.03 [-0.07, +0.01]. I don't know what to make of that split. Asked afterwards whether the bet influenced its estimate, Qwen says yes in 8% of samples, and in 0 of 425 for traces that denied, so the self-report follows what the CoT said and not how the model behaved.
 
@@ -106,7 +112,7 @@ The gap only appears among traces their eval-awareness judge flagged as saying t
 
 ![timing of intent statements](figures/out/paper/F6_timing.png)
 
-*Figure 5. Panel (b) is the paired comparison: mass to the right of zero is a conversation whose stated intent arrived after its answer was settled.*
+*Figure 6. Panel (b) is the paired comparison: mass to the right of zero is a conversation whose stated intent arrived after its answer was settled.*
 
 Honesty claims like "I must be accurate" arrive around the lock rather than before it, and the traces that make them still lean to the good side (mean s +0.23, against 0.00 for prefixes written with no bet). So the model isn't lying about intending to be accurate, it's stating an intention about something already decided. Qwen3.6-35B, which scores 0.27 in the paper, shows the same shape with about three-quarters of its bias in the text by t = 0.2.
 
