@@ -111,7 +111,10 @@ If the model were hiding its bias selectively, denials would concentrate on the 
 
 *Figure 5. Share of each group shaped by the bet, meaning the prefix already leans past 0.2 or the swapped prompt can still move it, by the label Betley et al.'s judge gave the CoT, with 95% intervals. The Denies minus Admits contrast is -0.12 [-0.16, -0.08], with the whole posterior below zero.*
 
-Betley et al. also score every CoT on whether the model seems to realise it's being evaluated, on a 1 to 7 rubric with 4 or above counting as aware. Splitting the traces that way doesn't explain the difference away. It's bigger among the 137 aware ones, -0.09 [-0.12, -0.06], and smaller among the other 99, -0.03 [-0.07, +0.01], which crosses zero but points the same way. Deniers and admitters aren't equally aware either, 53% against 61%, so the unsplit number partly reflects that. Taking the difference inside each group and averaging the two by group size gives -0.13 [-0.16, -0.09] on the second measure, against -0.12 [-0.16, -0.08] unsplit.
+Betley et al. also score every CoT on whether the model presents signs of eval-awareness, based on a UK AISI rubric that goes from 1 to 7, with 4 or above counting as aware.
+
+* Splitting the traces on that doesn't explain the difference away. Among the 137 aware ones it's -0.09 [-0.12, -0.06], and among the other 99 it's -0.03 [-0.07, +0.01], which includes zero but leans the same way.
+* Deniers and admitters aren't equally aware either, 53% against 61%, so I also took the difference inside each group and averaged the two by group size. That gives -0.13 [-0.16, -0.09], against -0.12 [-0.16, -0.08] without the split.
 
 Noticing the test suppresses the bias in both groups, but much more where the trace denies. Denying prefixes go from +0.30 to +0.17 when the model notices, admitting ones only from +0.33 to +0.26. So denying traces that notice the test are the ones where the model said it would resist the bet and then did. There's a catch. I didn't plan this split before running it, and my notes at the time said to treat awareness as a covariate rather than a finding, so I'd hold it loosely.
 
