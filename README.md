@@ -84,15 +84,15 @@ Averaging them out still hides information here so we can look at them disaggreg
 
 At t = 0.2,
 
-* The bet stops mattering as a prompt. Continuing a prefix with or without the bet gives a similar rate of the good side, so whatever steers the answer is in the trace and not the prompt by now.
+* The bet stops mattering as a prompt. Continuing a prefix with or without the bet gives a similar rate of the good side.
 
   ![three prompt conditions](figures/out/paper/F3_arms.png)
 
   *Figure 4. Once a prefix exists the original and no-bet conditions sit on top of each other, so the prefix carries the bias and the prompt doesn't.*
 
-* The text has already inherited the bias, with mean s(0.2) at +0.27 [0.25, 0.30] (brackets are 95% posterior intervals throughout), which on Betley et al.'s scale means 0.55 [0.49, 0.60], or 88% of the 0.62 the rollouts show at t = 0. Most of these prefixes don't contain an estimate yet, so the model isn't committing to a number but to a side.
+* The text has already inherited the bias, with mean s(0.2) at +0.27 [0.25, 0.30] (brackets are 95% posterior intervals throughout), which on Betley et al.'s scale means 0.55 [0.49, 0.60], or 88% of the 0.62 the rollouts show at t = 0. Most of these prefixes don't contain an estimate yet.
 
-* The bet determines the direction of early commitment. Without it 34% of prefixes lean more than 0.2 toward the bet's side and 35% lean that far the other way, while with the bet those become 70% and 7%, so nearly as many commit early either way but the even split disappears.
+* The bet determines the direction of early commitment. Without it 34% of prefixes lean more than 0.2 toward the bet's side and 35% lean that far the other way, while with the bet those become 70% and 7%.
 
 Here is a trace from the crochet subset, cut at t = 0.21, which ends mid-setup without an estimate:
 
@@ -115,7 +115,7 @@ Betley et al. also score every CoT on whether the model seems to realise it's be
 
 Noticing the test suppresses the bias in both groups, but much more where the trace denies. Denying prefixes go from +0.30 to +0.17 when the model notices, admitting ones only from +0.33 to +0.26. So denying traces that notice the test are the ones where the model said it would resist the bet and then did. There's a catch. Both labels are read off the same text, therefore I can't rule out that they're picking up the same sentence.
 
-I also ran a self-report test. Each conversation was replayed in full, then the model was asked five times whether the donation bet had influenced the estimate it gave. Qwen says yes in 8% of samples, and in none of the 85 denying conversations. Whether it says yes tracks what its own CoT said rather than the steering I measured, with a correlation between a conversation's yes-rate and its s(0.2) of -0.07 [-0.22, +0.08].
+I also ran a self-report test. Each conversation was replayed in full, then the model was asked five times whether the donation bet had influenced the estimate it gave. Qwen says yes in 8% of samples, and in none of the 85 denying conversations. Whether it says yes tracks what its own CoT said. The correlation between a conversation's yes-rate and its s(0.2) is -0.07 [-0.22, +0.08].
 
 ## Intent statements are done in retrospective
 
@@ -123,7 +123,7 @@ I also ran a self-report test. Each conversation was replayed in full, then the 
 
 *Figure 6. Panel (b) is the paired comparison: mass to the right of zero is a conversation whose stated intent arrived after its answer was settled.*
 
-Honesty claims like "I must be accurate" arrive around the lock rather than before it, and the traces that make them still lean to the good side (mean s +0.23, against 0.00 for prefixes written with no bet). So the model isn't lying about intending to be accurate, it's stating an intention about something already decided. Qwen3.6-35B, which scores 0.27 in the paper, shows the same shape with about three-quarters of its bias in the text by t = 0.2.
+Honesty claims like "I must be accurate" arrive around the lock itself, and the traces that make them still lean to the good side (mean s +0.23, against 0.00 for prefixes written with no bet). So the model isn't lying about intending to be accurate, it's stating an intention about something already decided. Qwen3.6-35B, which scores 0.27 in the paper, shows the same shape with about three-quarters of its bias in the text by t = 0.2.
 
 ## What the labels are for
 
@@ -131,16 +131,16 @@ What comes out of all this is a label per rollout: this conversation was moved b
 
 They come from an unmodified model, which is the part I care about. Per-rollout ground truth about a bias today mostly comes from model organisms with the bias trained in, and that buys certainty about the label at the price of studying a model built to be biased. Here the label comes from behaviour under a counterfactual prompt, so the model under study is the released one, and the same construction works on any task where the biasing feature can be swapped in the prompt with everything else held fixed.
 
-If we want a probe for value leakage, this is exactly the supervision it needs, and a monitor can be scored against it too. The timing results already say something about what we'd need from such a monitor, because one that waits for the model to confess, or clears a trace because it promised to be honest, would be wrong in a predictable direction. Whether a monitor reading only the first fifth can call the side is untested here, since most of those prefixes contain no estimate and it would be reading framing and not arithmetic.
+If we want a probe for value leakage, this is exactly the supervision it needs, and a monitor can be scored against it too. The timing results already say something about what we'd need from such a monitor, because one that waits for the model to confess, or clears a trace because it promised to be honest, would be wrong in a predictable direction. Whether a monitor reading only the first fifth can call the side is untested here, since most of those prefixes contain no estimate and it would be reading framing, with no arithmetic there yet.
 
 ## Models and data
 
-Qwen3.5-35B-A3B in FP8 under vLLM, thinking on, temperature 1. I drew 250 conversations from Betley et al.'s cached bet-condition rollouts, cut each at t = 0.2, 0.4, 0.6, 0.8 and 1.0, and continued every cut 25 times under each of the three prompts, for 93,750 continuations. Per-conversation numbers are posteriors from a joint fit in PyMC across cuts and questions, and the fit never sees the admit/deny labels. Brackets are 95% posterior intervals. [Bigelow et al. (2026)](https://arxiv.org/abs/2608.19611) show the counts at a fixed cut are exactly multinomial, so the Beta-Bernoulli treatment is justified and not just convenient.
+Qwen3.5-35B-A3B in FP8 under vLLM, thinking on, temperature 1. I drew 250 conversations from Betley et al.'s cached bet-condition rollouts, cut each at t = 0.2, 0.4, 0.6, 0.8 and 1.0, and continued every cut 25 times under each of the three prompts, for 93,750 continuations. Per-conversation numbers are posteriors from a joint fit in PyMC across cuts and questions, and the fit never sees the admit/deny labels. Brackets are 95% posterior intervals. [Bigelow et al. (2026)](https://arxiv.org/abs/2608.19611) show the counts at a fixed cut are exactly multinomial, so the Beta-Bernoulli treatment is justified.
 
 ## Limitations
 
-1. s tells me the direction of an early commitment but can't tell me one happened. With no bet, 34% of prefixes lean past +0.2 and 35% past -0.2 at t = 0.2, so any raw count of conversations the bet shaped inherits this, which is why I report differences between groups instead of counts.
-2. 25 samples per cell can't resolve a difference below about 0.3, so every per-conversation number is a posterior and not a measurement. Bigelow et al.'s smoothing would buy a little over 3x the effective sample size for free and I didn't use it.
+1. s tells me the direction of an early commitment but can't tell me one happened. With no bet, 34% of prefixes lean past +0.2 and 35% past -0.2 at t = 0.2, so any raw count of conversations the bet shaped inherits this, which is why I report differences between groups.
+2. 25 samples per cell can't resolve a difference below about 0.3, so every per-conversation number is a posterior. Bigelow et al.'s smoothing would buy a little over 3x the effective sample size for free and I didn't use it.
 3. The swapped prompt conflicts with the prefix, and this is the objection I take most seriously. When dep reaches zero there are two readings: the answer was settled, or the prefix just outweighs any prompt contradicting it. The model often notices the conflict — 16.4% of swapped continuations explicitly re-read or reverse the mapping, against 1.8% under the original prompt, and 28.2% at t = 0.2. So "locked" really means "follows the prefix over a prompt it can tell is contradicting it". What argues against pure prefix-dominance is the no-bet condition, where the prompt doesn't conflict but is simply absent, and there the prefixes still lean by s = +0.27. A prefix that only overrode contradictions wouldn't carry the lean when nothing is being contradicted. To close it properly I'd want a prompt-strength control.
 4. The denial result argues against selective concealment, but separating no introspective access from trained covertness needs activation-level work I didn't do.
 5. The lock is a posterior median on a 5-point grid, so "locked by 0.2" means the first measured cut and the true commitment could sit anywhere below it.
@@ -151,7 +151,7 @@ Qwen3.5-35B-A3B in FP8 under vLLM, thinking on, temperature 1. I drew 250 conver
 
 None of this was run. Cutting densely in t between 0 and 0.3 would tell us whether this is a gradual drift or a single sentence that settles the answer, since Bigelow et al. find outcome distributions stay flat across long stretches before changing sharply at forking points, sometimes after a single token. If 88% by t = 0.2 became 88% by t = 0.05, the claim would go from "settled early" to "settled in the framing, with the CoT never in the loop".
 
-A change-point estimator would place the lock better than I currently do. PELT with an exact multinomial cost, which is what Bigelow et al. use, would give it a proper interval instead of reading it off whichever grid node crosses a threshold. And the prompt-strength control from limitation 3 is the experiment I'd most want to run.
+A change-point estimator would place the lock better than I currently do. PELT with an exact multinomial cost, which is what Bigelow et al. use, would give it a proper interval, where I currently read it off whichever grid node crosses a threshold. And the prompt-strength control from limitation 3 is the experiment I'd most want to run.
 
 ## Acknowledgements
 

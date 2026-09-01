@@ -260,7 +260,7 @@ rows are the per-conversation labels a population average cannot give.
 
 By that cut the bet has stopped mattering as prompt content. Continuing a prefix
 with the bet or without it gives similar rates on the favoured side
-(Fig.~\ref{fig:threearm}), so whatever steers the answer is in the text and not in the instruction. The text has inherited the bias: mean $s(0.2)$
+(Fig.~\ref{fig:threearm}). The text has inherited the bias: mean $s(0.2)$
 is $+0.27$ [0.25, 0.30], which on the paper's scale is 0.55 [0.49, 0.60], or
 88\% [80\%, 97\%] of the 0.62 those same rollouts show at $t=0$. Most prefixes this early contain no estimate at all. The bet determines the
 direction of early commitment. Without it 34\% of prefixes lean more than 0.2
@@ -350,9 +350,7 @@ therefore this cannot rule out that they are picking up the same sentence.
 
 I also ran a self-report test. Each conversation was replayed in full and then asked whether the
 donation bet had influenced the estimate it gave, five times over. Qwen says yes
-in 8\% of samples and in none of the 85 denying conversations. Whether it says
-yes tracks what its own chain of thought said rather than the steering measured
-here: the correlation between a conversation's yes-rate and its $s(0.2)$ is
+in 8\% of samples and in none of the 85 denying conversations. Whether it says yes tracks what its own chain of thought said. The correlation between a conversation's yes-rate and its $s(0.2)$ is
 $-0.07$ [$-0.22$, $+0.08$].
 
 \begin{figure}[t]
@@ -374,8 +372,7 @@ chance, which inflates every group equally and cancels in the contrast.}
 
 Where a trace states which side it means to land on, it does so after the side
 is settled in 4 cases out of 5 (Fig.~\ref{fig:timing}). Honesty claims such as
-``I must be accurate'' arrive around the lock rather than before it, and the
-traces that make them still lean toward the favoured side, with mean $s$ of
+``I must be accurate'' arrive around the lock itself, and the traces that make them still lean toward the favoured side, with mean $s$ of
 $+0.23$ against $0.00$ for prefixes written with no bet.
 
 \begin{figure}[t]
@@ -418,7 +415,7 @@ monitor can be scored against it: the timing results say that a monitor waiting
 for the model to confess, or clearing a trace because it promised to be honest,
 would be wrong in a predictable direction. Whether a monitor reading only the
 first fifth of the chain of thought can call the side is untested here, since
-most such prefixes contain no estimate and the monitor would be reading framing and not arithmetic. These labels are the ground truth such an experiment would be scored against.
+most such prefixes contain no estimate and the monitor would be reading framing, with no arithmetic there yet. These labels are the ground truth such an experiment would be scored against.
 
 \section{Limitations}
 
@@ -426,12 +423,11 @@ most such prefixes contain no estimate and the monitor would be reading framing 
 
 With no bet in the prompt, 34\% of prefixes lean past $+0.2$ and 35\% past
 $-0.2$ at $t = 0.2$. The bet picks the side without making Qwen commit early in the first place.
-Any raw count of conversations the bet shaped inherits this, so I report
-differences between groups instead of counts.
+Any raw count of conversations the bet shaped inherits this, so I report differences between groups.
 
 \subsection{Sample size per cell}
 
-Twenty-five samples per cell cannot resolve a difference below about 0.3, so every per-conversation number is a posterior and not a measurement.
+Twenty-five samples per cell cannot resolve a difference below about 0.3, so every per-conversation number is a posterior.
 This is the binding constraint on the design, and there is a known remedy I did
 not use. \citet{bigelow2026} smooth low-sample resampling data
 with a change-point and kernel-pooling model that multiplies the effective
