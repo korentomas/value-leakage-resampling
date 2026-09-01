@@ -127,6 +127,8 @@ After seeing this, I ran a self-report test, replaying the conversations and ask
 
 ## Intent statements are done in retrospective
 
+Of the 250 conversations, 147 state at some point which side the model means to land on. In those, the statement comes after the answer is already locked 81% of the time.
+
 ![timing of intent statements](figures/out/paper/F6_timing.png)
 
 *Figure 6. (a) Where the answer locks and where the first stated intent appears, as fractions of the CoT on the same scale as the cuts. (b) The two subtracted within each conversation, which the overlapping distributions in (a) can't show. A positive difference means the intent came after the answer was already settled, which is the case for 81% of the 147.*
