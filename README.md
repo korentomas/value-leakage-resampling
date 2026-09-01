@@ -141,19 +141,19 @@ Honesty claims are a different thing, and they behave differently. These are sen
 
 *Figure 7. (a) Where the answer locks and where the first honesty claim appears, for the 77 denying conversations in which a claim could be located, as fractions of the CoT. The lock has median 0.26 and the first claim 0.23. (b) The two subtracted within each conversation. A positive difference means the claim came after the answer was already settled, which is the case for 45% of them.*
 
-The traces that make those claims still lean to the good side, mean s +0.23 against 0.00 for prefixes written with no bet, so saying it doesn't make the answer any less biased.
+The traces that make honesty claims are still influenced towards the good side, with a mean s of +0.23 against 0.00 for prefixes written without a bet, so saying they're trying to be honest doesn't make their answers any less biased.
 
-## Qwen3.6 shows the same shape
+## Replicated on Qwen3.6
 
-I ran a smaller version of all this on Qwen3.6-35B, which scores 0.27 in the paper. 100 conversations, cut at t = 0.2 and t = 1.0 only, for 12,500 continuations. dep(0) comes out at 0.27, matching their published number.
+I ran a smaller version of these experiments on Qwen3.6-35B, which scored 0.27 in the original paper against Qwen3.5's 0.62. Only 100 conversations, cut at t = 0.2 and t = 1.0, for 12,500 continuations. Its dep(0) comes out at 0.27, matching their published number.
 
-* dep falls from 0.27 to 0.10 by t = 0.2 and reaches 0 by the end, so the answer settles early here too.
-* Mean s(0.2) is +0.10 [+0.04, +0.16]. Doubled onto Betley et al.'s scale that is 0.20, and their published bias for this model is 0.27, so 74% of it is already in the text at that cut. For Qwen3.5 the same calculation gave 88%.
-* Denying traces lean less than admitting ones again, +0.03 against +0.16, a difference of -0.13 [-0.26, +0.02]. Same sign as Qwen3.5's -0.06, but with only 20 admitters the interval includes zero.
+* dep goes down from 0.27 at t = 0 to 0.10 by t = 0.2 and reaches 0 by the end, so the side is locked early here too.
+* Mean s(0.2) is +0.10 [+0.04, +0.16]. Doubled onto Betley et al.'s scale it becomes 0.20, and their published bias for this model is 0.27, so 74% of it is already in the text at that cut (which in Qwen3.5 was 88%).
+* Denying traces are influenced less than admitting ones again, +0.03 against +0.16, a difference of -0.13 [-0.26, +0.02]. Same sign as Qwen3.5's -0.06, but with only 20 admitters the interval here includes zero.
 
-One thing does differ. Qwen3.6's bias is almost entirely a below-good effect: at t = 0.2, s is +0.01 in the above-good version of the question and +0.20 in below-good, where Qwen3.5 leans in both. That matches the trajectories in Betley et al.'s Figure 35.
+There is one difference between the two models. Qwen3.6's bias is almost entirely a below-good effect: at t = 0.2, s is +0.01 in the above-good version of the question and +0.20 in below-good, where Qwen3.5 is influenced in both. This matches what Betley et al. show in their Figure 35.
 
-I didn't run the no-bet baseline or the self-report for this model.
+I haven't run the no-bet baseline or the self-report for this model.
 
 ## What the labels are for
 
