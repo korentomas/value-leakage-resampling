@@ -111,7 +111,9 @@ If the model were hiding its bias selectively, denials would concentrate on the 
 
 *Figure 5. Share of each group whose prefix already leans past 0.2 or can still be moved by the swapped prompt, by the label Betley et al.'s judge gave the CoT, with 95% intervals. The Denies minus Admits contrast is -0.12 [-0.16, -0.08], with the whole posterior below zero.*
 
-The gap only appears among the traces their eval-awareness judge flagged as saying they're being tested (137 of 236), and in the rest it's -0.03 [-0.07, +0.01]. I don't know what to make of that split.
+The gap is bigger among the traces their eval-awareness judge flagged as saying they're being tested. In those 137 it's -0.09 [-0.12, -0.06], and in the other 99 it's -0.03 [-0.07, +0.01], which crosses zero but points the same way. Weighting the two groups back together, the bet-shaped contrast is -0.13 [-0.16, -0.09] against -0.12 [-0.16, -0.08] unadjusted, so the result isn't an artifact of the split.
+
+What awareness seems to do is suppress the bias, and more where the trace denies. Denying prefixes lean 0.30 when the model doesn't notice the test and 0.17 when it does, while admitting ones only go from 0.33 to 0.26. So denial and awareness together mark the traces where the model said it would resist the bet and then did. I can't separate that from both labels being read off the same text, though.
 
 I also asked the model directly. Each conversation was replayed in full and then asked whether the donation bet had influenced the estimate it gave, five times over. Qwen says yes in 8% of samples, and in none of the 85 denying conversations. Whether it says yes tracks what its own CoT said rather than the steering I measured: the correlation between a conversation's yes-rate and its s(0.2) is -0.07 [-0.22, +0.08].
 
