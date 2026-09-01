@@ -111,14 +111,19 @@ If the model were hiding its bias selectively, denials would concentrate on the 
 
 *Figure 5. Share of each group shaped by the bet, meaning the prefix already leans past 0.2 or the swapped prompt can still move it, by the label Betley et al.'s judge gave the CoT, with 95% intervals. The Denies minus Admits contrast is -0.12 [-0.16, -0.08], with the whole posterior below zero.*
 
-Betley et al. also score every CoT on whether the model presents signs of eval-awareness, based on a UK AISI rubric that goes from 1 to 7, with 4 or above counting as aware.
+Betley et al. also judge CoTs on whether the model presents signs of eval-awareness, based on a UK AISI rubric that goes from 1 to 7, with 4 or above counting as aware.
 
-* Splitting the traces on that doesn't explain the difference away. Among the 137 aware ones it's -0.09 [-0.12, -0.06], and among the other 99 it's -0.03 [-0.07, +0.01], which includes zero but leans the same way.
-* Deniers and admitters aren't equally aware either, 53% against 61%, so I also took the difference inside each group and averaged the two by group size. That gives -0.13 [-0.16, -0.09], against -0.12 [-0.16, -0.08] without the split.
+* Splitting the traces on eval-awareness doesn't explain the difference away. For the 137 aware ones it's -0.09 [-0.12, -0.06], and for the other 99, -0.03 [-0.07, +0.01].
+* Averaging those two groups back together, weighted by size, we get -0.13 [-0.16, -0.09], against -0.12 [-0.16, -0.08] without the split.
 
-Noticing the test suppresses the bias in both groups, but much more where the trace denies. Denying prefixes go from +0.30 to +0.17 when the model notices, admitting ones only from +0.33 to +0.26. So denying traces that notice the test are the ones where the model said it would resist the bet and then did. There's a catch. I didn't plan this split before running it, and my notes at the time said to treat awareness as a covariate rather than a finding, so I'd hold it loosely.
+Looking closer at how eval-awareness affects behaviour, it comes with less bias in both groups, and the drop is bigger in the denying ones:
 
-I also ran a self-report test. Each conversation was replayed in full, then the model was asked five times whether the donation bet had influenced the estimate it gave. Qwen says yes in 8% of samples, and in none of the 85 denying conversations. Whether it says yes tracks what its own CoT said. The correlation between a conversation's yes-rate and its s(0.2) is -0.07 [-0.22, +0.08].
+* Denying traces go from +0.30 to +0.17 when the model presents eval-awareness.
+* Admitting ones from +0.33 to +0.26.
+
+So eval-aware denying traces are the clearest case of Qwen saying it will ignore the bet and then doing it. I didn't plan this split before running it though, and my notes at the time said to treat awareness as a covariate rather than a finding, so I'd hold it loosely.
+
+After seeing this, I ran a self-report test, replaying the conversations and asking the model whether the donation bet had influenced its estimate. It answers yes in 8% of samples and never in the denying conversations, so the self-report largely follows what it had said in its own CoT. The correlation between a conversation's yes-rate and its s(0.2) is -0.07 [-0.22, +0.08].
 
 ## Intent statements are done in retrospective
 
