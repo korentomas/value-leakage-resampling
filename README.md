@@ -88,7 +88,7 @@ At t = 0.2,
 
   ![three prompt conditions](figures/out/paper/F3_arms.png)
 
-  *Figure 4. Once a prefix exists the original and no-bet conditions sit on top of each other, so the prefix carries the bias and the prompt doesn't.*
+  *Figure 4. Share of continuations landing on the good side, by cut and prompt condition, one panel per direction. Error bars are Wilson 95% intervals on the pooled counts. From the first cut onward the original and no-bet lines run together, so once there is a prefix to continue from, having the bet in the prompt makes almost no difference to where the answer lands.*
 
 * The text has already inherited the bias. Mean s(0.2) is +0.27 [0.25, 0.30], and brackets are 95% posterior intervals throughout. Doubled onto Betley et al.'s scale that is 0.55 [0.49, 0.60], against the 0.62 those same rollouts show at t = 0, so 88% of the bias is already in the text. Most of these prefixes don't contain an estimate yet.
 
