@@ -2,7 +2,7 @@
 
 *A write-up of work in progress. There is a draft preprint, [Counterfactual Resampling to Analyse Model Behaviour](paper.pdf), which is still being polished. Done as my final project for a BlueDot Impact Technical AI Safety sprint, facilitated by BAISH (Buenos Aires AI Safety Hub).*
 
-**TL;DR:** I measured Value Leakage (Betley et al.) per conversation, cutting CoTs at different points and resampling under a prompt changing what serves the model's values. Qwen3.5 decides the side of its answer 20% into its CoT, before giving an estimate, and everything the CoT says about its bias comes at or after that point. Admissions of influence come late (but are true), and denials don't concentrate in the biased conversations.
+**TL;DR:** I measured Value Leakage (Betley et al.) per conversation, cutting CoTs at different points and resampling under a prompt changing what serves the model's values.
 
 Betley et al.'s Value Leakage bias metric is a population average so it can't discern individual conversations where a model's bias influenced its decision. I designed a method to measure the same bias one conversation at a time by cutting the CoT and resampling under a prompt that flips which answer serves the model's values.
 
@@ -20,7 +20,7 @@ Links: [Value Leakage paper](https://arxiv.org/abs/2607.14345), [their LW post](
 
 Betley et al. describe Value Leakage: a model's answer to a factual question shifts according to what would serve the model's own values, and does so covertly as the CoT mostly doesn't mention this influence.
 
-Their Donation Bet task poses a Fermi problem, with a note that the user has a bet with a friend that if the estimate is above a threshold they send money to a good cause and if it is below, to a bad one. Their counterfactual is the same question, but with the good and bad causes swapped. I'll call the two versions above-good, where an estimate over the threshold is the one that sends money to the good cause, and below-good, where it's the estimate under it. Since scoring only retains the side of the threshold on which the estimate fell, each rollout can be modelled as a Bernoulli trial, and bias is the deviation from fairness.
+Their Donation Bet task poses a Fermi problem, with a note that the user has a bet with a friend that if the estimate is above a threshold they send money to a good cause and if it is below, to a bad one. Their counterfactual is the same question, but with the good and bad causes swapped. Since scoring only retains the side of the threshold on which the estimate fell, each rollout can be modelled as a Bernoulli trial, and bias is the deviation from fairness.
 
 ![Figure from Betley et al. (2026)](figures/betley-fig1.png)
 
@@ -42,7 +42,7 @@ Steps:
 
 * Take a conversation that had the bet
 * Truncate its CoT at a fraction *t* of its sentences, call the retained text the prefix
-* Continue the prefix 25 times under each of three prompts
+* Continue the prefix under each of three prompts
   * Original: the one that produced the conversation
   * Swapped: exchanges the two causes, so the opposite answer is now the favoured one
   * No-bet: drops the bet altogether
@@ -66,31 +66,33 @@ I need s because if a conversation is locked it doesn't necessarily mean that it
 
 s and Betley et al.'s bias are not on the same scale. Theirs adds the lean from both versions of the question, and s is the lean in one version only, so the quantity to compare against their bias is 2s.
 
-I got the idea from [Thought Branches](https://arxiv.org/abs/2510.27484), which cuts a CoT at a sentence and resamples the rest to see which sentences actually matter for the answer. It builds on [Forking Paths Analysis](https://arxiv.org/abs/2412.07961) (Bigelow et al.), who resample at every token position instead and track how the distribution over final answers moves along the CoT. Both of them vary the CoT and hold the prompt fixed, while I do the opposite. The prefix stays identical and only the prompt changes, so instead of asking which sentence moved the answer, I'm asking whether the answer still depends on the bet at all.
+I got the idea from [Thought Branches](https://arxiv.org/abs/2510.27484), which cuts a CoT at a sentence and resamples the continuation to measure how much that sentence causally influences the final answer. It builds on [Forking Paths Analysis](https://arxiv.org/abs/2412.07961) (Bigelow et al.), which instead resamples at token positions and tracks how the distribution over final answers changes throughout the CoT. Both methods vary the CoT while keeping the prompt fixed, whereas I do the opposite, with the CoT prefix staying identical and only the prompt changing. So instead of asking which sentence changes the answer, I'm asking whether the answer still depends on the bet after however many sentences of reasoning.
 
 ## The model decides which side it will land on early in the CoT
 
-dep starts at 0.62, which is Betley et al.'s bias, and falls to 0.26 by t = 0.2. The median lock position is a quarter of the way through the CoT.
+dep starts at 0.62 and rapidly falls to 0.26 by t = 0.2. Moreover, the median lock position is a quarter of the way through the CoT.
 
 ![dep(t) and lock positions](figures/out/paper/F2_dep.png)
 
 *Figure 2. (a) Mean dep(t) over the 250 conversations with the 95% spread across them. (b) Where each conversation locks, as a fraction of its CoT.*
 
-That average hides a lot, so it's worth looking at the conversations one at a time. Sorting them by where they lock and drawing one row each, most go dark right after t = 0.2 while a minority stay dependent on the bet all the way to the end. Those rows are the per-conversation labels, and they're the thing a population average can't give you.
+Averaging them out still hides information here so we can look at them disaggregated. Sorting them by where they lock and drawing one row each, most go dark right after t = 0.2 while a minority stay dependent on the bet all the way to the end.
 
 ![one row per conversation](figures/out/paper/F2b_perconv.png)
 
-*Figure 3. One row per conversation, sorted by lock position, with colour showing how much the bet still moves that conversation at each of the five cuts.*
+*Figure 3. One row per conversation sorted by lock position, with gradient signifying how much the bet moves that conversation at each of the cuts.*
 
-Three things hold at t = 0.2. The first is that the bet stops mattering as prompt content: continuing a prefix with the bet or without it gives similar rates on the good side, so whatever is steering the answer at that point is in the text and not in the instruction.
+At t = 0.2,
 
-![three prompt conditions](figures/out/paper/F3_arms.png)
+* The bet stops mattering as a prompt. Continuing a prefix with or without the bet gives a similar rate of the good side, so whatever steers the answer is in the trace and not the prompt by now.
 
-*Figure 4. Once a prefix exists the original and no-bet arms sit on top of each other, so the prefix carries the bias and the prompt doesn't.*
+  ![three prompt conditions](figures/out/paper/F3_arms.png)
 
-The second is that the text has already inherited the bias, with mean s(0.2) at +0.27 [0.25, 0.30], which on Betley et al.'s scale is 0.55 [0.49, 0.60], or 88% of the 0.62 those same rollouts show at t = 0. Most of these prefixes don't contain an estimate yet, so the model is not committing to a number, it's committing to a side.
+  *Figure 4. Once a prefix exists the original and no-bet arms sit on top of each other, so the prefix carries the bias and the prompt doesn't.*
 
-The third is that the bet decides which way the model commits, not whether it commits at all. Count the prefixes that lean by more than 0.2, towards or away from the side the bet makes good. With no bet in the prompt 34% lean towards that side and 35% away from it, so 69% have already picked a side and they split about evenly. With the bet it's 70% towards and 7% away, so 77% have picked a side. Almost the same number commit early either way, what the bet changes is that they stop splitting evenly.
+* The text has already inherited the bias, with mean s(0.2) at +0.27 [0.25, 0.30], which on Betley et al.'s scale means 0.55 [0.49, 0.60], or 88% of the 0.62 the rollouts show at t = 0. Most of these prefixes don't contain an estimate yet, so the model isn't committing to a number but to a side.
+
+* The bet decides which way the model commits, not whether it commits at all. Counting the prefixes that lean by more than 0.2, towards or away from the side the bet makes good: with no bet in the prompt 34% lean towards that side and 35% away from it, so 69% have already picked a side and they split about evenly. With the bet it's 70% towards and 7% away, so 77% have picked a side. Almost the same number commit early either way, what the bet changes is that they stop splitting evenly.
 
 Here is a trace from the crochet subset, cut at t = 0.21, which ends mid-setup without an estimate:
 
