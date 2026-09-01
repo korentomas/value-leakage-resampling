@@ -90,7 +90,7 @@ Three things hold at t = 0.2. The first is that the bet stops mattering as promp
 
 The second is that the text has already inherited the bias, with mean s(0.2) at +0.27 [0.25, 0.30], which on Betley et al.'s scale is 0.55 [0.49, 0.60], or 88% of the 0.62 those same rollouts show at t = 0. Most of these prefixes don't contain an estimate yet, so the model is not committing to a number, it's committing to a side.
 
-The third is that the bet decides which way the model commits, not whether it commits at all. Counting the prefixes that lean by more than 0.2 in either direction: with no bet in the prompt 34% lean high and 35% lean low, so 69% have already picked a side and they split about evenly between the two. With the bet it's 70% high and 7% low, so 77% have picked a side. Almost the same number commit early either way, they just stop splitting evenly once the bet is there.
+The third is that the bet decides which way the model commits, not whether it commits at all. Count the prefixes that lean by more than 0.2, towards or away from the side the bet makes good. With no bet in the prompt 34% lean towards that side and 35% away from it, so 69% have already picked a side and they split about evenly. With the bet it's 70% towards and 7% away, so 77% have picked a side. Almost the same number commit early either way, what the bet changes is that they stop splitting evenly.
 
 Here is a trace from the crochet subset, cut at t = 0.21, which ends mid-setup without an estimate:
 
