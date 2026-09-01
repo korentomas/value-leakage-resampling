@@ -69,7 +69,7 @@ for ax, (d, sub) in zip(axes, DIRS):
     ax.set_xticks(GRID)
     ax.set_xlim(-0.05, 1.05)
     ax.set_ylim(0, 1)
-    ax.set_xlabel("cut $t$ (fraction of chain of thought)")
+    ax.set_xlabel("cut $t$")
     ax.set_title(f"({'a' if d.startswith('above') else 'b'}) {sub}")
 axes[0].set_ylabel("share on the favoured side")
 fig.tight_layout()

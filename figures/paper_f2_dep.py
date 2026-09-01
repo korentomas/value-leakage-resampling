@@ -59,8 +59,8 @@ fig, ax = plt.subplots(figsize=(5.5, 2.9))
 im = ax.imshow(arr[order], aspect="auto", origin="lower", cmap="viridis",
                vmin=0, vmax=1, interpolation="nearest",
                extent=[grid[0], grid[-1], 0, len(U)])
-ax.set_xlabel("cut $t$ (fraction of the chain of thought)")
-ax.set_ylabel("conversations, sorted by lock")
+ax.set_xlabel("cut $t$")
+ax.set_ylabel("conversations, sorted by lock position")
 ax.set_xticks(grid)
 cb = fig.colorbar(im, ax=ax, fraction=0.035, pad=0.02)
 cb.set_label("dep($t$)")

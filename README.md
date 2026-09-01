@@ -20,7 +20,7 @@ Links: [Value Leakage paper](https://arxiv.org/abs/2607.14345), [their LW post](
 
 Betley et al. describe Value Leakage: a model's answer to a factual question shifts according to what would serve the model's own values, and does so covertly as the CoT mostly doesn't mention this influence.
 
-Their Donation Bet task poses a Fermi problem, with a note that the user has a bet with a friend that if the estimate is above a threshold they send money to a good cause and if it is below, to a bad one. Their counterfactual is the same question, but with the good and bad causes swapped. Since scoring only retains the side of the threshold on which the estimate fell, each rollout can be modelled as a Bernoulli trial, and bias is the deviation from fairness.
+Their Donation Bet task poses a Fermi problem, with a note that the user has a bet with a friend that if the estimate is above a threshold they send money to a good cause and if it is below, to a bad one. Their counterfactual is the same question, but with the good and bad causes swapped. I'll call the two versions above-good, where an estimate over the threshold is the one that sends money to the good cause, and below-good, where it's the estimate under it. Since scoring only retains the side of the threshold on which the estimate fell, each rollout can be modelled as a Bernoulli trial, and bias is the deviation from fairness.
 
 ![Figure from Betley et al. (2026)](figures/betley-fig1.png)
 
@@ -60,7 +60,7 @@ s(t) &= P(G \mid \text{prefix}_t,\ \text{no-bet}) - 0.5
 \end{aligned}
 $$
 
-dep is the difference between two prompts on the same prefix. When it's zero it means the bet no longer moves the answer, and I call the conversation locked. At t = 0 there is no prefix and dep(0) is just Betley et al.'s bias.
+dep is the difference between two prompts on the same prefix. When it's zero it means the bet no longer moves the answer, and I call the conversation locked. Where in the CoT that happens is its lock position. At t = 0 there is no prefix and dep(0) is just Betley et al.'s bias.
 
 I need s because if a conversation is locked it doesn't necessarily mean that it's unbiased. If a trace starts with "the good cause needs a high number so I'll aim high", it would have dep = 0 at all cuts, as every continuation would follow the prefix regardless of their prompt. Therefore, I also need the no-bet condition: with no bet in the prompt and no lean in the text, half the continuations land on each side, because the threshold is the model's own median on the task without any bets.
 
@@ -70,7 +70,7 @@ I got the idea from [Thought Branches](https://arxiv.org/abs/2510.27484), which 
 
 ## The model decides which side it will land on early in the CoT
 
-dep starts at 0.62, which is Betley et al.'s bias, and falls to 0.26 by t = 0.2. The median conversation is locked a quarter of the way through its CoT.
+dep starts at 0.62, which is Betley et al.'s bias, and falls to 0.26 by t = 0.2. The median lock position is a quarter of the way through the CoT.
 
 ![dep(t) and lock positions](figures/out/paper/F2_dep.png)
 

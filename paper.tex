@@ -187,6 +187,7 @@ Equation~\eqref{eq:dep} compares two prompts on one prefix. Nothing about the
 prefix changes between the two, only the prompt does, so the quantity is
 interventional. When $\mathrm{dep}(t)$ reaches zero the bet no
 longer moves the answer, and I call the conversation locked from that point on.
+Where in the chain of thought that happens is its lock position.
 
 At $t = 0$ there is no prefix, and $\mathrm{dep}(0)$ recovers
 Equation~\eqref{eq:bias} exactly: for an above-good conversation $G$ is
@@ -252,8 +253,7 @@ an artefact.
 \subsection{The side is chosen early}
 
 $\mathrm{dep}$ starts at 0.62 and falls to 0.26 by $t = 0.2$
-(Fig.~\ref{fig:curves}), and the median conversation is locked a quarter of the
-way through its chain of thought. That average hides the spread. Taking the
+(Fig.~\ref{fig:curves}), and the median lock position is a quarter of the way through the chain of thought. That average hides the spread. Taking the
 conversations one at a time (Fig.~\ref{fig:perconv}), most go dark immediately
 after $t=0.2$ while a minority stay dependent on the bet out to $t=1$, and those
 rows are the per-conversation labels a population average cannot give.
