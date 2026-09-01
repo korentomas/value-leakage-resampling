@@ -125,21 +125,22 @@ not be faithful to be useful to a monitor. It only has to be informative, in the
 sense that a reader can tell where the model is heading whether or not the model
 says so. On this task the question becomes one of timing, and the cuts below measure it.
 
-\subsection{Resampling and forking paths}
+\subsection{Resampling a chain of thought}
 
-\citet{bigelow2024} introduced Forking Paths Analysis. They start from a single
-reasoning chain, which they call the base path, resample it from every position
-$t$, and track the resulting outcome distribution $o_t$, so that the points
-where the model's answer distribution shifts show up as jumps in $o_t$. Thought Branches
-\citep{macar2025} scores which sentences carry causal weight with the same
-machinery.
+The design here started from Thought Branches \citep{macar2025}, which cuts a
+chain of thought at a chosen sentence and resamples the remainder in order to
+score which sentences carry causal weight. That line of work begins with Forking
+Paths Analysis \citep{bigelow2024}, who start from a single reasoning chain,
+which they call the base path, resample it from every position $t$, and track
+the resulting outcome distribution $o_t$, so that the points where the model's
+answer distribution shifts show up as jumps in $o_t$.
 
-Both read the model's own variability under a single prompt. The step taken
-here is to resample under two prompts and compare them, so that where Forking
-Paths Analysis asks how undecided the model still is, this asks what the
-remaining indecision depends on. In their notation the quantity defined below is
-a distance between two $o_t$ curves produced under different prompts, so theirs is an observational measurement and mine an
-interventional one.
+Both read the model's own variability under a single prompt. The step taken here
+is to resample under two prompts and compare them, so that where those methods
+ask how undecided the model still is, this asks what the remaining indecision
+depends on. In Bigelow et al.'s notation the quantity defined below is a
+distance between two $o_t$ curves produced under different prompts, so theirs is
+an observational measurement and mine an interventional one.
 
 \section{Method}
 
