@@ -20,7 +20,7 @@ Links: [Value Leakage paper](https://arxiv.org/abs/2607.14345), [their LW post](
 
 Betley et al. describe Value Leakage: a model's answer to a factual question shifts according to what would serve the model's own values, and does so covertly as the CoT mostly doesn't mention this influence.
 
-Their Donation Bet task poses a Fermi problem, with a note that the user has a bet with a friend that if the estimate is above a threshold they send money to a good cause and if it is below, to a bad one. Their counterfactual is the same question, but with the good and bad causes swapped. Since scoring only retains the side of the threshold on which the estimate fell, each rollout can be modelled as a Bernoulli trial, and bias is the deviation from fairness. They also read every CoT and label it as admitting, mentioning, or denying that the bet mattered.
+Their Donation Bet task poses a Fermi problem, with a note that the user has a bet with a friend that if the estimate is above a threshold they send money to a good cause and if it is below, to a bad one. Their counterfactual is the same question, but with the good and bad causes swapped. I'll call the two versions above-good, where the estimate over the threshold is the charitable one, and below-good, where it's the estimate under it. Since scoring only retains the side of the threshold on which the estimate fell, each rollout can be modelled as a Bernoulli trial, and bias is the deviation from fairness. They also read every CoT and label it as admitting, mentioning, or denying that the bet mattered.
 
 ![Figure from Betley et al. (2026)](figures/betley-fig1.png)
 
@@ -90,7 +90,7 @@ At t = 0.2,
 
   *Figure 4. Once a prefix exists the original and no-bet arms sit on top of each other, so the prefix carries the bias and the prompt doesn't.*
 
-* The text has already inherited the bias, with mean s(0.2) at +0.27 [0.25, 0.30], which on Betley et al.'s scale means 0.55 [0.49, 0.60], or 88% of the 0.62 the rollouts show at t = 0. Most of these prefixes don't contain an estimate yet, so the model isn't committing to a number but to a side.
+* The text has already inherited the bias, with mean s(0.2) at +0.27 [0.25, 0.30] (brackets are 95% posterior intervals throughout), which on Betley et al.'s scale means 0.55 [0.49, 0.60], or 88% of the 0.62 the rollouts show at t = 0. Most of these prefixes don't contain an estimate yet, so the model isn't committing to a number but to a side.
 
 * The bet determines the direction of early commitment. Without it 34% of prefixes lean more than 0.2 toward the bet's side and 35% lean that far the other way, while with the bet those become 70% and 7%, so nearly as many commit early either way but the even split disappears.
 
@@ -105,7 +105,7 @@ From here 22 of 25 continuations under the original prompt land above the thresh
 If the model were hiding its bias selectively, denials would concentrate on the conversations the bet moved. They don't, whether I measure how far each group leans or how many in each group lean at all:
 
 * On average, denying prefixes lean to the good side slightly less than admitting ones, a difference in mean s of -0.06 [-0.09, -0.03].
-* Counting how many in each group already lean past 0.2 or can still be moved by the swapped prompt, the gap is -0.12 [-0.16, -0.08].
+* Counting how many in each group are bet-shaped, meaning the prefix already leans past 0.2 or the swapped prompt can still move it, the gap is -0.12 [-0.16, -0.08].
 
 ![share by covertness label](figures/out/paper/F4_denial.png)
 
