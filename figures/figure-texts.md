@@ -191,3 +191,20 @@ became `cut at t = 0.2; suffix discarded`, and the card bodies dropped to
 cause`. The font stack is `"DejaVu Sans", Verdana` so the schematic matches the
 plots, since DejaVu Sans is not installed for Chrome on this machine and
 Verdana is its closest metric match.
+
+## Generated images
+
+Images made with an image model carry a credit in the caption, naming the model
+and acknowledging the training data, in this form:
+
+> Giraffes via nano banana, thanks to all artists whose work was used to train
+> this model.
+
+`figures/giraffe.jpg` (Figure 0 in the post) was generated with nano banana and
+is credited that way. The convention comes from TK's other posts, e.g. "geometric
+pomegranate via gpt image 2 thanks to all artists whose work was used to train
+this model". Anything generated later should follow it rather than going
+uncredited.
+
+`figures/betley-fig1.png` is not generated. It is reproduced from Betley et al.
+(2026) and is credited to them in its caption.

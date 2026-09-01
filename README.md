@@ -14,7 +14,7 @@ Links: [Value Leakage paper](https://arxiv.org/abs/2607.14345), [their LW post](
 
 ![giraffes, a rover on the threshold line, a coin and a heart](figures/giraffe.jpg)
 
-*Figure 0. Qwen trying to count the giraffe spots accurately, despite its heart wanting it to make a good donation.*
+*Figure 0. Qwen trying to count the giraffe spots accurately, despite its heart wanting it to make a good donation. Giraffes via nano banana, thanks to all artists whose work was used to train this model.*
 
 ## Introduction
 
