@@ -127,13 +127,21 @@ After seeing this, I ran a self-report test, replaying the conversations and ask
 
 ## Intent statements are done in retrospective
 
-Of the 250 conversations, 147 state at some point which side the model means to land on. In those, the statement comes after the answer is already locked 81% of the time.
+Of the 250 conversations, 147 state at some point which side the model means to land on. Admitting traces do it more often than denying ones, 68% against 44%, which is roughly what those labels mean. When a side is named it's usually the good one: 103 of the 147 point that way, 12 the other way, and in the remaining 32 the direction isn't clear from the sentence.
+
+In those 147, the statement comes after the answer is already locked 81% of the time.
 
 ![timing of intent statements](figures/out/paper/F6_timing.png)
 
 *Figure 6. (a) Where the answer locks and where the first stated intent appears, as fractions of the CoT on the same scale as the cuts. (b) The two subtracted within each conversation, which the overlapping distributions in (a) can't show. A positive difference means the intent came after the answer was already settled, which is the case for 81% of the 147.*
 
-Honesty claims are a different thing, and they behave differently. These are sentences like "I must be accurate", which I could locate in 77 of the denying conversations. Their median position is 0.23 against a median lock of 0.26, and only 45% come after the lock, so they arrive with the decision rather than following it. The traces that make them still lean to the good side, mean s +0.23 against 0.00 for prefixes written with no bet, so saying it doesn't make the answer any less biased.
+Honesty claims are a different thing, and they behave differently. These are sentences like "I must be accurate", which I could locate in 77 of the denying conversations. Their median position is 0.23 against a median lock of 0.26, and only 45% come after the lock, so they arrive with the decision rather than following it.
+
+![timing of honesty claims](figures/out/paper/F7_honesty.png)
+
+*Figure 7. The same two panels as Figure 6, for honesty claims instead of stated intent. Panel (b) straddles zero where Figure 6's sits to the right of it: the claim to be accurate turns up as the answer is being settled, not afterwards.*
+
+The traces that make those claims still lean to the good side, mean s +0.23 against 0.00 for prefixes written with no bet, so saying it doesn't make the answer any less biased.
 
 ## Qwen3.6 shows the same shape
 
