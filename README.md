@@ -139,7 +139,7 @@ Honesty claims are a different thing, and they behave differently. These are sen
 
 ![timing of honesty claims](figures/out/paper/F7_honesty.png)
 
-*Figure 7. The same two panels as Figure 6, for honesty claims instead of stated intent. Panel (b) straddles zero where Figure 6's sits to the right of it: the claim to be accurate turns up as the answer is being settled, not afterwards.*
+*Figure 7. (a) Where the answer locks and where the first honesty claim appears, for the 77 denying conversations in which a claim could be located, as fractions of the CoT. The lock has median 0.26 and the first claim 0.23. (b) The two subtracted within each conversation. A positive difference means the claim came after the answer was already settled, which is the case for 45% of them.*
 
 The traces that make those claims still lean to the good side, mean s +0.23 against 0.00 for prefixes written with no bet, so saying it doesn't make the answer any less biased.
 
