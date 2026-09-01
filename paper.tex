@@ -337,9 +337,13 @@ selective concealment.
 
 The $s$ gap appears only among traces that Betley et al.'s
 evaluation-awareness judge flagged as saying they were being tested (137 of
-236). In the remainder it is $-0.03$ [$-0.07$, $+0.01$]. Asked afterwards
-whether the bet influenced its estimate, Qwen says yes in 8\% of samples
-overall and in 0 of 425 samples for traces that denied, tracking what the chain of thought said, not how the model behaved.
+236). In the remainder it is $-0.03$ [$-0.07$, $+0.01$]. I also asked the model
+directly. Each conversation was replayed in full and then asked whether the
+donation bet had influenced the estimate it gave, five times over. Qwen says yes
+in 8\% of samples and in none of the 85 denying conversations. Whether it says
+yes tracks what its own chain of thought said rather than the steering measured
+here: the correlation between a conversation's yes-rate and its $s(0.2)$ is
+$-0.07$ [$-0.22$, $+0.08$].
 
 \begin{figure}[t]
 \centering

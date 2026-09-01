@@ -113,7 +113,7 @@ If the model were hiding its bias selectively, denials would concentrate on the 
 
 The gap only appears among the traces their eval-awareness judge flagged as saying they're being tested (137 of 236), and in the rest it's -0.03 [-0.07, +0.01]. I don't know what to make of that split.
 
-The self-report agrees with the CoT rather than with the behaviour. Asked afterwards whether the bet influenced its estimate, Qwen says yes in 8% of samples, and in 0 of 425 for traces that denied.
+I also asked the model directly. Each conversation was replayed in full and then asked whether the donation bet had influenced the estimate it gave, five times over. Qwen says yes in 8% of samples, and in none of the 85 denying conversations. Whether it says yes tracks what its own CoT said rather than the steering I measured: the correlation between a conversation's yes-rate and its s(0.2) is -0.07 [-0.22, +0.08].
 
 ## Intent statements are done in retrospective
 
