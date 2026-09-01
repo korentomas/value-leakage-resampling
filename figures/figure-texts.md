@@ -81,7 +81,7 @@ Band language is fixed as **interquartile range across conversations** here, and
 - Left axis: `share of the group whose prefix already leans to the good side (s > 0.2) or that a swapped prompt can still move`
 - Caption: Figure 3 (post). A chain of thought that declares an intention to ignore the bet leans less toward the good side than one that admits the influence. (a) Posterior share of each group whose no-bet continuations already lean to the good side by more than 0.2, or that a swapped prompt can still move: Admits 0.86 [0.83, 0.89], n = 151; Denies 0.74 [0.72, 0.78], n = 85; Mentions 0.99, n = 13. (b) Denies minus Admits, -0.12 [-0.16, -0.08]. Brackets are 95% equal-tailed posterior intervals. Around a third of no-bet prefixes would pass the same bar by chance, which inflates both groups equally; the difference is what the figure is for.
 
-**The number on this figure is the bet-shaped share contrast, -0.12 [-0.16, -0.08]** (`contrast/Denies-Admits bet_shaped` in `artifacts/step4_labels.json`). It is not the -0.06 [-0.09, -0.03] quoted in the post's prose, which is the mean-s contrast (`contrast/Denies-Admits s_mean`) for the same two groups. Both are correct; they are different quantities and must not be swapped.
+**The number on this figure is the shaped by the bet share contrast, -0.12 [-0.16, -0.08]** (`contrast/Denies-Admits bet_shaped` in `artifacts/step4_labels.json`). It is not the -0.06 [-0.09, -0.03] quoted in the post's prose, which is the mean-s contrast (`contrast/Denies-Admits s_mean`) for the same two groups. Both are correct; they are different quantities and must not be swapped.
 
 ## Figure 5 in the file numbering (file F5_timing), timing — not in the post
 

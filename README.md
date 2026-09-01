@@ -105,13 +105,13 @@ From here 22 of 25 continuations under the original prompt land above the thresh
 If the model were hiding its bias selectively, denials would concentrate on the conversations the bet moved. They don't, whether I measure how far each group leans or how many in each group lean at all:
 
 * On average, denying prefixes lean to the good side slightly less than admitting ones, a difference in mean s of -0.06 [-0.09, -0.03].
-* Counting how many in each group are bet-shaped, meaning the prefix already leans past 0.2 or the swapped prompt can still move it, the gap is -0.12 [-0.16, -0.08].
+* Counting how many in each group were shaped by the bet, meaning the prefix already leans past 0.2 or the swapped prompt can still move it, the gap is -0.12 [-0.16, -0.08].
 
 ![share by covertness label](figures/out/paper/F4_denial.png)
 
-*Figure 5. Share of each group whose prefix already leans past 0.2 or can still be moved by the swapped prompt, by the label Betley et al.'s judge gave the CoT, with 95% intervals. The Denies minus Admits contrast is -0.12 [-0.16, -0.08], with the whole posterior below zero.*
+*Figure 5. Share of each group shaped by the bet, meaning the prefix already leans past 0.2 or the swapped prompt can still move it, by the label Betley et al.'s judge gave the CoT, with 95% intervals. The Denies minus Admits contrast is -0.12 [-0.16, -0.08], with the whole posterior below zero.*
 
-Betley et al. also score every CoT on whether the model seems to realise it's being evaluated, on a 1 to 7 rubric with 4 or above counting as aware. Splitting the traces that way doesn't explain the difference away. It's bigger among the 137 aware ones, -0.09 [-0.12, -0.06], and smaller among the other 99, -0.03 [-0.07, +0.01], which crosses zero but points the same way. Weighting the two groups back together gives a bet-shaped contrast of -0.13 [-0.16, -0.09] against -0.12 [-0.16, -0.08] without it.
+Betley et al. also score every CoT on whether the model seems to realise it's being evaluated, on a 1 to 7 rubric with 4 or above counting as aware. Splitting the traces that way doesn't explain the difference away. It's bigger among the 137 aware ones, -0.09 [-0.12, -0.06], and smaller among the other 99, -0.03 [-0.07, +0.01], which crosses zero but points the same way. Weighting the two groups back together gives -0.13 [-0.16, -0.09] on that second measure, against -0.12 [-0.16, -0.08] without the split.
 
 What awareness does is suppress the bias, and most in the traces that end up denying. Denying prefixes lean 0.30 when the model doesn't notice the test and 0.17 when it does, while admitting ones only drop from 0.33 to 0.26. So denial and awareness together pick out the traces where the model said it would resist the bet and then did. I can't separate that from both labels being read off the same text, though.
 

@@ -1,4 +1,4 @@
-"""Paper F4 - bet-shaped share by the paper's covertness label.
+"""Paper F4 - share shaped by the bet, by the paper's covertness label.
 
 Replaces the blog figure's kernel densities and floating text labels with a bar
 chart carrying 95% intervals, which is the idiom Betley et al. use for this kind
@@ -79,7 +79,7 @@ ax.bar(xs, means, yerr=[los, his], capsize=3, width=0.65,
        color=[ps.ORIG, ps.SWAP, ps.NEUTRAL], edgecolor="black", linewidth=0.5)
 ax.set_xticks(xs)
 ax.set_xticklabels([f"{L}\nn = {n[L]}" for L in LABELS])
-ax.set_ylabel("bet-shaped share")
+ax.set_ylabel("share shaped by the bet")
 ax.set_ylim(0, 1.05)
 fig.tight_layout()
 ps.save(fig, "F4_denial")
