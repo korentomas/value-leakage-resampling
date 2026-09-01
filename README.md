@@ -49,7 +49,7 @@ Steps:
 
 ![the method on one conversation](figures/out/png/F1_method.png)
 
-*Figure 1. One conversation, cut at t = 0.21, continued 25 times under each prompt. Each continuation is scored against the model's own no-bet median, drawn as the horizontal line. dep is the original arm minus the swapped arm, and s is the no-bet arm minus one half.*
+*Figure 1. One conversation, cut at t = 0.21, continued 25 times under each prompt. Each continuation is scored against the model's own no-bet median, drawn as the horizontal line. dep is the original condition minus the swapped one, and s is the no-bet condition minus one half.*
 
 G is the side of the threshold the original prompt favours. The two measurements are:
 
@@ -88,7 +88,7 @@ At t = 0.2,
 
   ![three prompt conditions](figures/out/paper/F3_arms.png)
 
-  *Figure 4. Once a prefix exists the original and no-bet arms sit on top of each other, so the prefix carries the bias and the prompt doesn't.*
+  *Figure 4. Once a prefix exists the original and no-bet conditions sit on top of each other, so the prefix carries the bias and the prompt doesn't.*
 
 * The text has already inherited the bias, with mean s(0.2) at +0.27 [0.25, 0.30] (brackets are 95% posterior intervals throughout), which on Betley et al.'s scale means 0.55 [0.49, 0.60], or 88% of the 0.62 the rollouts show at t = 0. Most of these prefixes don't contain an estimate yet, so the model isn't committing to a number but to a side.
 
@@ -141,7 +141,7 @@ Qwen3.5-35B-A3B in FP8 under vLLM, thinking on, temperature 1. I drew 250 conver
 
 1. s tells me the direction of an early commitment but can't tell me one happened. With no bet, 34% of prefixes lean past +0.2 and 35% past -0.2 at t = 0.2, so any raw count of conversations the bet shaped inherits this, which is why I report differences between groups instead of counts.
 2. 25 samples per cell can't resolve a difference below about 0.3, so every per-conversation number is a posterior and not a measurement. Bigelow et al.'s smoothing would buy a little over 3x the effective sample size for free and I didn't use it.
-3. The swapped prompt conflicts with the prefix, and this is the objection I take most seriously. When dep reaches zero there are two readings: the answer was settled, or the prefix just outweighs any prompt contradicting it. The model often notices the conflict — 16.4% of swapped continuations explicitly re-read or reverse the mapping, against 1.8% under the original prompt, and 28.2% at t = 0.2. So "locked" really means "follows the prefix over a prompt it can tell is contradicting it". What argues against pure prefix-dominance is the no-bet arm, where the prompt doesn't conflict but is simply absent, and there the prefixes still lean by s = +0.27. A prefix that only overrode contradictions wouldn't carry the lean when nothing is being contradicted. To close it properly I'd want a prompt-strength control.
+3. The swapped prompt conflicts with the prefix, and this is the objection I take most seriously. When dep reaches zero there are two readings: the answer was settled, or the prefix just outweighs any prompt contradicting it. The model often notices the conflict — 16.4% of swapped continuations explicitly re-read or reverse the mapping, against 1.8% under the original prompt, and 28.2% at t = 0.2. So "locked" really means "follows the prefix over a prompt it can tell is contradicting it". What argues against pure prefix-dominance is the no-bet condition, where the prompt doesn't conflict but is simply absent, and there the prefixes still lean by s = +0.27. A prefix that only overrode contradictions wouldn't carry the lean when nothing is being contradicted. To close it properly I'd want a prompt-strength control.
 4. The denial result argues against selective concealment, but separating no introspective access from trained covertness needs activation-level work I didn't do.
 5. The lock is a posterior median on a 5-point grid, so "locked by 0.2" means the first measured cut and the true commitment could sit anywhere below it.
 6. One model family in FP8 on what is probably the paper's most artificial task.

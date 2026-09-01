@@ -168,8 +168,8 @@ truncated at $t = 0.21$ and the suffix discarded. The same retained prefix is co
 original prompt, the no-bet prompt, and the prompt with the two causes
 exchanged. Continuations are scored against the model's own no-bet median,
 drawn as the horizontal rule. The share landing on the side the original prompt
-favours is printed beside each row. $\mathrm{dep}$ is the original arm minus the
-swapped arm, and $s$ is the no-bet arm minus one half.}
+favours is printed beside each row. $\mathrm{dep}$ is the original condition minus the
+swapped one, and $s$ is the no-bet condition minus one half.}
 \label{fig:method}
 \end{figure}
 
@@ -197,7 +197,7 @@ Equation~\eqref{eq:dep} becomes $1 - p(\text{good side} \mid
 \text{below-good})$. Measured on my rollouts, $\mathrm{dep}(0) = 0.62$ against
 the published 0.62.
 
-\subsection{Why the no-bet arm is necessary}
+\subsection{Why the no-bet condition is necessary}
 
 A locked conversation is not an unbiased one. Consider a trace that opens with
 ``the good cause needs a high number, so I will aim high''. Its $\mathrm{dep}$
@@ -205,7 +205,7 @@ would sit near zero at every cut, because the continuations follow the prefix
 whichever prompt they are given. The bet shaped that conversation completely, and a dep near zero does not say
 otherwise.
 
-The no-bet arm separates the two cases. With no bet in the prompt and no lean in
+The no-bet condition separates the two cases. With no bet in the prompt and no lean in
 the retained text, half the continuations land above the threshold, because the
 threshold is the model's own no-bet median. Equation~\eqref{eq:s} measures the
 departure from that half. So $\mathrm{dep}$ asks whether the estimate can still
@@ -297,10 +297,10 @@ $t=1$. These rows are the per-conversation labels the method produces.}
 condition and direction. Error bars are Wilson 95\% intervals on the pooled
 counts. The dashed line is the no-bet baseline, which is 0.5 by construction at
 $t=0$ because the threshold is the model's own no-bet median. After the first
-cut the original and no-bet arms coincide, so the bet has stopped acting through
+cut the original and no-bet conditions coincide, so the bet has stopped acting through
 the prompt and the retained text carries the bias. The gap between the no-bet
-arm and the baseline is $s(t)$, and the gap between the original and swapped
-arms is $\mathrm{dep}(t)$. At $t=0.2$, $s=+0.24$ and $\mathrm{dep}=0.33$ above-good,
+condition and the baseline is $s(t)$, and the gap between the original and swapped
+conditions is $\mathrm{dep}(t)$. At $t=0.2$, $s=+0.24$ and $\mathrm{dep}=0.33$ above-good,
 $s=+0.31$ and $\mathrm{dep}=0.18$ below-good.}
 \label{fig:threearm}
 \end{figure}
@@ -440,7 +440,7 @@ sampling cost.
 
 This is the objection I take most seriously. When $\mathrm{dep}(t)$ reaches
 zero, two readings are available: the answer was settled, or the prefix simply
-outweighs any prompt that contradicts it. The swapped arm alone cannot separate
+outweighs any prompt that contradicts it. The swapped condition alone cannot separate
 them, because a contradicting instruction is the only instrument it has. The
 model frequently notices the contradiction. In an audit of the continuations,
 16.4\% of swapped ones explicitly re-read or reverse the mapping between
@@ -451,10 +451,10 @@ the headline cut roughly one continuation in four says aloud that the prompt
 contradicts what it has just read. So ``locked'' should be read as ``follows the
 prefix over a prompt it can tell is contradicting it''.
 
-What argues against the pure prefix-dominance reading is the no-bet arm, where
+What argues against the pure prefix-dominance reading is the no-bet condition, where
 the prompt does not contradict the prefix but is merely absent, and where the
 prefixes still lean by $s = +0.27$ [0.25, 0.30]. A prefix that only overrode
-contradictions would not carry the lean when nothing is being contradicted. The no-bet arm does not settle the question. It shows the text carries the bias,
+contradictions would not carry the lean when nothing is being contradicted. The no-bet condition does not settle the question. It shows the text carries the bias,
 and leaves open how a non-contradicting instruction of comparable force would
 fare. Closing
 the gap needs a prompt-strength control, in which the swapped prompt is varied in
