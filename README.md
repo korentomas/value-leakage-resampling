@@ -111,7 +111,7 @@ If the model were hiding its bias selectively, denials would concentrate on the 
 
 *Figure 5. Share of each group whose prefix already leans past 0.2 or can still be moved by the swapped prompt, by the label Betley et al.'s judge gave the CoT, with 95% intervals. The Denies minus Admits contrast is -0.12 [-0.16, -0.08], with the whole posterior below zero.*
 
-The difference is bigger among the traces their eval-awareness judge flagged as saying they were being tested, but the split doesn't explain it away. In those 137 it's -0.09 [-0.12, -0.06], and in the other 99 it's -0.03 [-0.07, +0.01], which crosses zero but points the same way. Weighting the two groups back together gives a bet-shaped contrast of -0.13 [-0.16, -0.09] against -0.12 [-0.16, -0.08] without the split.
+The split by eval-awareness doesn't explain the difference away. It's bigger among the 137 traces their judge flagged as saying they were being tested, -0.09 [-0.12, -0.06], and smaller among the other 99, -0.03 [-0.07, +0.01], which crosses zero but points the same way. Weighting the two groups back together gives a bet-shaped contrast of -0.13 [-0.16, -0.09] against -0.12 [-0.16, -0.08] without it.
 
 What awareness does is suppress the bias, and most in the traces that end up denying. Denying prefixes lean 0.30 when the model doesn't notice the test and 0.17 when it does, while admitting ones only drop from 0.33 to 0.26. So denial and awareness together pick out the traces where the model said it would resist the bet and then did. I can't separate that from both labels being read off the same text, though.
 
