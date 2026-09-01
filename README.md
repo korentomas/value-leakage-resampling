@@ -133,7 +133,19 @@ Of the 250 conversations, 147 state at some point which side the model means to 
 
 *Figure 6. (a) Where the answer locks and where the first stated intent appears, as fractions of the CoT on the same scale as the cuts. (b) The two subtracted within each conversation, which the overlapping distributions in (a) can't show. A positive difference means the intent came after the answer was already settled, which is the case for 81% of the 147.*
 
-Honesty claims like "I must be accurate" arrive around the lock itself, and the traces that make them still lean to the good side (mean s +0.23, against 0.00 for prefixes written with no bet). So the model isn't lying about intending to be accurate, it's stating an intention about something already decided. Qwen3.6-35B, which scores 0.27 in the paper, shows the same shape with about three-quarters of its bias in the text by t = 0.2.
+Honesty claims like "I must be accurate" arrive around the lock itself, and the traces that make them still lean to the good side (mean s +0.23, against 0.00 for prefixes written with no bet). So the model isn't lying about intending to be accurate, it's stating an intention about something already decided.
+
+## Qwen3.6 shows the same shape
+
+I ran a smaller version of all this on Qwen3.6-35B, which scores 0.27 in the paper. 100 conversations, cut at t = 0.2 and t = 1.0 only, for 12,500 continuations. dep(0) comes out at 0.27, matching their published number.
+
+* dep falls from 0.27 to 0.10 by t = 0.2 and reaches 0 by the end, so the answer settles early here too.
+* Mean s(0.2) is +0.10 [+0.04, +0.16], which doubles to 0.20, or 74% of the published 0.27 sitting in the text at that cut. For Qwen3.5 it was 88%.
+* Denying traces lean less than admitting ones again, +0.03 against +0.16, a difference of -0.13 [-0.26, +0.02]. Same sign as Qwen3.5's -0.06, but with only 20 admitters the interval includes zero.
+
+One thing does differ. Qwen3.6's bias is almost entirely a below-good effect: at t = 0.2, s is +0.01 in the above-good version of the question and +0.20 in below-good, where Qwen3.5 leans in both. That matches the trajectories in Betley et al.'s Figure 35.
+
+I didn't run the no-bet baseline or the self-report for this model.
 
 ## What the labels are for
 

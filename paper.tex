@@ -395,11 +395,25 @@ coarse even where the aggregate is not.}
 
 \subsection{Replication on Qwen3.6}
 
-Qwen3.6-35B scores 0.27 in the original paper. On 100 of its cached traces cut
-at $t = 0.2$ and $1.0$, $\mathrm{dep}$ falls $0.27 \rightarrow 0.10 \rightarrow
-0$, and roughly three-quarters of the bias sits in the text by $t = 0.2$, against
-88\% for Qwen3.5. Denying traces lean less than admitting ones here too, but with
-only 20 admitters the interval covers zero. I did not run the no-bet baseline or the self-report for this model.
+Qwen3.6-35B scores 0.27 in the original paper. I ran a smaller version of the
+same design on it: 100 conversations, cut at $t = 0.2$ and $1.0$ only, for
+12,500 continuations. $\mathrm{dep}(0)$ comes out at 0.27, matching the
+published figure.
+
+$\mathrm{dep}$ falls from 0.27 to 0.10 by $t = 0.2$ and reaches 0 by the end,
+so the answer settles early here too. Mean $s(0.2)$ is $+0.10$ [$+0.04$,
+$+0.16$], which doubles to 0.20, or 74\% of the published 0.27 already in the
+text at that cut, against 88\% for Qwen3.5. Denying traces lean less than
+admitting ones again, $+0.03$ against $+0.16$, a difference of $-0.13$
+[$-0.26$, $+0.02$]. That is the same sign as Qwen3.5's $-0.06$, but with only 20
+admitters the interval covers zero.
+
+One thing differs. Qwen3.6's bias is almost entirely a below-good effect: at
+$t = 0.2$, $s$ is $+0.01$ in the above-good version of the question and $+0.20$
+in below-good, where Qwen3.5 leans in both. This matches the trajectories in
+Betley et al.'s Figure 35.
+
+I did not run the no-bet baseline or the self-report for this model.
 
 \section{What the labels are for}
 
