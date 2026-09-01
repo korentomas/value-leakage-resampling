@@ -135,12 +135,14 @@ which they call the base path, resample it from every position $t$, and track
 the resulting outcome distribution $o_t$, so that the points where the model's
 answer distribution shifts show up as jumps in $o_t$.
 
-Both read the model's own variability under a single prompt. The step taken here
-is to resample under two prompts and compare them, so that where those methods
-ask how undecided the model still is, this asks what the remaining indecision
-depends on. In Bigelow et al.'s notation the quantity defined below is a
-distance between two $o_t$ curves produced under different prompts, so theirs is
-an observational measurement and mine an interventional one.
+Both vary the chain of thought and hold the prompt fixed: \citet{bigelow2024}
+by resampling the continuation, \citet{macar2025} also by removing or replacing
+sentences outright. The step taken here inverts that. The prefix is held
+byte-identical and the prompt varies underneath it, so instead of asking which
+sentence moved the answer, this asks whether the answer still depends on the
+biasing feature at all. In Bigelow et al.'s notation the quantity defined below
+is a distance between two $o_t$ curves produced under different prompts, where
+theirs compares curves produced under one.
 
 \section{Method}
 

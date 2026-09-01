@@ -67,7 +67,7 @@ I need s because a locked conversation isn't necessarily unbiased. A trace that 
 
 s and Betley et al.'s bias are not on the same scale. Theirs adds the lean from both versions of the question, and s is the lean in one version only, so the quantity to compare against their bias is 2s.
 
-I got the idea from [Thought Branches](https://arxiv.org/abs/2510.27484), which cuts a CoT at a sentence and resamples the rest to see which sentences actually matter for the answer. It builds on [Forking Paths Analysis](https://arxiv.org/abs/2412.07961) (Bigelow et al.), who do it at every token position instead and track how the distribution over final answers moves along the CoT. Both resample under a single prompt. What they measure is the model's own variability, and that isn't quite the question I wanted. I resample under two prompts and compare them, so instead of asking how undecided the model still is, I'm asking what that indecision depends on.
+I got the idea from [Thought Branches](https://arxiv.org/abs/2510.27484), which cuts a CoT at a sentence and resamples the rest to see which sentences actually matter for the answer. It builds on [Forking Paths Analysis](https://arxiv.org/abs/2412.07961) (Bigelow et al.), who resample at every token position instead and track how the distribution over final answers moves along the CoT. Both of them vary the CoT and hold the prompt fixed. I do the opposite. The prefix stays byte-identical and the prompt changes underneath it, so instead of asking which sentence moved the answer, I'm asking whether the answer still depends on the bet at all.
 
 ## The model picks its side early
 
