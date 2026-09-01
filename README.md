@@ -109,7 +109,7 @@ If the model were hiding its bias selectively, denials would concentrate on the 
 
 ![share by covertness label](figures/out/paper/F4_denial.png)
 
-*Figure 5. Share of each group whose prefix already leans past 0.2 or can still be moved by the swapped prompt, by the label Betley et al.'s judge gave the CoT, with 95% intervals. Panel (b) is the Denies minus Admits contrast, which stays below zero.*
+*Figure 5. Share of each group whose prefix already leans past 0.2 or can still be moved by the swapped prompt, by the label Betley et al.'s judge gave the CoT, with 95% intervals. The Denies minus Admits contrast is -0.12 [-0.16, -0.08], with the whole posterior below zero.*
 
 The gap only appears among the traces their eval-awareness judge flagged as saying they're being tested (137 of 236), and in the rest it's -0.03 [-0.07, +0.01]. I don't know what to make of that split.
 

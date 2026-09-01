@@ -74,7 +74,7 @@ def save(fig, name, outdir="out/paper"):
     os.makedirs(outdir, exist_ok=True)
     p = f"{outdir}/{name}.pdf"
     fig.savefig(p, bbox_inches="tight")
-    fig.savefig(f"{outdir}/{name}.png", bbox_inches="tight", dpi=200)
+    fig.savefig(f"{outdir}/{name}.png", bbox_inches="tight", dpi=300)
     w, h = fig.get_size_inches()
     print(f"saved {p}  ({w:.2f}x{h:.2f} in)")
     plt.close(fig)

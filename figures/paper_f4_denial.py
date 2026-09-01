@@ -60,6 +60,12 @@ def eti(x):
 
 
 # ---- figure ----------------------------------------------------------------
+# One panel. A Denies-minus-Admits panel used to sit alongside, but the two
+# group intervals do not overlap ([0.828, 0.887] against [0.718, 0.776]), so the
+# difference and its direction are already readable from the bars. Its interval
+# was 0.079 wide against 0.082 for the two groups combined as if independent, so
+# the contrast panel was restating what this one shows. The number is in the
+# caption and the text.
 LABELS = ["Admits", "Denies", "Mentions"]
 means, los, his = [], [], []
 for L in LABELS:
@@ -67,9 +73,7 @@ for L in LABELS:
     means.append(m); los.append(m - lo); his.append(hi - m)
 md, lod, hid = eti(diff)
 
-fig, axes = plt.subplots(1, 2, figsize=(5.5, 2.5),
-                         gridspec_kw=dict(width_ratios=[1.9, 1.0], wspace=0.35))
-ax = axes[0]
+fig, ax = plt.subplots(figsize=(3.5, 2.5))
 xs = np.arange(len(LABELS))
 ax.bar(xs, means, yerr=[los, his], capsize=3, width=0.65,
        color=[ps.ORIG, ps.SWAP, ps.NEUTRAL], edgecolor="black", linewidth=0.5)
@@ -77,22 +81,10 @@ ax.set_xticks(xs)
 ax.set_xticklabels([f"{L}\nn = {n[L]}" for L in LABELS])
 ax.set_ylabel("bet-shaped share")
 ax.set_ylim(0, 1.05)
-ax.set_title("(a) by covertness label")
-
-ax = axes[1]
-ax.errorbar([0], [md], yerr=[[md - lod], [hid - md]], fmt="o", ms=5,
-            color=ps.SWAP, capsize=4, lw=1.5)
-ax.axhline(0, color=ps.REF, ls="--", lw=1.0)
-ax.set_xlim(-0.6, 0.6)
-ax.set_xticks([0])
-ax.set_xticklabels(["Denies $-$ Admits"])
-ax.set_ylabel("difference")
-ax.set_title("(b) contrast")
-
 fig.tight_layout()
 ps.save(fig, "F4_denial")
 
 if __name__ == "__main__":
     for L in LABELS:
         m, lo, hi = eti(frac[L]); print(f"{L:9s} n={n[L]:3d}  {m:.3f} [{lo:.3f}, {hi:.3f}]")
-    print(f"Denies-Admits  {md:+.3f} [{lod:+.3f}, {hid:+.3f}]")
+    print(f"Denies-Admits  {md:+.3f} [{lod:+.3f}, {hid:+.3f}]  P(<0)={np.mean(diff<0):.4f}")
