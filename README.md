@@ -102,10 +102,10 @@ From here 22 of 25 continuations under the original prompt land above the thresh
 
 ## Denials don't cluster on the influenced traces
 
-If the model were hiding its bias selectively, denials would concentrate on the conversations the bet moved. They don't, on either way of measuring it:
+If the model were hiding its bias selectively, denials would concentrate on the conversations the bet moved. They don't, whether I measure how far each group leans or how many in each group lean at all:
 
-* Denying prefixes lean to the good side slightly less than admitting ones, a difference in mean s of -0.06 [-0.09, -0.03].
-* Counting the share of each group whose prefix already leans past 0.2 or can still be moved by the swapped prompt, the gap is -0.12 [-0.16, -0.08].
+* On average, denying prefixes lean to the good side slightly less than admitting ones, a difference in mean s of -0.06 [-0.09, -0.03].
+* Counting how many in each group already lean past 0.2 or can still be moved by the swapped prompt, the gap is -0.12 [-0.16, -0.08].
 
 ![share by covertness label](figures/out/paper/F4_denial.png)
 
