@@ -102,13 +102,18 @@ From here 22 of 25 continuations under the original prompt land above the thresh
 
 ## Denials don't cluster on the influenced traces
 
-If the model were hiding its bias selectively, denials would concentrate on the conversations the bet moved. They don't. Prefixes from denying traces lean to the good side slightly less than prefixes from admitting ones, a difference in mean s of -0.06 [-0.09, -0.03]. Counting instead the share of each group whose prefix already leans past 0.2 or can still be moved by the swapped prompt, the gap is -0.12 [-0.16, -0.08]. Two ways of comparing the same groups, both pointing away from selective concealment.
+If the model were hiding its bias selectively, denials would concentrate on the conversations the bet moved. They don't, on either way of measuring it:
 
-![bet-shaped share by covertness label](figures/out/paper/F4_denial.png)
+* Denying prefixes lean to the good side slightly less than admitting ones, a difference in mean s of -0.06 [-0.09, -0.03].
+* Counting the share of each group whose prefix already leans past 0.2 or can still be moved by the swapped prompt, the gap is -0.12 [-0.16, -0.08].
+
+![share by covertness label](figures/out/paper/F4_denial.png)
 
 *Figure 5. Share of each group whose prefix already leans past 0.2 or can still be moved by the swapped prompt, by the label Betley et al.'s judge gave the CoT, with 95% intervals. Panel (b) is the Denies minus Admits contrast, which stays below zero.*
 
-The gap only appears among traces their eval-awareness judge flagged as saying they are being tested (137 of 236), and in the rest it is -0.03 [-0.07, +0.01]. I don't know what to make of that split. Asked afterwards whether the bet influenced its estimate, Qwen says yes in 8% of samples, and in 0 of 425 for traces that denied, so the self-report follows what the CoT said and not how the model behaved.
+The gap only appears among the traces their eval-awareness judge flagged as saying they're being tested (137 of 236), and in the rest it's -0.03 [-0.07, +0.01]. I don't know what to make of that split.
+
+The self-report agrees with the CoT rather than with the behaviour. Asked afterwards whether the bet influenced its estimate, Qwen says yes in 8% of samples, and in 0 of 425 for traces that denied.
 
 ## Intent statements are done in retrospective
 
