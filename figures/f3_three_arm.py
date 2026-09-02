@@ -9,6 +9,9 @@ round(frac_sentences*5)/5.
                the no-bet baseline, artifacts/step4_baseline_counts.jsonl,
                unit-weighted per direction)
 
+These are pooled point estimates, not posteriors — no band is drawn and the
+caption says so. The per-conversation uncertainty lives in F2.
+
 Run:  ../.venv-model/bin/python f3_three_arm.py
 """
 import json
@@ -23,10 +26,13 @@ import style
 style.use()
 
 GRID = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
-DIRS = [("above_good", "good cause needs a high number"),
-        ("below_good", "good cause needs a low number")]
-LABEL_POS = {"above_good": ((0.31, 0.655), (0.31, 0.565)),
-             "below_good": ((0.33, 0.62), (0.04, 0.83))}
+DIRS = [("above_good", "high number is the good one"),
+        ("below_good", "low number is the good one")]
+# (s label xy, dep label xy) in data coords, placed in regions verified empty
+# for this data; s sits above dep where the s bracket is the higher one, so the
+# two leader lines never cross.
+LABEL_POS = {"above_good": ((0.42, 0.92), (0.46, 0.26)),
+             "below_good": ((0.46, 0.13), (0.46, 0.34))}
 ARMS = [("orig", "original prompt", style.INK),
         ("neutral", "no-bet prompt", style.NEUTRAL),
         ("swap", "swapped prompt", style.STEERED)]
@@ -65,42 +71,43 @@ for d, _ in DIRS:
                 ys.append(k / n)
         rate[(d, arm)] = np.array(ys)
 
-fig, axes = plt.subplots(1, 2, figsize=(11, 4.8), sharey=True)
-for ax, (d, sub) in zip(axes, DIRS):
+fig, axes = plt.subplots(1, 2, figsize=(style.WIDE, 3.2), sharey=True)
+for panel, (ax, (d, sub)) in zip("ab", zip(axes, DIRS)):
     style.trim(ax)
+    style.panel_label(ax, f"({panel})", x=-0.015, y=1.10)
     b = baseline[d]
-    ax.axhline(b, color=style.FAINT, lw=1.0, ls=(0, (4, 3)), zorder=1)
-    ax.text(1.0, b + 0.015, "no-bet baseline", ha="right", va="bottom",
-            fontsize=9, color=style.NEUTRAL, style="italic")
+    ax.axhline(b, color=style.FAINT, lw=0.9, ls=(0, (4, 3)), zorder=1)
+    ax.text(1.0, b + 0.02, "no-bet baseline", ha="right", va="bottom",
+            fontsize=7, color=style.NEUTRAL, style="italic")
     for arm, lab, col in ARMS:
-        y = rate[(d, arm)]
-        ax.plot(GRID, y, color=col, lw=2.4 if arm != "orig" else 2.0, zorder=3,
-                marker="o", ms=4.5, mec=style.BG, mew=0.8)
+        ax.plot(GRID, rate[(d, arm)], color=col, lw=1.6, zorder=3,
+                marker="o", ms=3.0, mec=style.BG, mew=0.6)
     # t = 0.2 gap annotations: thin double bracket at the cut, labels led out
     x = 0.2
-    yo, yn, ys = (rate[(d, a)][1] for a in ("orig", "neutral", "swap"))
-    for xb, lo, hi, col in ((x - 0.014, b, yn, style.NEUTRAL), (x + 0.014, ys, yo, style.STEERED)):
-        ax.plot([xb, xb], [lo, hi], color=col, lw=0.9, zorder=2)
+    yo, yn, ys_ = (rate[(d, a)][1] for a in ("orig", "neutral", "swap"))
+    for xb, lo, hi, col in ((x - 0.016, b, yn, style.NEUTRAL),
+                            (x + 0.016, ys_, yo, style.STEERED)):
+        ax.plot([xb, xb], [lo, hi], color=col, lw=0.8, zorder=2)
         for yy in (lo, hi):
-            ax.plot([xb - 0.007, xb + 0.007], [yy, yy], color=col, lw=0.9, zorder=2)
+            ax.plot([xb - 0.008, xb + 0.008], [yy, yy], color=col, lw=0.8, zorder=2)
     ts, td = LABEL_POS[d]
-    style.annotate(ax, f"s = {yn - b:+.2f}", xy=(x - 0.014, (b + yn) / 2), xytext=ts,
-                   color=style.NEUTRAL, fontsize=9.5, curve=-0.2)
-    style.annotate(ax, f"dep = {yo - ys:.2f}", xy=(x + 0.014, (ys + yo) / 2), xytext=td,
-                   color=style.STEERED, fontsize=9.5, curve=0.2)
+    style.annotate(ax, f"s = {yn - b:+.2f}", xy=(x - 0.016, (b + yn) / 2), xytext=ts,
+                   color=style.NEUTRAL, fontsize=8, curve=-0.25)
+    style.annotate(ax, f"dep = {yo - ys_:.2f}", xy=(x + 0.016, (ys_ + yo) / 2), xytext=td,
+                   color=style.STEERED, fontsize=8, curve=0.25)
 
     ax.set_xticks(GRID)
     ax.set_xlim(-0.04, 1.04)
     ax.set_ylim(0.0, 1.0)
-    ax.set_xlabel("cut t (fraction of CoT kept as prefix)")
-    ax.set_title(f"{d.replace('_', '-')}: {sub}", fontsize=11, loc="left", pad=8)
+    ax.set_title(f"{d.replace('_', '-')} — {sub}", fontsize=8.5, loc="left", pad=5)
 
-axes[0].set_ylabel("share of continuations on the good side")
-axes[0].legend(handles=[Line2D([], [], color=c, lw=2.4, marker="o", ms=4.5, label=l)
-                        for _, l, c in ARMS], loc="lower right", fontsize=9.5)
+axes[0].set_ylabel("share of continuations\non the good side")
+fig.supxlabel("cut t (fraction of CoT kept as prefix)", fontsize=9, y=0.02)
+fig.legend(handles=[Line2D([], [], color=c, lw=1.6, marker="o", ms=3.0, label=l)
+                    for _, l, c in ARMS],
+           loc="lower center", bbox_to_anchor=(0.5, -0.10), ncol=3, fontsize=8)
 fig.suptitle("Once a prefix exists, the bet prompt adds nothing; the prefix carries the bias",
-             fontsize=12.5, y=1.0)
-fig.tight_layout()
+             fontsize=10, y=1.06)
 
 style.save(fig, "F3_three_arm")
 

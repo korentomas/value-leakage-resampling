@@ -694,3 +694,93 @@ does mean "follows the prefix over a prompt it can tell is contradicting it"
 continuation in four notices the contradiction out loud. Worth quoting in
 the write-up's limitation 3, and it suggests the splice/consistent-prompt
 control is the right next experiment.
+
+## v2 writeup reframe + figure regeneration (2026-08-31; docs/V2-BRIEF.md; figures/*, README.md)
+
+No new sampling. Every number below comes from the existing `artifacts/`.
+
+**Figures rebuilt on a SciencePlots base.** `figures/style.py` now applies
+`plt.style.use(["science", "no-latex"])` and overrides it with the project
+palette, white ground and sans face; the public API (`use`, `plate`, `trim`,
+`annotate`, `label_halfplane`, `save`, `tangle`) is unchanged, plus new
+`no_minor`, `panel_label` and `audit`. Every figure is built at its final
+printed size (6.5 in, the LW column) instead of being drawn large and shrunk.
+`save()` now writes svg + pdf + png(200 dpi) + a greyscale proof and prints an
+audit line. F2-F6 render with zero warnings and a `clean` audit; greyscale
+proofs check out, including F3's three arms.
+
+Two rendering bugs found and fixed on the way:
+
+- SciencePlots sets `axes.formatter.use_mathtext: True`, which routes *tick
+  labels* through the math font. With a custom Helvetica mathtext map that
+  cannot resolve a weight, and matplotlib logged
+  `findfont: Failed to find font weight normal` on every render. Fixed by
+  using the `dejavusans` math set instead of a custom map.
+- SciencePlots' global minor ticks land at meaningless positions on the
+  categorical y axes of F5b and F6 (AutoMinorLocator interpolating between two
+  category rows). Fixed with `style.no_minor(ax)`.
+
+**F2's Pchip interpolation really does undershoot.** 24 of the 250 per-unit
+curves dip below 0 between grid knots, worst -0.159. All interpolated series
+(spaghetti, means, IQR band edges) are now clipped to [0, 1].
+
+**The brief's F4 instruction was wrong and was not followed.** It asked for
+`-0.06 [-0.09, -0.03]` on the Denies - Admits panel. That is
+`contrast/Denies-Admits s_mean` in `artifacts/step4_labels.json`, the mean-s
+contrast quoted in the post's prose. What F4 plots is the bet-shaped share
+contrast, `contrast/Denies-Admits bet_shaped` = **-0.116 [-0.155, -0.076]**,
+which is what the figure now states and what `figure-texts.md` already said.
+Both numbers are correct; they are different quantities. `figure-texts.md`
+now carries an explicit warning not to swap them.
+
+Intervals on F4 are labelled **95% ETI**, not HDI: ETI is what
+`swap/step4_labels.py` computes and stores, so calling them HDI in a caption
+would not match the artifact.
+
+**The headline 87% is 88% on three of four routes.** With
+s_ag + s_bg = 0.5414 and our dep(0) = 0.6170: 87.3% against the paper's
+published 0.62, 87.8% against our own dep(0); using 2 x pooled s = 0.5454 it
+is 88.0% and 88.4%. The README now reports 88% and carries the interval the
+number actually has, 2 x [0.246, 0.299] = [0.49, 0.60], i.e. **[80%, 97%]**
+of 0.62. The old bare "87%" was one rounding path presented without
+uncertainty.
+
+**`splice_check` cannot support limitation 3.** It splices a full CoT back
+under its *own original* prompt; it is a prefill-fidelity gate, and
+`artifacts/splice_check_v2.jsonl` is 186 raw unjudged continuations of that
+design. Limitation 3 was instead rewritten around two things that do bear on
+it: the no-bet arm (a non-conflicting prompt, where prefixes still lean
+s = +0.27), and the 2026-08-27 threshold audit's conflict-detection rate
+(16.4% of swap vs 1.8% of orig continuations explicitly re-read or reverse
+the mapping; 28.2% at t ~ 0.2). That audit entry asked for exactly this and
+it is now quoted in the post.
+
+**Writeup reframed method-first** per the brief: method and formal
+definitions of dep and s before the Value Leakage context, a lineage
+paragraph (FPA -> Thought Branches -> here), the Context section compressed,
+"why this matters" promoted to "what the per-conversation labels are for",
+and a future-work section that runs nothing. Both Bigelow citations added,
+each verified against the PDF in `external/refs/`: counts at a cut are
+exactly multinomial with a fitted slope of -0.4903 against -1/2 predicted;
+smoothing multiplies effective sample size 3.3x (S=30) to 5x (S=5); PELT with
+an exact multinomial cost segments o_t; outcome distributions are flat with
+sparse sharp forking points.
+
+**Title.** v1 was "Value leakage happens before the CoT admits it", which is
+findings-first and no longer matches a method-first body. Now "Resampling
+under flipped conditions: value leakage, one conversation at a time", taking
+the brief's own wording. Still TK's call; it is a one-line change.
+
+**Repo cleanup.** Deleted `figures/out/svg/F1_method.svg`: a hand-authored
+leftover from an earlier F1 on the old palette (`#3c3b3b` where the current
+ink is `#2b3a4f`), missing the current strings, referenced by nothing and
+produced by nothing (`html/render.sh` writes PNG only). Gitignored
+`figures/out/grey/`, which is a QA check rather than a deliverable.
+Downscaled `figures/betley-fig1.png` from 4912x1950 to 1600x635, 1207 KB ->
+424 KB; text stays legible and no README embed needs more.
+
+Not touched, but noted: four tracked artifacts are referenced by nothing in
+the repo (`qwen3.5-35_master.stats.json`, `qwen3.6-35_master.stats.json`,
+`splice_check_v2.jsonl`, `step4f_by_source.json`). They are small and they
+are evidence, so they stay. `figures/export_truth.py` also stays: no figure
+reads `figure_truth.npz`, but `swap/critique_addenda.py` does.

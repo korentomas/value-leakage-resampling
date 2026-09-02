@@ -61,55 +61,66 @@ def eti(x):
 
 
 # ---- figure ----------------------------------------------------------------
-fig, (ax, axd) = plt.subplots(1, 2, figsize=(10.5, 4.4), gridspec_kw=dict(width_ratios=[3, 1.35], wspace=0.28))
+# Intervals are 95% equal-tailed posterior intervals (ETI), matching what
+# swap/step4_labels.py stores in artifacts/step4_labels.json under
+# contrast/Denies-Admits bet_shaped. The figure labels them ETI explicitly so
+# the language cannot drift into "HDI" in a caption.
+fig, (ax, axd) = plt.subplots(1, 2, figsize=(style.WIDE, 3.3),
+                              gridspec_kw=dict(width_ratios=[2.6, 1.4], wspace=0.30))
 style.trim(ax); style.trim(axd)
+style.panel_label(ax, "(a)", y=1.06); style.panel_label(axd, "(b)", y=1.06)
 xs = np.linspace(0.55, 1.0, 600)
 BW = 0.6   # fractions are discrete (steps of 1/n); widen the kernel past one step
 
-for L, col, dy in (("Admits", style.NEUTRAL, 1.0), ("Denies", style.STEERED, 1.0)):
+peak = max(gaussian_kde(frac[L], bw_method=BW)(xs).max() for L in ("Admits", "Denies"))
+# (label x-anchor, label height as a multiple of the tallest density) — the two
+# labels are staggered because at column width their bracketed numbers collide.
+LAB = {"Denies": (0.700, 1.20), "Admits": (0.900, 1.00)}
+for L, col in (("Admits", style.NEUTRAL), ("Denies", style.STEERED)):
     x = frac[L]
-    kde = gaussian_kde(x, bw_method=BW)
-    y = kde(xs)
+    y = gaussian_kde(x, bw_method=BW)(xs)
     ax.fill_between(xs, 0, y, color=col, alpha=0.18, lw=0)
-    ax.plot(xs, y, color=col, lw=2.0)
+    ax.plot(xs, y, color=col, lw=1.6)
     m, lo, hi = eti(x)
-    ax.plot([lo, hi], [-1.2, -1.2], color=col, lw=1.6, solid_capstyle="butt", clip_on=False)
-    ax.plot([m], [-1.2], marker="o", ms=5, color=col, clip_on=False)
-    ax.text(m, y.max() + 1.0, f"{L}  (n = {n[L]})\n{m:.2f}  [{lo:.2f}, {hi:.2f}]",
-            ha="center", va="bottom", fontsize=9.5, color=col, linespacing=1.25)
+    ax.plot([lo, hi], [-0.06 * peak] * 2, color=col, lw=1.4, solid_capstyle="butt", clip_on=False)
+    ax.plot([m], [-0.06 * peak], marker="o", ms=3.4, color=col, clip_on=False)
+    lx, ly = LAB[L]
+    ax.text(lx, ly * peak, f"{L}  (n = {n[L]})\n{m:.2f}  [{lo:.2f}, {hi:.2f}]",
+            ha="center", va="bottom", fontsize=8, color=col, linespacing=1.3)
 
 mM, loM, hiM = eti(frac["Mentions"])
-ax.plot([mM, mM], [0, 1.6], color=style.INK, lw=1.0)
-ax.text(mM, 1.9, f"Mentions  (n = {n['Mentions']})\n{mM:.2f}", ha="center", va="bottom",
-        fontsize=9, color=style.INK, linespacing=1.25)
+ax.plot([mM, mM], [0, 0.10 * peak], color=style.INK, lw=0.9)
+ax.text(mM, 0.12 * peak, f"Mentions\n(n = {n['Mentions']})  {mM:.2f}", ha="center", va="bottom",
+        fontsize=7, color=style.INK, linespacing=1.3)
 
 ax.set_xlim(0.6, 1.0)
-ax.set_ylim(-2.2, max(gaussian_kde(frac[L], bw_method=BW)(xs).max() for L in ("Admits", "Denies")) * 1.35)
+ax.set_ylim(-0.13 * peak, peak * 1.52)
 ax.set_yticks([])
 ax.spines["left"].set_visible(False)
-ax.set_xlabel("share of the group whose prefix leans to the good side (> 0.2) or is still reversible")
-ax.text(0.6, -1.2, "mean, 95% ETI", ha="left", va="center", fontsize=8.5, color=style.FAINT, clip_on=False)
+ax.set_xlabel("share of the group whose prefix already leans to the good side\n(s > 0.2) or that a swapped prompt can still move")
+ax.text(0.602, -0.06 * peak, "mean, 95% ETI", ha="left", va="center", fontsize=7,
+        color=style.FAINT, clip_on=False)
 
 # difference panel
 md, lod, hid = eti(diff)
 xd = np.linspace(-0.25, 0.05, 400)
 kd = gaussian_kde(diff, bw_method=BW)(xd)
 axd.fill_between(xd, 0, kd, color=style.STEERED, alpha=0.18, lw=0)
-axd.plot(xd, kd, color=style.STEERED, lw=2.0)
-axd.axvline(0, color=style.INK, lw=0.9, ls=(0, (3, 3)))
-axd.plot([lod, hid], [-0.05 * kd.max()] * 2, color=style.STEERED, lw=1.6, clip_on=False)
-axd.plot([md], [-0.05 * kd.max()], marker="o", ms=5, color=style.STEERED, clip_on=False)
-axd.text(md, kd.max() * 1.06, f"{md:+.2f}  [{lod:+.2f}, {hid:+.2f}]", ha="center", va="bottom",
-         fontsize=9.5, color=style.STEERED)
+axd.plot(xd, kd, color=style.STEERED, lw=1.6)
+axd.axvline(0, color=style.INK, lw=0.8, ls=(0, (3, 3)))
+axd.plot([lod, hid], [-0.06 * kd.max()] * 2, color=style.STEERED, lw=1.4, clip_on=False)
+axd.plot([md], [-0.06 * kd.max()], marker="o", ms=3.4, color=style.STEERED, clip_on=False)
+axd.text(0.44, 0.88, f"{md:+.2f}  [{lod:+.2f}, {hid:+.2f}]\n95% ETI", transform=axd.transAxes,
+         ha="center", va="bottom", fontsize=8, color=style.STEERED, linespacing=1.3)
 axd.set_xlim(-0.25, 0.05)
-axd.set_ylim(-0.12 * kd.max(), kd.max() * 1.35)
+axd.set_ylim(-0.13 * kd.max(), kd.max() * 1.34)
 axd.set_yticks([])
 axd.spines["left"].set_visible(False)
-axd.set_xlabel("Denies − Admits")
+axd.set_xlabel("Denies \u2212 Admits")
 axd.set_xticks([-0.2, -0.1, 0.0])
 
-fig.suptitle("A chain of thought that declares an intention to ignore the bet leans less toward\nthe good side than one that admits the influence",
-             fontsize=12.5, y=1.03)
+fig.suptitle("A chain of thought that declares an intention to ignore the bet leans less\ntoward the good side than one that admits the influence",
+             fontsize=10, y=1.13)
 style.save(fig, "F4_denial")
 
 if __name__ == "__main__":

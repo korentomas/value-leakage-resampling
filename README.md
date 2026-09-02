@@ -12,7 +12,7 @@
 
 Links: [Value Leakage paper](https://arxiv.org/abs/2607.14345), [their LW post](https://www.lesswrong.com/posts/hbMw4Yqw6RnFaExDy/value-leakage-an-llm-s-answers-are-silently-shaped-by-its-1), [their code and data](https://github.com/TruthfulAI-research/value_leakage), my code (and posteriors and continuations) is this repo.
 
-![giraffes, a rover on the threshold line, a coin and a heart](figures/giraffe.png)
+![giraffes, a rover on the threshold line, a coin and a heart](figures/giraffe.jpg)
 
 *Figure 0. Qwen trying to count the giraffe spots accurately, even if its heart wants it to make a good donation. via nano banana, credit to all artists whose work was used in training.*
 
@@ -72,21 +72,23 @@ I got the idea from [Thought Branches](https://arxiv.org/abs/2510.27484), which 
 
 dep starts at 0.62 and rapidly falls to 0.26 by t = 0.2. Moreover, the median lock position is a quarter of the way through the CoT.
 
-<!-- [TK] The post's Figure 2 is a two-panel (mean dep(t) with 95% spread; histogram of lock positions) and its Figure 3 is a heatmap of dep(t) per conversation sorted by lock position. Neither has a script in figures/. F2_final.png below is the repo's dep(t) figure (per-conversation curves split by locked before / reversible after t = 0.2). Decide whether to add scripts for the post's versions or keep this one. -->
+![dep(t) and lock positions](figures/out/paper/F2_dep.png)
 
-![dep(t) per conversation](figures/out/png/F2_final.png)
-
-*Figure 2. dep(t) over the 250 conversations, one curve each, with the group means for the conversations locked before t = 0.2 and the ones still reversible after it.*
+*Figure 2. (a) Mean dep(t) over the 250 conversations with the 95% spread across them. (b) Where each conversation locks, as a fraction of its CoT.*
 
 Averaging them out still hides information here so we can look at them disaggregated. Sorting them by where they lock and drawing one row each, most go dark right after t = 0.2 while a minority stay dependent on the bet all the way to the end.
+
+![one row per conversation](figures/out/paper/F2b_perconv.png)
+
+*Figure 3. One row per conversation sorted by lock position, with gradient signifying how much the bet moves that conversation at each of the cuts.*
 
 At t = 0.2, there are a few things going on:
 
 1. The bet stops mattering as part of the prompt. Continuing a prefix with or without the bet gives a similar rate of the good side, so whatever steers the answer at that point is in the CoT and not the prompt itself by now.
 
-![share on the good side by cut and prompt](figures/out/png/F3_three_arm.png)
+![three prompt conditions](figures/out/paper/F3_arms.png)
 
-*Figure 3. Share of continuations landing on the good side, by cut and prompt condition.*
+*Figure 4. Share of continuations landing on the good side, by cut and prompt condition.*
 
 2. The text has already inherited the bias, with mean s(0.2) at +0.27 [0.25, 0.30], which on Betley et al.'s scale means 0.55 [0.49, 0.60], or 88% of the 0.62 the rollouts had shown at t = 0. Most of these prefixes don't contain an estimate yet, so the model isn't committing to a specific number but to the side it wants to land on.
 
@@ -111,9 +113,9 @@ If the model was selectively hiding its bias then it should deny especially wher
 * Prefixes that lead to a denial tend to lean less towards the good side than prefixes that lead to an admission, with a difference in mean s of -0.06 [-0.09, -0.03].
 * Looking specifically at the proportion of each group whose prefix already leans beyond 0.2, or can still be shifted by swapping the prompt, the difference is -0.12 [-0.16, -0.08].
 
-![share of each label group whose prefix leans or is still reversible](figures/out/png/F4_denial.png)
+![share by covertness label](figures/out/paper/F4_denial.png)
 
-*Figure 4. Share of each group whose prefix already leans past 0.2 or can still be moved by the swapped prompt, by the label Betley et al.'s judge gave the CoT, with 95% intervals. The Denies minus Admits contrast is -0.12 [-0.16, -0.08], with the whole posterior below zero.*
+*Figure 5. Share of each group whose prefix already leans past 0.2 or can still be moved by the swapped prompt, by the label Betley et al.'s judge gave the CoT, with 95% intervals. The Denies minus Admits contrast is -0.12 [-0.16, -0.08], with the whole posterior below zero.*
 
 Betley et al. also judge CoTs on whether the model presents signs of eval-awareness, based on a UK AISI rubric that goes from 1 to 7, with 4 or above counting as aware.
 
@@ -133,15 +135,15 @@ After seeing this, I conducted a self-report test, reproducing the conversations
 
 Of the 250 conversations, 147 state at some point which side the model means to land on. Admitting traces do it more often than denying ones, 68% against 44%, which is roughly what those labels mean. When a side is mentioned it's usually the good one, it shows up in 103 of the 147 traces. The bad cause side is only mentioned in 12 of the traces and the remaining 32 have statements that aren't clear.
 
-![lock position against first statement of intent](figures/out/png/F6_intent_strips.png)
+![timing of intent statements](figures/out/paper/F6_timing.png)
 
-*Figure 5. Where the answer locks and where the first stated intent appears, as fractions of the CoT, for the 147 conversations that state one. The intent came after the answer was already settled in 81% of them.*
+*Figure 6. (a) Where the answer locks and where the first stated intent appears, as fractions of the CoT. (b) The two subtracted per conversation. A positive difference means the intent came after the answer was already settled, which is the case for 81% of the 147 traces.*
 
 Honesty claims from the model show up as it saying stuff like "I must be accurate" and these are found in 77 of the denying conversations. The median position of these is 0.23 against a median lock of 0.26. They seem to appear roughly around the same time as the lock happens and 55% of them come before it.
 
-![lock position against first honesty claim](figures/out/png/F5_timing.png)
+![timing of honesty claims](figures/out/paper/F7_honesty.png)
 
-*Figure 6. Top: the 77 denying conversations whose first honesty claim could be located, sorted by lock position, with the claim's position; sienna where the claim follows the lock. Bottom: the same lock-against-intent strips as Figure 5.*
+*Figure 7. (a) Where the answer locks and where the first honesty claim appears, as fractions of the CoT. (b) The two subtracted per conversation. A positive difference means the claim came after the answer was already settled.*
 
 Traces with honesty claims are still influenced towards the good side. They have a mean s of +0.23. Even if these say they need to be honest, their answers aren't less biased.
 
@@ -209,7 +211,7 @@ This project was done as part of a BlueDot Impact Technical AI Safety project sp
 ```
 screen/     reproduce the paper's Donation Bet bias on a local vLLM serve (gate before spending compute)
 swap/       the experiment: cut -> three-prompt continuations -> judge -> counts -> PyMC fit; plus the follow-ups
-figures/    scripts for Figures 1-6 (strings in figure-texts.md), shared style
+figures/    figure scripts: paper_f*.py (the figures above, out/paper/), f2-f6 (styled blog set, out/png|svg|pdf/), html/ (Figure 1); every string in figure-texts.md
 artifacts/  derived data the figures and every reported number read from (raw request/result dumps are gitignored)
 infra/      RunPod/vLLM serving notes and the shell scripts used to run the fleet
 docs/       FINDINGS.md, the running log of what was tried and what came out
@@ -220,7 +222,7 @@ external/   (gitignored) clone of TruthfulAI-research/value_leakage; its cache i
 
 ```bash
 git clone https://github.com/TruthfulAI-research/value_leakage external/value_leakage   # + their data submodule
-python -m venv .venv-model && .venv-model/bin/pip install numpy pandas pyarrow pymc arviz matplotlib openai anthropic httpx
+python -m venv .venv-model && .venv-model/bin/pip install numpy pandas pyarrow pymc arviz matplotlib scienceplots openai anthropic httpx
 ```
 
 `screen/` and `swap/` import the paper's own prompt templates, question list, threshold routine and judge parser from `external/value_leakage`, so nothing here re-implements their evaluation.
@@ -257,8 +259,10 @@ python qwen36_gen.py && bash ../infra/ops/fit4g.sh && python qwen36_readout.py  
 python reviewer_checks.py && python critique_addenda.py   # robustness tables cited in the post
 python threshold_audit.py                                 # threshold handling and prefix/prompt conflict in the step-3 continuations
 
-# 4. Figures (from figures/)
-cd ../figures && sh html/render.sh && for f in f2_curves f3_three_arm f4_denial f5_timing f6_intent_strips; do ../.venv-model/bin/python $f.py; done
+# 4. Figures (from figures/). Figure 1 is HTML rendered by headless Chrome; paper_f*.py write out/paper/ (pdf + png); f*.py write the styled set (svg + pdf + png + a greyscale proof)
+cd ../figures && sh html/render.sh
+for f in paper_f2_dep paper_f3_arms paper_f4_denial paper_f6_timing paper_f7_honesty; do ../.venv-model/bin/python $f.py; done
+for f in f2_curves f3_three_arm f4_denial f5_timing f6_intent_strips; do ../.venv-model/bin/python $f.py; done
 ```
 
 Tests: `cd swap && python test_cuts.py && python test_template.py && python test_model.py && python synth_test.py`.
