@@ -94,7 +94,7 @@ p(f"median commitment_frac  = {median([j['commitment_frac'] for j in joined]):.4
 p("")
 
 expected = {"n_joined": 77, "first_after": 35, "last_after": 71}
-p(f"Expected (prior hand computation): n=77, first-after=35/77, last-after=71/77")
+p("Expected (prior hand computation): n=77, first-after=35/77, last-after=71/77")
 disc1 = []
 if n_joined != expected["n_joined"]:
     disc1.append(f"n_joined {n_joined} != expected {expected['n_joined']}")
@@ -211,7 +211,7 @@ for arm, exp in expected2.items():
     got = totals2.get(arm, {}).get("rate", float("nan"))
     if abs(got - exp) > 0.001:
         disc2.append(f"{arm}: got {got:.4f} vs expected {exp}")
-p(f"\nExpected: swap 0.158, orig 0.144")
+p("\nExpected: swap 0.158, orig 0.144")
 if disc2:
     p("DISCREPANCY: " + "; ".join(disc2))
 else:
@@ -325,7 +325,7 @@ pooled_rs = pooled_k_s / pooled_n_s if pooled_n_s else float("nan")
 pooled_dep0 = pooled_ro - pooled_rs
 p(f"| pooled | {pooled_dep0:.4f} |")
 p(f"\nrate_orig pooled = {pooled_ro:.4f} (n={pooled_n_o}), rate_swap pooled = {pooled_rs:.4f} (n={pooled_n_s})")
-p(f"Compare with fitted dep(0) = 0.617, published dep(0) = 0.62.")
+p("Compare with fitted dep(0) = 0.617, published dep(0) = 0.62.")
 table4_dep["pooled"] = pooled_dep0
 
 out["raw_t0_bias"] = {"by_direction_arm": table4_raw, "dep0_by_direction": table4_dep, "dep0_pooled": pooled_dep0,

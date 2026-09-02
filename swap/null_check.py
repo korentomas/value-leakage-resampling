@@ -1,7 +1,7 @@
 """4D: null for s. Baseline-sourced prefixes cut at t=0.2, continued under the no-bet prompt.
 s_null = k/n - 0.5 per prefix (k = above threshold). Compare |s_null| with the bet arm's s(0.2).
 Run: ../.venv-model/bin/python null_check.py  (reads artifacts/step4d_counts.jsonl, step4_fits/neutral/step4_summaries_r.json)"""
-import json, numpy as np, sys
+import json, numpy as np
 from pathlib import Path
 A = Path('../artifacts')
 rows = [json.loads(l) for l in open(A/'step4d_counts.jsonl')]

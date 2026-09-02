@@ -99,6 +99,6 @@ if __name__ == "__main__":
           f"last claim {np.median(last):.3f}, first claim after lock {after.mean():.3f}")
     print(f"intent n={m}: median intent {np.median(ipos):.3f}, median lock (same units) {np.median(lock_i):.3f}, "
           f"intent after lock {np.mean(ipos > lock_i):.3f}")
-    print(f"lock medians by label (all 250): " + ", ".join(
+    print("lock medians by label (all 250): " + ", ".join(
         f"{L} {np.median([S[r['source_id']]['commitment_frac'] for r in pdr if r['grid_idx'] == 5 and r['denial_label'] == L]):.3f}"
         for L in ("Admits", "Denies", "Mentions")))

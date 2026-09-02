@@ -3,6 +3,7 @@ external/
 __pycache__/
 .DS_Store
 .deepeval/
+infra/ops/logs/
 
 # Raw request/result dumps (GBs) stay local; only the derived files the
 # figures and reported numbers depend on are tracked.

@@ -237,7 +237,6 @@ def main(argv=None) -> int:
     assert len(requests) == len({r["req_id"] for r in requests}), "duplicate req_ids"
     expected = N_SOURCES * sum(len(a) for a in KEEP_CUTS.values())
     assert len(requests) == expected, (len(requests), expected)
-    table = _threshold_prompts()
     fmt_mismatch = set()
     for s in sources:
         bcp = build_counter_prompt(s["prompt_key"], s["direction"], s["threshold"])
@@ -258,7 +257,6 @@ def main(argv=None) -> int:
     by_key = defaultdict(dict)
     for r in requests:
         m = r["meta"]
-        hdr_user = {"orig": None, "swap": None, "neutral": table[m["prompt_key"]]["baseline"]}[m["arm"]]
         prompt = r["body"]["prompt"]
         user = prompt.split("<|im_end|>")[0][len("<|im_start|>user\n"):]
         prefix = prompt[len(render_with_prefix(user, "")):]

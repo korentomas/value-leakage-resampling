@@ -10,7 +10,6 @@ Run:  ../.venv-model/bin/python f6_intent_strips.py
 import json
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 import style
 

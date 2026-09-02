@@ -18,7 +18,7 @@ import numpy as np
 
 sys.path.insert(0, "../swap")
 import arviz as az  # noqa: E402
-from model import prepare_data, load_counts, DEFAULT_EPS  # noqa: E402
+from model import prepare_data, load_counts  # noqa: E402
 
 EPS = 0.2
 ART = Path("../artifacts")

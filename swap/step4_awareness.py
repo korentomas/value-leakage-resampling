@@ -1,7 +1,7 @@
 """4A follow-up: is the denier/admitter bet-shaped gap explained by verbalised
 eval-awareness (paper Fig 30)? Stratify the neutral-arm bet-shaped posterior by
 the paper's awareness labels (artifacts/qwen3.5-35_master.parquet)."""
-import json, sys
+import json
 from pathlib import Path
 import numpy as np, pandas as pd, arviz as az
 from model import DEFAULT_GRID, load_counts, prepare_data

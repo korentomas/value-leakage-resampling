@@ -1,7 +1,7 @@
 #!/bin/bash
 # $1 name $2 host $3 ssh-port $4 local-port $5 setup-script $6 model-grep ; sets up + keeps a tunnel; no driver
 name=$1; host=$2; sport=$3; lport=$4; setup=$5; mg=$6
-D=/Users/tk/Documents/Personal/ais/projects26/leakage-probing/status
+D=$(cd "$(dirname "$0")" && pwd); mkdir -p $D/logs
 SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 -o BatchMode=yes -p $sport root@$host"
 n=0; until $SSH 'echo ok' >/dev/null 2>&1; do n=$((n+1)); [ $n -gt 40 ] && echo "$name SSH_TIMEOUT" && exit 1; sleep 15; done
 $SSH 'bash -s' < $D/$setup > $D/logs/setup-$name.log 2>&1

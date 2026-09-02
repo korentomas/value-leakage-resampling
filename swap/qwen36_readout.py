@@ -1,5 +1,5 @@
 """4G readout: Qwen3.6 model-free rates by direction and cut, fitted dep summaries, plug-in s(0.2) by label; side by side with Qwen3.5.
-Run after status/fit4g.sh: ../.venv-model/bin/python qwen36_readout.py"""
+Run after infra/ops/fit4g.sh: ../.venv-model/bin/python qwen36_readout.py"""
 import json, collections, numpy as np
 from pathlib import Path
 A = Path('../artifacts')

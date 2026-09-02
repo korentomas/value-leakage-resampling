@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Pull on-pod results every 2 min; print '<name> FINISHED ...' once per pod and ALL_FINISHED at the end."""
 import subprocess, time, os, sys
-A='/Users/tk/Documents/Personal/ais/projects26/leakage-probing/artifacts'
+import pathlib
+A=str(pathlib.Path(__file__).resolve().parents[2]/'artifacts')
+# Fleet as run on 2026-08-21 (RunPod pods, long gone). Edit PODS before reuse.
 PODS=[('ra','103.207.149.71','10086','step4d_results_ra.jsonl'),('rd2','103.207.149.106','10628','step4d_results_rd2.jsonl'),
 ('rd3','103.207.149.173','15538','step4d_results_rd3.jsonl'),('rd4','103.207.149.172','15383','step4d_results_rd4.jsonl'),
 ('rd5','103.207.149.173','10843','step4d_results_rd5.jsonl'),('g1','64.247.201.33','17745','step4g_results_g1.jsonl'),

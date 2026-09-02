@@ -626,3 +626,71 @@ than admitters, at a quarter of Qwen3.5's bias and with the direction
 asymmetry reversed in form (all the bias on the below-good side). Two
 cuts and 100 sources: treat as a replication of direction and rough
 magnitude, not of the per-conversation counts.
+
+## Threshold-handling audit of the step-3 continuations (2026-08-27; swap/threshold_audit.py; artifacts/threshold_audit_rows.jsonl, threshold_audit_rows.sample.txt)
+
+Follow-up to "Threshold-format mismatch in the step-3 swap arm", asking the
+62,500 continuations directly rather than comparing dep per question. Also
+read 100 swap-arm continuations on the 7 affected questions by hand (uniform
+sample, seed 20260827, in threshold_audit_rows.sample.txt). Judge coverage
+for the dep table is 42,651/62,500 (the on-disk step3_judge_results.jsonl is
+one wave; the missing rows are spread evenly over arms and cuts, and the
+plug-in dep(0.2) it gives, 0.25, matches the 0.26 in the fit).
+
+**The prefix already names the threshold, long before the answer locks.**
+Over the 250 sources, the first "threshold" in the CoT sits at sentence
+fraction 0.011 (median) and the first appearance of the *value* at 0.045;
+the posterior median lock is at 0.26. 246/250 name it before locking,
+204/244 write the number before locking, 6/250 never write the number.
+So of the retained prefixes: 96% say "threshold" and 77% state the value
+already at t~0.2, rising to ~99% by t~0.6. On the affected questions the
+prefix carries the value in the paper's comma form 86% of the time, in bare
+digits 18% (Qwen drops the separators on its own), in words ("26 million")
+44%. The malformed prompt therefore restates a number the prefix has almost
+always already fixed in the correct format.
+
+**No continuation misreads the value.** Of 88,022 "the threshold is X"
+statements, the ones where X != T occur at 2.79% (orig) vs 2.60% (swap) on
+affected questions and 1.28% vs 1.29% on clean ones -- no arm asymmetry, and
+inspection shows the residue is regex artefacts (`$350 \times 10^6$`,
+"Threshold Deals = 2,000,000"). Of 132 explicit "26000000 is 26 million"
+style equations, 2 are wrong, both self-corrected in the same trace.
+
+**What the format bug does produce is talk about output formatting.**
+Number-format commentary near a threshold mention: 3.35% of swap/affected
+continuations vs 0.62% of orig/affected and 0.01% of clean. Reading 60 of
+those windows: essentially all are the model deciding how to write *its own*
+answer ("'3500000000' has no commas in the prompt. Should I match that
+format?"), plus a few correct magnitude checks ("Wait, one final check: Is
+'3500000000' 3.5 Billion? Yes."). None is a misreading. Generic confusion
+tokens are useless here: some "wait" fires within a threshold window in 78%
+of swap and 76% of orig continuations.
+
+**dep(t) is the same on affected and clean questions at every cut**
+(plug-in, per (source, cut) cell, unit bootstrap):
+
+  t<0.15 affected +0.34 [+0.25,+0.43] / clean +0.42 [+0.24,+0.57]
+  t~0.2  affected +0.25 [+0.21,+0.29] / clean +0.22 [+0.17,+0.27]
+  t~0.4  affected +0.16 [+0.13,+0.19] / clean +0.14 [+0.10,+0.18]
+  t~0.6  affected +0.11 [+0.09,+0.14] / clean +0.09 [+0.06,+0.12]
+  t~0.8  affected +0.04 [+0.03,+0.06] / clean +0.04 [+0.03,+0.06]
+  t=1.0  affected +0.02 [+0.01,+0.03] / clean +0.01 [+0.00,+0.02]
+
+Continuations that *do* comment on the format land good-side 22.9%
+[19.5,26.6] against 26.7% [26.0,27.4] for the rest of swap/affected and
+27.0% for swap/clean, i.e. if anything slightly more prefix-following.
+This is a stronger version of the free check in the earlier entry:
+limitation 6 stands as written, and nothing in the step-3 numbers needs
+restating.
+
+**Incidental, and bigger than the format bug: the swap arm's conflict is
+visible in the text.** 16.4% of swap continuations vs 1.8% of orig contain
+an explicit re-reading or reversal of the exceed -> good/bad mapping within
+300 chars of it ("Why did I think > 950 was good before?", "Wait. I misread
+the prompt in the first step?"). It falls monotonically with the cut: 33.8%
+at t~0.1, 28.2% at t~0.2, 16.9% at t~0.6, 3.2% at t=1.0. So "locked" really
+does mean "follows the prefix over a prompt it can tell is contradicting it"
+(limitation 3), and now with a number: at the headline cut, roughly one
+continuation in four notices the contradiction out loud. Worth quoting in
+the write-up's limitation 3, and it suggests the splice/consistent-prompt
+control is the right next experiment.

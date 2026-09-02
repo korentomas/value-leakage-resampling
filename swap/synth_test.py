@@ -32,7 +32,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 from dataclasses import dataclass
 
 import numpy as np
@@ -396,7 +395,6 @@ def simulate_three_arm(
     """
     rng = np.random.default_rng(seed)
     grid = np.asarray(grid, dtype=float)
-    n_g = len(grid)
     directions = ["below_good", "above_good"]
     questions = [f"v1_q{q}" for q in range(n_questions)]
 

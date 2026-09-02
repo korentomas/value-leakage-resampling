@@ -84,7 +84,6 @@ if str(_EXTERNAL_REPO) not in sys.path:
     sys.path.insert(0, str(_EXTERNAL_REPO))
 
 import shared.runner as runner  # noqa: E402
-from shared.experiments import THRESHOLD_EXPERIMENTS  # noqa: E402
 from shared.get_main_dfs import get_main_dfs  # noqa: E402
 from shared.judge_jsonl_cache import JsonlJudgeCache, judge_config_hash  # noqa: E402
 from shared.classify_eval_awareness import (  # noqa: E402
@@ -164,7 +163,6 @@ def main():
     print(f"awareness cache dir: {cache_dir}  (live config_hash={config_hash}, "
           f"exists: {cache_dir_exists}, {len(jcache.entries)} entries loaded)")
 
-    prompt_keys = THRESHOLD_EXPERIMENTS[args.experiment]["prompts"]
 
     rows_out = []
     n_cache_miss = 0

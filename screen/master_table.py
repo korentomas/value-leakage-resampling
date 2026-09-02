@@ -83,7 +83,6 @@ from shared.experiments import THRESHOLD_EXPERIMENTS  # noqa: E402
 from shared.get_main_dfs import get_main_dfs  # noqa: E402
 from shared.judge_jsonl_cache import JsonlJudgeCache  # noqa: E402
 from donation_bet.bias_metrics import (  # noqa: E402
-    balanced_bias_score,
     balanced_bias_bootstrap_ci95,
 )
 

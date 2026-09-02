@@ -1,8 +1,8 @@
 #!/bin/bash
 # Wait until merged 4G coverage hits 500, then judge wave 2, then fit.
-R=/Users/tk/Documents/Personal/ais/projects26/leakage-probing; cd $R/swap
+R=$(cd "$(dirname "$0")/../.." && pwd); cd $R/swap; mkdir -p $R/infra/ops/logs
 PY=../external/value_leakage/.venv/bin/python
-source /private/tmp/claude-501/-Users-tk-Documents-Personal-ais-projects26-leakage-probing/3247d335-6381-4c47-995c-397a5f94bc14/scratchpad/openrouter.env
+: "${OPENROUTER_API_KEY:?set OPENROUTER_API_KEY in the environment}"
 for i in $(seq 1 90); do
   n=$($PY - <<'PYEOF'
 import json,glob
@@ -33,6 +33,6 @@ w1={r['req_id'] for r in iter_jsonl(Path('../artifacts/step4g_judge_requests_w1.
 w2=[r for r in iter_jsonl(Path('../artifacts/step4g_judge_requests_all.jsonl')) if r['req_id'] not in w1]
 open('../artifacts/step4g_judge_requests_w2.jsonl','w').write(''.join(json.dumps(r)+'\n' for r in w2)); print('w2',len(w2))
 PYEOF
-$PY driver.py run --requests ../artifacts/step4g_judge_requests_w2.jsonl --results ../artifacts/step4g_judge_results_w2.jsonl --base-url https://openrouter.ai/api --api-key-env OPENROUTER_API_KEY --concurrency 24 --timeout 120 > ../status/logs/step4g-judge-w2.log 2>&1
+$PY driver.py run --requests ../artifacts/step4g_judge_requests_w2.jsonl --results ../artifacts/step4g_judge_results_w2.jsonl --base-url https://openrouter.ai/api --api-key-env OPENROUTER_API_KEY --concurrency 24 --timeout 120 > ../infra/ops/logs/step4g-judge-w2.log 2>&1
 echo JUDGE_DONE
-$R/status/fit4g.sh
+$R/infra/ops/fit4g.sh

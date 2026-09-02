@@ -15,7 +15,6 @@ Items
 """
 from __future__ import annotations
 
-import argparse
 import json
 import random
 import re
@@ -126,7 +125,7 @@ p(f"| raw: rate_orig − rate_swap > 0.2 (25 vs 25 samples; bootstrap 95% [{boot
 p(f"| posterior cutoff: P(dep(0.2) > 0.2) > 0.9 | {post_cut} | {100*post_cut/250:.0f}% |")
 p(f"| propagated: Σ_u P(dep_u(0.2) > 0.2) | {post_prop:.1f} | {100*post_prop/250:.0f}% |")
 p(f"| (for reference) late-locked = dep > 0.2 anywhere past t0, P>0.9 | {late94} | {100*late94/250:.0f}% |")
-p(f"\nraw count at other thresholds: " + ", ".join(f"> {e}: {raw_counts[e]}" for e in (0.1, 0.15, 0.2, 0.3))
+p("\nraw count at other thresholds: " + ", ".join(f"> {e}: {raw_counts[e]}" for e in (0.1, 0.15, 0.2, 0.3))
   + f"; units with an empty arm at this cut: {n_missing}; median raw dep(0.2) = {np.nanmedian(raw_arr):+.3f}, mean {np.nanmean(raw_arr):+.3f}")
 OUT["single_cut_t02"] = {"raw_gt_eps": raw_counts, "raw_gt_eps_boot95": boot_eti, "posterior_cutoff_gt_eps": post_cut,
                          "propagated_expected_count": post_prop, "late_locked_anywhere": late94,

@@ -1,6 +1,6 @@
 # Figure texts
 
-Figure 1 is `figures/html/F1_method.html` (shared style `figures/html/figstyle.css`: Helvetica, white ground, ink / blue-grey / sienna for the three prompts), rendered by `figures/html/render.sh` (headless Chrome at 3x, trimmed to the figure -> `out/png/F1_method.png`). The no-bet card is centred on the cut line, so its arrow leaves the chain of thought horizontally; the discarded text runs past the card edge and fades out. No footers.. Figures 2-5 use the same palette and font through `figures/style.py`. Box titles are lowercase bold, as in the mock.
+Figure 1 is `figures/html/F1_method.html` (shared style `figures/html/figstyle.css`: Helvetica, white ground, ink / blue-grey / sienna for the three prompts), rendered by `figures/html/render.sh` (headless Chrome at 3x, trimmed to the figure -> `out/png/F1_method.png`). The no-bet card is centred on the cut line, so its arrow leaves the chain of thought horizontally; the discarded text runs past the card edge and fades out. No footers. Figures 2-6 use the same palette and font through `figures/style.py`. Box titles are lowercase bold, as in the mock.
 
 ## Figure 1, method schematic (every string on the figure, in reading order)
 
@@ -64,3 +64,11 @@ Figure 1. One conversation, cut mid-thought, continued under three prompts. A re
 - Annotations: `median first claim 0.23`, `median lock 0.26`; lower panel `lock` (median 0.29) / `first intent statement` (median 0.63); `147 conversations with an explicit intent to fall on the good side; intent written after the lock in 81%`
 - Axis: `position in the chain of thought (fraction)`
 - Caption: Figure 5. Statements of intent to fall on the good side come after the lock; the first honesty claim comes with it. Top: the 77 denying conversations whose first honesty claim could be located, sorted by lock position (posterior median), with the claim's position; sienna where the claim follows the lock (35 of 77). Bottom: lock position against the first explicit statement of intent to fall on the good side, for the 147 conversations that contain one.
+
+## Figure 6, intent strips (the bottom panel of Figure 5 on its own)
+
+- Title: `Statements of intent come after the lock`
+- Row labels: `answer locked`, `first statement\nof intent`
+- Annotations: `median 0.29` (lock, ink), `median 0.63` (intent, sienna)
+- Axis: `position in the chain of thought (fraction)`
+- Data: the 147 conversations with an explicit statement of intent (artifacts/prefix_direction.jsonl, grid_idx 5, has_intent), lock = posterior median commitment_frac under the neutral prior.

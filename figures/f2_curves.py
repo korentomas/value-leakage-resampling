@@ -8,7 +8,6 @@ Run:  ../external/value_leakage/.venv/bin/python f2_curves.py
 """
 import json
 import numpy as np
-import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from scipy.interpolate import PchipInterpolator
 
