@@ -211,10 +211,9 @@ This project was done as part of a BlueDot Impact Technical AI Safety project sp
 ```
 screen/     reproduce the paper's Donation Bet bias on a local vLLM serve (gate before spending compute)
 swap/       the experiment: cut -> three-prompt continuations -> judge -> counts -> PyMC fit; plus the follow-ups
-figures/    figure scripts: paper_f*.py (the figures above, out/paper/), f2-f6 (styled blog set, out/png|svg|pdf/), html/ (Figure 1); every string in figure-texts.md
+figures/    paper_f*.py write the figures above to out/paper/; html/ is Figure 1, rendered by headless Chrome
 artifacts/  derived data the figures and every reported number read from (raw request/result dumps are gitignored)
-infra/      RunPod/vLLM serving notes and the shell scripts used to run the fleet
-docs/       FINDINGS.md, the running log of what was tried and what came out
+infra/ops/  shell scripts used to set up the RunPod pods, run the fleet and collect results
 external/   (gitignored) clone of TruthfulAI-research/value_leakage; its cache is the source of every prefix
 ```
 
@@ -222,7 +221,7 @@ external/   (gitignored) clone of TruthfulAI-research/value_leakage; its cache i
 
 ```bash
 git clone https://github.com/TruthfulAI-research/value_leakage external/value_leakage   # + their data submodule
-python -m venv .venv-model && .venv-model/bin/pip install numpy pandas pyarrow pymc arviz matplotlib scienceplots openai anthropic httpx
+python -m venv .venv-model && .venv-model/bin/pip install numpy pandas pyarrow pymc arviz matplotlib scipy openai anthropic httpx
 ```
 
 `screen/` and `swap/` import the paper's own prompt templates, question list, threshold routine and judge parser from `external/value_leakage`, so nothing here re-implements their evaluation.
@@ -230,7 +229,7 @@ python -m venv .venv-model && .venv-model/bin/pip install numpy pandas pyarrow p
 ### Pipeline, as run
 
 ```bash
-# 0. Serve Qwen3.5-35B-A3B in FP8 with vLLM (infra/RECON.md), completions endpoint.
+# 0. Serve Qwen3.5-35B-A3B in FP8 with vLLM (screen/serve.sh), completions endpoint.
 # 1. Gate: does the local serve reproduce the paper's 0.62?
 cd screen && python run_screen.py --model-key qwen3.5-35 --base-url http://<host>:8000/v1 --out ../artifacts/screen_qwen3.5-35_fp8.jsonl
 python judge.py --in ../artifacts/screen_qwen3.5-35_fp8.jsonl --out ../artifacts/screen_qwen3.5-35_fp8.judged.jsonl
@@ -259,10 +258,9 @@ python qwen36_gen.py && bash ../infra/ops/fit4g.sh && python qwen36_readout.py  
 python reviewer_checks.py && python critique_addenda.py   # robustness tables cited in the post
 python threshold_audit.py                                 # threshold handling and prefix/prompt conflict in the step-3 continuations
 
-# 4. Figures (from figures/). Figure 1 is HTML rendered by headless Chrome; paper_f*.py write out/paper/ (pdf + png); f*.py write the styled set (svg + pdf + png + a greyscale proof)
+# 4. Figures (from figures/)
 cd ../figures && sh html/render.sh
 for f in paper_f2_dep paper_f3_arms paper_f4_denial paper_f6_timing paper_f7_honesty; do ../.venv-model/bin/python $f.py; done
-for f in f2_curves f3_three_arm f4_denial f5_timing f6_intent_strips; do ../.venv-model/bin/python $f.py; done
 ```
 
 Tests: `cd swap && python test_cuts.py && python test_template.py && python test_model.py && python synth_test.py`.
